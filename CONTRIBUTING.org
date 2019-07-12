@@ -1,0 +1,5 @@
+Contributions are welcome.
+
+You can chose one of issues to work on from the tracker.
+
+All commits should conform to the following [[https://chris.beams.io/posts/git-commit/][style guide]].
