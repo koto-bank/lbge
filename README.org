@@ -1,0 +1,2 @@
+* LBGE - lisp butts game engine
+ECS Lisp game engine for creating Lisp-powered games.

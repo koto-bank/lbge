@@ -1,0 +1,271 @@
+* Idea
+A feature-rich game with two game modes:
+1. Shooter platformer with metroidvania elements, playable as a
+   handsome feline marine (huh) in cool armor suit.
+2. Space exploration with environmental hazards and spaceship upgrade
+   capabilities.
+
+* Overview
+Research project. At first as simple, as possible, but still playable
+and with distinct and unique elements. Also there should be
+possibility of feature expansion, so during the development process of
+the engine, the game and the tools this should be always accounted
+for.
+
+At first, only two things to each mechanic, e.g. one upgrade level,
+besides base, two environmental hazards, one additional weapon, two
+global map zones, two local levels, etc.
+
+The main goal is to acquire proficiency with modern game development
+tech, so ambitious goals must be set, and much attention paid to the
+development process on all levels. As all participants are
+programmers, the main goal is to write a decent piece of code.
+
+Issues like where to get graphic assets/effects/textures, how the
+animation looks ugly and rough and so on should be approached
+pragmatically and either dealt with ASAP or discarded as non-goals.
+All effort must be placed in engine and tools development.
+
+* Gameplay mechanics
+** Exploration
+Exploration is fun. So we don't give access to all the space map from
+the start, nor we allow to go to every corner without upgrading your
+ship first. The same goes for on-foot exploration of platformer
+levels.  Also exploration should not be all smooth and safe. There
+should be dangerous places to create tension and excitement!
+
+So to sum up:
+1. Map is not revealed at the start
+2. There are zones that are not accessible without exploring first ones
+3. Keys, buttons and triggers are very cool, we should have a couple
+   of this
+4. Unmapped secret areas is a nice thing
+5. There should be natural dangers, i.e. stationary sources of
+   hindrance/damage that don't give a fuck about the player.
+
+Features:
+1. Two explorable space zones, each with own map and design
+2. Buttons, triggers, levers. One or two
+3. There must be areas unpassable without acquiring equipment
+   first. Think radiation protection or whatever.
+
+** Ship and equipment upgrades
+Upgrades are cool because they can be easily tweaked to set wide range
+of goals, time-wise. Also they provide a powerful sense of
+accomplishment, once obtained, which basically means they generate
+fun. Upgrades should require progression through the game, e.g. by
+means of obtaining some ingredient hidden in a distant part of a
+level, or by defeating some kind of boss, or by grinding through
+random drop from lesser enemies. Suggestions are welcome.
+
+Features:
+1. Two upgrades for armor, and one for each weapon
+May or may not have an effect on the weapon appearance.
+
+** Fight
+Action = running/flying + shooting + trying to not die. The simplest
+to feel and also one of the hardest (and most fun) parts to design.
+Several types of weapons, a number of armor upgrades, maybe shields, idk.
+Grenades for platformer levels? Rockets/mines/bombs for spaceship mode?
+Also maybe we should add bosses in time.
+The possibilities are endless and wonders never cease.
+
+However, the minimum feature set is quite simple and goes as follows:
+1. Two types of mobs for each space and platformer modes
+2. Two weapons for each of modes, one default and one obtainable
+3. Basic mechanic of losing armor and dying, ability to restore it
+   somehow, and to fight and kill opposing entities.
+
+** Final destination
+The game should have an end. Some final boss to fight, or some eerie
+looking wormhole to jump to. Or both.
+
+For now, let it be a wormhole, path to which is blocked and unlocks
+only after some ship level upgrade have been obtained.
+
+** Statistics, achievements and trophies
+This things are cool and generate pleasant thoughts, so we should also
+have them. Like a head of a boss on your ship hood or something.
+
+Minimal features:
+1. Statistics tracking: total number of jumps, kills, damage dealt and
+   taken, passed playtime
+2. Table of unlockable achievements for each upgrade and reaching
+   particular zones.
+
+** Plot
+Not needed, as Karmak bestowed upon us. Although not really, but can
+safely be postponed.
+
+** Technical mechanics
+Time tracking, ability to save and load.
+
+** UI
+Map view, ship/suit upgrade status view
+
+* Technical details
+** Introduction
+   At the moment, it is somewhat implied that the game will be written
+   in Common Lisp, using the Entity-Component-System idea, and somewhat
+   basing it on existing code of [[https://github.com/pkulev/o2/blob/master/src/components.lisp][o2's ECS]], hence, the technical concept
+   in this section will be described in terms of the concepts used
+   there.
+
+   Briefly:
+   - Components ::
+   CLOS classes inheriting from the ~component~ class, that only
+   contain data.  The inheritance only gives a type distinction between
+   other classes and components as of now, but, of course, may be used,
+   in time, to have special operations for components.
+
+   - Systems ::
+   CLOS classes inheriting from the ~system~ class, that only run
+   actions and do not contain data.  Instead, they get data from the
+   components they require with their ~required-components~ slot.
+   System classes are only instantiated once, since they do not have
+   any data, and their class-iness is only used for simpler
+   dispatch. Every frame, systems get all the data from their required
+   components and modify them to their needs.
+
+   - Entities ::
+   Entities are the objects that represent actual things in-game. They
+   contain components (data), that is unique for every object, and
+   system references. Every frame, all the systems of all the objects
+   are "run" with the corresponding components.
+
+   Some components and systems are very common and will be described
+   here, and then back-referenced:
+
+   - transform :: <<sec:transform>>
+   The transform component stores the position of the object in the
+   game world, not more, not less.  It doesn't have any system of the
+   same name, since it is implied that other systems will modify it
+   (one such example is the [[sec:physics][physics system]]). It also may be
+   advantageous to store the parent and the child objects in the
+   transform component, as this component is the one that uses them
+   the most. Another thing that the transform component should do is
+   allow both local (as in relative to parent) and global position
+   setting/getting.
+
+   - render :: <<sec:render>>
+   The render component stores the sprite and the priority in which
+   the sprite shall be drawn.  It's the component to store anything to
+   draw on screen. One possibility that has not been explored in o2 is
+   animation. One possibility is having the render component allow a
+   list in the ~sprite~ slot, which then can be used by the
+   ~animation~ system to draw such component (this is only an idea,
+   and not the best one at that).  The render system is the system
+   that, basically, does the drawing. It takes the sprite and draws it
+   on screen according to the [[sec:transform][transform component]].
+
+   - tags :: <<sec:tags>>
+   Tag components are components with no data that serve as tags for
+   objects to mark them as something special.  Ideally, these can be
+   subclassed from a ~tag~ class which is itself a subclass of
+   ~component~. Another possibility is having tags as separate
+   entities that are not components at all.
+
+   As all the objects in the game are just entities, a sum of
+   components and systems, the player, the enemies and all other
+   things will be described as a combination of their components and
+   systems.
+
+   Other property that currently exists in o2 and will be used to
+   describe the details here is "game states", which are, simply put,
+   named instances of the "state" class for drastically different
+   parts of the game. For example, some possible states here are
+   "menu", "space exploration" and "sidescrolling exploration".
+
+** The "metroidvania exploration" state
+*** Components and systems that are shared
+    - physics :: <<sec:physics>>
+    The physics component stores the rigid body and the shape of the
+    object.  This document currently implies that the Chipmunk2D
+    physics engine will be used, one can read the manual [[https://chipmunk-physics.net/release/ChipmunkLatest-Docs/][here]].  The
+    physics system gets the position, rotation and all the other
+    things needed from the rigid body and applies them to
+    components. The most basic example is synchronizing the position
+    to the transform component.
+
+    - health :: <<sec:health>>
+    Both player and enemies have health. While the systems that are
+    run on this component might be different for the player and the
+    enemies, the component should probably be the same, the health is
+    just two integers, one for max health, one for current health. It
+    can, of course, be expanded to also have armor. Or armor can be a
+    separate component, it does not matter currently.  The health
+    system would check if the player's health is below zero and kill
+    the player or the enemy.
+
+    - shooter or attacker :: <<sec:attack>>
+    The component that stores the attacking properties of the object,
+    be it player or enemy.  Since the attack is a somewhat general
+    thing, the attacking component might be shared between the player
+    and the enemies. The attack system would check if the player or
+    the enemy decided to attack and perform it.
+
+*** Player
+    As the player is the main entity, the actor, it shall be described
+    first.
+
+    The following components would be fit for a player:
+    - player [[sec:tags][tag]], [[sec:transform][transform]], [[sec:render][render]], [[sec:physics][physics]], [[sec:health][health]], [[sec:attack][attack]]
+    - player equipment component :: the component storing what
+         equipment player has (armor, etc.)  Stores the things,
+         collectible, upgradable, etc. that player has.  There might
+         be, for example, a class, that contains slots for what it's
+         name is, it's sprite, what it does, et cetera
+
+    The following systems would work with the player's components:
+    - [[sec:health][health]], [[sec:physical][physical]], [[sec:render][render]], [[sec:attack][attack]]
+    - player controllable :: A system that let's the actual player
+         control the game player It would be responsible for giving
+         player the momentum (via the physical system), when the
+         player moves, and setting the appropriate data on the attack
+         component to make the player shoot. It is, basically, the
+         place where the player movement input the accepted (whether
+         to accept other input, like opening a menu, there, is an
+         unresolved question currently).
+
+*** Enemies
+    Components:
+    - [[sec:transform][transform]], [[sec:render][render]], [[sec:physics][physics]], [[sec:health][health]], [[sec:attack][attack]]
+
+    Systems:
+    - [[sec:health][health]], [[sec:physical][physical]], [[sec:render][render]], [[sec:attack][attack]]
+    - enemy AI system :: A system the controls all enemy movements and
+         attacks It would find the player by the player's tag, try to
+         move towards them and then attack if the range is enough to
+         do so.
+
+*** Pickups
+    The levels will contain certain pick-up-able items, and the
+    enemies might drop them. Pick-ups are also objects with their
+    logic.
+
+    Components:
+    - [[sec:transform][transform]], [[sec:render][render]]
+    - [[sec:physics][physics]] :: If the pickups are going to physically drop on the
+         ground, but mostly for collision detection), however, since
+         Chipmunk2D also stores it's own special tags for objects, the
+         pickup body should be marked as such (see more [[https://chipmunk-physics.net/release/ChipmunkLatest-Docs/#Collision-Detection][here]]).
+
+    - pickup component ::
+         A component that stores what the pickup actually does It might
+         be advantageous to have several pickup components subclassed
+         from the base one, to have the easily detectable.
+
+    Systems:
+    - [[sec:physical][physical]], [[sec:render][render]]
+    - pickup system :: A component that applies the effects of the
+                       pickup to the player This component would apply
+                       the effect to the player. This system might as
+                       well be contained within the player object, not
+                       sure what is the best way to do this.
+
+*** Level
+    A level would probably be built either of big static bodies or
+    small tiles that are each a static body.  This depends on how the
+    level editor is built.
+
+** TODO The "space exploration" state
