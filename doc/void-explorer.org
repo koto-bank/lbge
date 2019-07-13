@@ -269,3 +269,13 @@ Map view, ship/suit upgrade status view
     level editor is built.
 
 ** TODO The "space exploration" state
+* Proposed API
+** 2D physics
+   - Physical simulation :: Different types of simulation for dynamic,
+        kinematic, static bodies
+   - Dynamic body properites :: weight, friction, moment of inertia
+   - Tags for bodies :: an ability to tag bodies and somehow filter
+        them based on tags
+   - Collision callbacks :: an ability to add callbacks
+   - Metadata :: an ability to add metadata to bodies
+   - Constraints :: for later consideration, see [[http://chipmunk-physics.net/release/ChipmunkLatest-Docs/#cpConstraint][here]]
