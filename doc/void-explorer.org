@@ -18,8 +18,10 @@ global map zones, two local levels, etc.
 
 The main goal is to acquire proficiency with modern game development
 tech, so ambitious goals must be set, and much attention paid to the
-development process on all levels. As all participants are
-programmers, the main goal is to write a decent piece of code.
+development process on all levels. Not all participants are
+programmers, so the main goal is to not only write a decent piece of
+code, but to make it into a playable game, with all features,
+including sound and music.
 
 Issues like where to get graphic assets/effects/textures, how the
 animation looks ugly and rough and so on should be approached
