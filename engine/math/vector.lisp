@@ -5,45 +5,39 @@
 
 (defclass float2 ()
   ((x
-    :initform 0
     :initarg :x
     :accessor x)
    (y
-    :initform 0
     :initarg :y
-    :accessor y)))
+    :accessor y))
+  (:default-initargs :x 0 :y 0))
 
 (defclass float3 ()
   ((x
-    :initform 0
     :initarg :x
     :accessor x)
    (y
-    :initform 0
     :initarg :y
     :accessor y)
    (z
-    :initform 0
     :initarg :z
-    :accessor z)))
+    :accessor z))
+  (:default-initargs :x 0 :y 0 :z 0))
 
 (defclass float4 ()
   ((x
-    :initform 0
     :initarg :x
     :accessor x)
    (y
-    :initform 0
     :initarg :y
     :accessor y)
    (z
-    :initform 0
     :initarg :z
     :accessor z)
    (w
-    :initform 0
     :initarg :w
-    :accessor w)))
+    :accessor w))
+  (:default-initargs :x 0 :y 0 :z 0 :w 0))
 
 
 (defgeneric add (vector1 vector2)
@@ -228,22 +222,22 @@
   (dot vector1 (normalize vector2)))
 
 
-(defvar +float2-zero+ (make-instance 'float2))
-(defvar +float3-zero+ (make-instance 'float3))
-(defvar +float4-zero+ (make-instance 'float4))
+(defun float2-zero () (make-instance 'float2))
+(defun float3-zero () (make-instance 'float3))
+(defun float4-zero () (make-instance 'float4))
 
-(defvar +float2-one+ (make-instance 'float2 :x 1 :y 1))
-(defvar +float3-one+ (make-instance 'float3 :x 1 :y 1 :z 1))
-(defvar +float4-one+ (make-instance 'float4 :x 1 :y 1 :z 1 :w 1))
+(defun float2-one () (make-instance 'float2 :x 1 :y 1))
+(defun float3-one () (make-instance 'float3 :x 1 :y 1 :z 1))
+(defun float4-one () (make-instance 'float4 :x 1 :y 1 :z 1 :w 1))
 
-(defvar +float2-x+ (make-instance 'float2 :x 1))
-(defvar +float2-y+ (make-instance 'float2 :y 1))
+(defun float2-x () (make-instance 'float2 :x 1))
+(defun float2-y () (make-instance 'float2 :y 1))
 
-(defvar +float3-x+ (make-instance 'float3 :x 1))
-(defvar +float3-y+ (make-instance 'float3 :y 1))
-(defvar +float3-z+ (make-instance 'float3 :z 1))
+(defun float3-x () (make-instance 'float3 :x 1))
+(defun float3-y () (make-instance 'float3 :y 1))
+(defun float3-z () (make-instance 'float3 :z 1))
 
-(defvar +float4-x+ (make-instance 'float4 :x 1))
-(defvar +float4-y+ (make-instance 'float4 :y 1))
-(defvar +float4-z+ (make-instance 'float4 :z 1))
-(defvar +float4-w+ (make-instance 'float4 :w 1))
+(defun float4-x () (make-instance 'float4 :x 1))
+(defun float4-y () (make-instance 'float4 :y 1))
+(defun float4-z () (make-instance 'float4 :z 1))
+(defun float4-w () (make-instance 'float4 :w 1))
