@@ -1,4 +1,7 @@
-(in-package :lbge)
+(defpackage :lbge.math
+  (:use :cl))
+
+(in-package :lbge.math)
 
 (defclass float2 ()
   ((x
@@ -73,68 +76,142 @@
 (defgeneric project (vector1 vector2)
   (:documentation "Projects vector1 onto vector2"))
 
+(defgeneric eq (vector1 vector2)
+  (:documentation "Test two vectors for equality"))
+
+(defgeneric neq (vector1 vector2)
+  (:documentation "Test two vectors for inequality"))
+
+
+(defun make-float2 (x y)
+  (make-instance 'float2 :x x :y y))
+
+(defun make-float3 (x y z)
+  (make-instance 'float3 :x x :y y :z z))
+
+(defun make-float4 (x y z w)
+  (make-instance 'float4 :x x :y y :z z :w w))
+
 
 (defmethod add ((vector1 float2) vector2)
-  (make-instance 'float2 :x (+ (x vector1) (x vector2)) :y (+ (y vector1) (y vector2))))
+  (make-float2 (+ (x vector1) (x vector2))
+	       (+ (y vector1) (y vector2))))
 
 (defmethod add ((vector1 float3) vector2)
-  (make-instance 'float3 :x (+ (x vector1) (x vector2)) :y (+ (y vector1) (y vector2)) :z (+ (z vector1) (z vector2))))
+  (make-float3 (+ (x vector1) (x vector2))
+	       (+ (y vector1) (y vector2))
+	       (+ (z vector1) (z vector2))))
 
 (defmethod add ((vector1 float4) vector2)
-  (make-instance 'float4 :x (+ (x vector1) (x vector2)) :y (+ (y vector1) (y vector2)) :z (+ (z vector1) (z vector2)) :w (+ (w vector1) (w vector2))))
+  (make-float4 (+ (x vector1) (x vector2))
+	       (+ (y vector1) (y vector2))
+	       (+ (z vector1) (z vector2))
+	       (+ (w vector1) (w vector2))))
 
 
 (defmethod sub ((vector1 float2) vector2)
-  (make-instance 'float2 :x (- (x vector1) (x vector2)) :y (- (y vector1) (y vector2))))
+  (make-float2 (- (x vector1) (x vector2))
+	       (- (y vector1) (y vector2))))
 
 (defmethod sub ((vector1 float3) vector2)
-  (make-instance 'float3 :x (- (x vector1) (x vector2)) :y (- (y vector1) (y vector2)) :z (- (z vector1) (z vector2))))
+  (make-float3 (- (x vector1) (x vector2))
+	       (- (y vector1) (y vector2))
+	       (- (z vector1) (z vector2))))
 
 (defmethod sub ((vector1 float4) vector2)
-  (make-instance 'float4 :x (- (x vector1) (x vector2)) :y (- (y vector1) (y vector2)) :z (- (z vector1) (z vector2)) :w (- (w vector1) (w vector2))))
+  (make-float4 (- (x vector1) (x vector2))
+	       (- (y vector1) (y vector2))
+	       (- (z vector1) (z vector2))
+	       (- (w vector1) (w vector2))))
 
 
 (defmethod mul ((vector float2) scalar)
-  (make-instance 'float2 :x (* (x vector) scalar) :y (* (y vector) scalar)))
+  (make-float2 (* (x vector) scalar)
+	       (* (y vector) scalar)))
 
 (defmethod mul ((vector float3) scalar)
-  (make-instance 'float2 :x (* (x vector) scalar) :y (* (y vector) scalar) :z (* (z vector) scalar)))
+  (make-float3 (* (x vector) scalar)
+	       (* (y vector) scalar)
+	       (* (z vector) scalar)))
 
 (defmethod mul ((vector float4) scalar)
-  (make-instance 'float2 :x (* (x vector) scalar) :y (* (y vector) scalar) :z (* (z vector) scalar) :w (* (w vector) scalar)))
+  (make-float4 (* (x vector) scalar)
+	       (* (y vector) scalar)
+	       (* (z vector) scalar)
+	       (* (w vector) scalar)))
 
 
 (defmethod div ((vector float2) scalar)
-  (make-instance 'float2 :x (/ (x vector) scalar) :y (/ (y vector) scalar)))
+  (make-float2 (/ (x vector) scalar)
+	       (/ (y vector) scalar)))
 
 (defmethod div ((vector float3) scalar)
-  (make-instance 'float2 :x (/ (x vector) scalar) :y (/ (y vector) scalar) :z (/ (z vector) scalar)))
+  (make-float3 (/ (x vector) scalar)
+	       (/ (y vector) scalar)
+	       (/ (z vector) scalar)))
 
 (defmethod div ((vector float4) scalar)
-  (make-instance 'float2 :x (/ (x vector) scalar) :y (/ (y vector) scalar) :z (/ (z vector) scalar) :w (/ (w vector) scalar)))
+  (make-float4 (/ (x vector) scalar)
+	       (/ (y vector) scalar)
+	       (/ (z vector) scalar)
+	       (/ (w vector) scalar)))
 
 
 (defmethod dot ((vector1 float2) vector2)
-  (+ (* (x vector1) (x vector2)) (* (y vector1) (y vector2))))
+  (+ (* (x vector1) (x vector2))
+     (* (y vector1) (y vector2))))
 
 (defmethod dot ((vector1 float3) vector2)
-  (+ (* (x vector1) (x vector2)) (* (y vector1) (y vector2)) (* (z vector1) (z vector2))))
+  (+ (* (x vector1) (x vector2))
+     (* (y vector1) (y vector2))
+     (* (z vector1) (z vector2))))
 
 (defmethod dot ((vector1 float4) vector2)
-  (+ (* (x vector1) (x vector2)) (* (y vector1) (y vector2)) (* (z vector1) (z vector2)) (* (w vector1) (w vector2))))
+  (+ (* (x vector1) (x vector2))
+     (* (y vector1) (y vector2))
+     (* (z vector1) (z vector2))
+     (* (w vector1) (w vector2))))
+
 
 (defmethod length ((vector float2))
-  (sqrt (+ (expt (x vector) 2) (expt (y vector) 2))))
+  (sqrt (+ (expt (x vector) 2)
+	   (expt (y vector) 2))))
   
 (defmethod length ((vector float3))
-  (sqrt (+ (expt (x vector) 2) (expt (y vector) 2) (expt (z vector) 2))))
+  (sqrt (+ (expt (x vector) 2)
+	   (expt (y vector) 2)
+	   (expt (z vector) 2))))
   
 (defmethod length ((vector float4))
-  (sqrt (+ (expt (x vector) 2) (expt (y vector) 2) (expt (z vector) 2) (expt (w vector) 2))))
+  (sqrt (+ (expt (x vector) 2)
+	   (expt (y vector) 2)
+	   (expt (z vector) 2)
+	   (expt (w vector) 2))))
+
+
+(defmethod eq ((vector1 float2) vector2)
+  (and (= (x vector1) (x vector2))
+       (= (y vector1) (y vector2))))
+
+(defmethod eq ((vector1 float3) vector2)
+  (and (= (x vector1) (x vector2))
+       (= (y vector1) (y vector2))
+       (= (z vector1) (z vector2))))
+
+(defmethod eq ((vector1 float2) vector2)
+  (and (= (x vector1) (x vector2))
+       (= (y vector1) (y vector2))
+       (= (z vector1) (z vector2))
+       (= (w vector1) (w vector2))))
 
 
 (defun cross (vector1 vector2)
-  (make-instance 'float3 :x (- (* (y vector1) (z vector2)) (* (z vector1) (y vector2))) :y (- (* (z vector1) (x vector2)) (* (x vector1) (z vector2))) :z (- (* (x vector1) (y vector2)) (* (y vector1) (x vector2))))) 
+  (make-float3 (- (* (y vector1) (z vector2))
+		  (* (z vector1) (y vector2)))
+	       (- (* (z vector1) (x vector2))
+		  (* (x vector1) (z vector2)))
+	       (- (* (x vector1) (y vector2))
+		  (* (y vector1) (x vector2))))) 
 
 
 (defmethod normalize (vector)
@@ -142,7 +219,9 @@
 
 
 (defmethod angle (vector1 vector2)
-  (acos (/ (dot vector1 vector 2) (* (length vector1) (length vector2)))))
+  (acos (/ (dot vector1 vector 2)
+	   (* (length vector1)
+	      (length vector2)))))
 
 
 (defmethod project (vector1 vector2)
@@ -157,18 +236,14 @@
 (defvar +float3-one+ (make-instance 'float3 :x 1 :y 1 :z 1))
 (defvar +float4-one+ (make-instance 'float4 :x 1 :y 1 :z 1 :w 1))
 
-(defvar +float2-unit+ (normalize +float2-one+))
-(defvar +float3-unit+ (normalize +float3-one+))
-(defvar +float4-unit+ (normalize +float4-one+))
+(defvar +float2-x+ (make-instance 'float2 :x 1))
+(defvar +float2-y+ (make-instance 'float2 :y 1))
 
-(defvar +float2-i+ (make-instance 'float2 :x 1))
-(defvar +float2-j+ (make-instance 'float2 :y 1))
+(defvar +float3-x+ (make-instance 'float3 :x 1))
+(defvar +float3-y+ (make-instance 'float3 :y 1))
+(defvar +float3-z+ (make-instance 'float3 :z 1))
 
-(defvar +float3-i+ (make-instance 'float3 :x 1))
-(defvar +float3-j+ (make-instance 'float3 :y 1))
-(defvar +float3-k+ (make-instance 'float3 :z 1))
-
-(defvar +float4-i+ (make-instance 'float4 :x 1))
-(defvar +float4-j+ (make-instance 'float4 :y 1))
-(defvar +float4-k+ (make-instance 'float4 :z 1))
-(defvar +float4-l+ (make-instance 'float4 :w 1))
+(defvar +float4-x+ (make-instance 'float4 :x 1))
+(defvar +float4-y+ (make-instance 'float4 :y 1))
+(defvar +float4-z+ (make-instance 'float4 :z 1))
+(defvar +float4-w+ (make-instance 'float4 :w 1))
