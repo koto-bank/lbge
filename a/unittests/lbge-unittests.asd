@@ -1,4 +1,4 @@
-(defpackage :lbge-test
+(defpackage :lbge-unittests
   (:use :cl))
 
 (in-package :lbge-test)
