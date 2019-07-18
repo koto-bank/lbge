@@ -5,22 +5,17 @@
 
 (defun tga (path)
   "Returns the `lbge.image-loader:image` object for `path` file."
-  (let ((raw (alexandria:read-file-into-string path))
+  (let ((raw (alexandria:read-file-into-byte-vector path))
     (make-image :width    (get-width raw)
                 :height   (get-height raw)
                 :channels (get-channels raw)
                 :data raw))))
 
 (defun get-width (raw)
-  (parse-integer (concatenate (subseq raw 13 14)
-                              (subseq raw 12 13)
-                 :radix 16)))
+  (write-to-string (+ (aref raw 12) (aref raw 13))))
 
 (defun get-height (raw)
-  (parse-integer (concatenate (subseq raw 15 16)
-                              (subseq raw 14 15)
-                 :radix 16)))
+  (write-to-string (+ (aref raw 14) (aref raw 15))))
 
 (defun get-channels (raw)
-  (format nil "rgb~a" (parse-integer (subseq raw 16 17)
-                                     :radix 16))
+  (format nil "rgb~a" (aref raw 16)))
