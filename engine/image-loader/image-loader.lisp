@@ -15,7 +15,7 @@
    (channels :reader  channels
              :initarg :channels
              :initform nil
-             :type string)
+             :type (vector (unsigned-byte 8)))
    (data :reader  data
          :initarg :data
          :initform nil
@@ -32,16 +32,6 @@
 
 (defun load-image (path)
   "Takes path to an image and returns `image` structure.
-   If image format unsupported throws error."
-  (cond-extension path
-    (".tga" (lbge.image-loader:tga path))
-    (t (error "Unsupported image format"))))
-
-(defmacro cond-extension (path &rest clouses)
-  "Takes path and list of clouses. Each clouse has the form:
-   (%file-extension-str% %result-expr%).
-   If `path` has %file-extensuin-str% then %result-expr% will returned."
-  (when (and path clouses)
-    `(if (search ,(caar clouses) path :from-end t)
-         ,(cadar clouses)
-         (cond-extension ,path ,(cadr clouses)))))
+   If the image format is unsupported throws error."
+  (ccase (pathname-type path)
+    ("tga" (lbge.image-loader:tga path))))
