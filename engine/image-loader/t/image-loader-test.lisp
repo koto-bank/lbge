@@ -4,8 +4,8 @@
 
 (deftest make-image-test
   (ok (instance-of-p
-          'lbge.image-loader::image
-         (make-image :width 50 :height 50 :channels "rgba8" :data (vector 1 2 3 4)))))
+         'lbge.image-loader::image
+         (make-image :width 50 :height 50 :channels "rgba8" :data #(1 2 3 4)))))
 
 (deftest load-image-test
   (ok (instance-of-p

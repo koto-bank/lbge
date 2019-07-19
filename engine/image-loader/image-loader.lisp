@@ -15,11 +15,11 @@
    (channels :reader  channels
              :initarg :channels
              :initform nil
-             :type (vector (unsigned-byte 8)))
+             :type string))
    (data :reader  data
          :initarg :data
          :initform nil
-         :type string)))
+         :type (vector (unsigned-byte 8))))
 
 (defun make-image (&key width height channels data)
   "Wrapper arround `image` class for making image objects
