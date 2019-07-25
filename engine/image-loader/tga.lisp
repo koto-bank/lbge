@@ -12,10 +12,10 @@
                 :data raw))))
 
 (defun get-width (raw)
-  (+ (aref raw 12) (aref raw 13)))
+  (+ (ash (aref raw 12) 8) (aref raw 13)))
 
 (defun get-height (raw)
-  (+ (aref raw 14) (aref raw 15)))
+  (+ (ash (aref raw 14) 8) (aref raw 15)))
 
 (defun get-channels (raw)
-  (format nil "rgb~a" (aref raw 16)))
+  (format nil "rgba~a" (aref raw 16)))
