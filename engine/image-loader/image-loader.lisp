@@ -4,21 +4,17 @@
 (in-package lbge.image-loader)
 
 (defclass image ()
-  ((width :reader  width
+  ((width :reader width
           :initarg :width
-          :initform nil
           :type integer)
-   (height :reader  height
+   (height :reader height
            :initarg :height
-           :initform nil
            :type integer)
-   (channels :reader  channels
+   (channels :reader channels
              :initarg :channels
-             :initform nil
              :type string))
-   (data :reader  data
+   (data :reader data
          :initarg :data
-         :initform nil
          :type (vector (unsigned-byte 8))))
 
 (defun make-image (&key width height channels data)
