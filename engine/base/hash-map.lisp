@@ -1,5 +1,6 @@
 (defpackage :lbge.hash
   (:use :cl))
+
 (in-package :lbge.hash)
 
 (defclass hash ()

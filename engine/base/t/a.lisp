@@ -1,3 +1,4 @@
-(in-package :lbge-test)
+(defpackage :lbge.test.base
+  (:use :cl :lbge.hash :rove))
 
-(print "Hello world")
+(in-package :lbge.test.base)

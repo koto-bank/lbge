@@ -1,14 +1,9 @@
-(defpackage :lbge-unittests
+(defpackage :lbge-unittests-system
   (:use :cl))
 
-(in-package :lbge-test)
+(in-package :lbge-unittests-system)
 
-(asdf:defsystem :lbge-test
+(asdf:defsystem :lbge-unittests
+  :depends-on (:rove :lbge)
   :components
-  #.(let (l) (uiop:collect-sub*directories
-              (asdf:system-source-directory :lbge) t t
-              (lambda (dir)
-                (let ((dir-name (pathname-directory dir)))
-                  (if (string-equal (last dir-name) "t")
-                      (uiop:collect-sub*directories
-                       ())))))))
+  ((:file "main")))

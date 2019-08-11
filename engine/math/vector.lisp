@@ -1,6 +1,3 @@
-(defpackage :lbge.math
-  (:use :cl))
-
 (in-package :lbge.math)
 
 (defclass float2 ()
@@ -55,7 +52,7 @@
 (defgeneric dot (vector1 vector2)
   (:documentation "Dot product of vector1 and vector2"))
 
-(defgeneric length (vector)
+(defgeneric norm (vector)
   (:documentation "The Euclidian norm of a vector"))
 
 (defgeneric normalize (vector)
@@ -70,7 +67,7 @@
 (defgeneric project (vector1 vector2)
   (:documentation "Projects vector1 onto vector2"))
 
-(defgeneric eq (vector1 vector2)
+(defgeneric eqv (vector1 vector2)
   (:documentation "Test two vectors for equality"))
 
 (defgeneric neq (vector1 vector2)
@@ -167,32 +164,32 @@
      (* (w vector1) (w vector2))))
 
 
-(defmethod length ((vector float2))
+(defmethod norm ((vector float2))
   (sqrt (+ (expt (x vector) 2)
 	   (expt (y vector) 2))))
-  
-(defmethod length ((vector float3))
+
+(defmethod norm ((vector float3))
   (sqrt (+ (expt (x vector) 2)
 	   (expt (y vector) 2)
 	   (expt (z vector) 2))))
-  
-(defmethod length ((vector float4))
+
+(defmethod norm ((vector float4))
   (sqrt (+ (expt (x vector) 2)
 	   (expt (y vector) 2)
 	   (expt (z vector) 2)
 	   (expt (w vector) 2))))
 
 
-(defmethod eq ((vector1 float2) vector2)
+(defmethod eqv ((vector1 float2) vector2)
   (and (= (x vector1) (x vector2))
        (= (y vector1) (y vector2))))
 
-(defmethod eq ((vector1 float3) vector2)
+(defmethod eqv ((vector1 float3) vector2)
   (and (= (x vector1) (x vector2))
        (= (y vector1) (y vector2))
        (= (z vector1) (z vector2))))
 
-(defmethod eq ((vector1 float2) vector2)
+(defmethod eqv ((vector1 float2) vector2)
   (and (= (x vector1) (x vector2))
        (= (y vector1) (y vector2))
        (= (z vector1) (z vector2))
@@ -205,17 +202,17 @@
 	       (- (* (z vector1) (x vector2))
 		  (* (x vector1) (z vector2)))
 	       (- (* (x vector1) (y vector2))
-		  (* (y vector1) (x vector2))))) 
+		  (* (y vector1) (x vector2)))))
 
 
 (defmethod normalize (vector)
-  (div vector (length vector)))
+  (div vector (norm vector)))
 
 
 (defmethod angle (vector1 vector2)
   (acos (/ (dot vector1 vector 2)
-	   (* (length vector1)
-	      (length vector2)))))
+	   (* (norm vector1)
+	      (norm vector2)))))
 
 
 (defmethod project (vector1 vector2)

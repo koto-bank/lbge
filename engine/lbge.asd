@@ -4,6 +4,21 @@
   :components
   ((:module base
     :components
-    ((:file "hash-map")))))
-
-
+    ((:file "hash-map")))
+   (:module image-loader
+    :components
+    ((:file "packages")
+     (:file "image-loader")
+     (:file "tga")))
+   (:module math
+    :components
+    ((:file "package")
+     (:file "matrix")
+     (:file "vector")))
+   (:module ecs
+    :components
+    ((:file "package")
+     (:file "component")
+     (:file "entity")
+     (:file "system")
+     (:file "world")))))

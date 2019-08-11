@@ -1,4 +1,4 @@
-(in-package :lbge)
+(in-package :lbge.ecs)
 
 (defclass world ()
   ((world-entity :accessor :world-entity)
