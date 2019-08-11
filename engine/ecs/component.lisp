@@ -1,4 +1,4 @@
-(in-package :lbge)
+(in-package :lbge.ecs)
 
 (defclass component ()
   (entity))

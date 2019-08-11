@@ -1,7 +1,4 @@
-(defpackage lbge.image-loader
-  (:use :cl)
-  (:export load-image make-image))
-(in-package lbge.image-loader)
+(in-package :lbge.image-loader)
 
 (defclass image ()
   ((width :reader width
@@ -12,10 +9,10 @@
            :type integer)
    (channels :reader channels
              :initarg :channels
-             :type string))
+             :type string)
    (data :reader data
          :initarg :data
-         :type (vector (unsigned-byte 8))))
+         :type (vector (unsigned-byte 8)))))
 
 (defun make-image (&key width height channels data)
   "Wrapper arround `image` class for making image objects
@@ -30,4 +27,4 @@
   "Takes path to an image and returns `image` structure.
    If the image format is unsupported throws error."
   (ccase (pathname-type path)
-    ("tga" (lbge.image-loader:tga path))))
+    ("tga" (lbge.image-loader.tga:tga path))))
