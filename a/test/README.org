@@ -1,0 +1,39 @@
+* Unit test application
+This is the application for running LBGE unit tests.
+
+To run unit tests, import `lbge-unittests` system via quicklisp, and
+call `(lbge-unit-tests:run)`.
+
+* Writing unit tests
+This app collects all .lisp files from `t` subdirectories among the
+whole engine, and loads its at runtime. For your file to be run, it
+must also define a package for your unit tests, and the package name
+must start with "lbge.test." prefix.
+
+We use rove for unit testing, so use it for actually writing test
+cases.
+
+* An example:
+`lbge/engine/math/t/vector.lisp:`
+#+BEGIN_SRC common-lisp
+  (defpackage :lbge.test.math-vector
+    (:use :cl :rove :lbge.math))
+
+  (in-package :lbge.test.math-vector)
+
+  (deftest add-test
+    (testing "2d vector addition"
+             (ok (eq (add (make-float2 1 2)
+                          (make-float2 3 4))
+                     (make-float2 4 6))))
+
+    (testing "3d vector addition"
+             (ok (eq (add (make-float3 1 2 3)
+                          (make-float3 4 5 6))
+                     (make-float3 5 7 9))))
+
+    (testing "4d vector addition"
+             (ok (eq (add (make-float4 1 2 3 4)
+                          (make-float4 5 6 7 8))
+                     (make-float4 6 8 10 12)))))
+#+END_SRC
