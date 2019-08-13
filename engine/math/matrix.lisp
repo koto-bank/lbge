@@ -12,17 +12,17 @@
     :initarg :in-list
     :accessor in-list
     :initform #(0 0 0
-		  0 0 0
-		  0 0 0))))
+		0 0 0
+		0 0 0))))
 
 (defclass float4x4 ()
   ((in-list
     :initarg :in-list
     :accessor in-list
     :initform #(0 0 0 0
-		 0 0 0 0
-		 0 0 0 0
-		 0 0 0 0))))
+		0 0 0 0
+		0 0 0 0
+		0 0 0 0))))
 
 
 (defgeneric get-at (matrix i j)
@@ -55,119 +55,133 @@
 (defgeneric negm (matrix)
   (:documentation "Matrix with each element inverted"))
 
+(defgeneric eqm (matrix1 matrix2)
+  (:documentation "Test two matrices for equality"))
+
+(defgeneric neqm (matrix1 matrix2)
+  (:documentation "Test two matrices for inequality"))
+
+
+(defun make-float2x2 (vec)
+  (make-instance 'float2x2
+		 :in-list vec))
+
+(defun make-float3x3 (vec)
+  (make-instance 'float3x3
+		 :in-list vec))
+
+(defun make-float4x4 (vec)
+  (make-instance 'float4x4
+		 :in-list vec))
+
+
 ; should probably be a macro
 (defmethod get-at ((matrix float2x2) i j)
-  (aref (in-list matrix) (+ i (* j 2))))
+  (aref (in-list matrix)
+	(+ i (* j 2))))
 
 (defmethod get-at ((matrix float3x3) i j)
-  (aref (in-list matrix) (+ i (* j 3))))
+  (aref (in-list matrix)
+	(+ i (* j 3))))
 
 (defmethod get-at ((matrix float4x4) i j)
-  (aref (in-list matrix) (+ i (* j 4))))
+  (aref (in-list matrix)
+	(+ i (* j 4))))
 
 ; should probably be a macro
 (defmethod set-at ((matrix float2x2) i j v)
-  (setf (aref (in-list matrix) (+ i (* j 2))) v))
+  (setf (aref (in-list matrix)
+	      (+ i (* j 2))) v))
 
 (defmethod set-at ((matrix float3x3) i j v)
-  (setf (aref (in-list matrix) (+ i (* j 3))) v))
+  (setf (aref (in-list matrix)
+	      (+ i (* j 3))) v))
 
 (defmethod set-at ((matrix float4x4) i j v)
-  (setf (aref (in-list matrix) (+ i (* j 4))) v))
+  (setf (aref (in-list matrix)
+	      (+ i (* j 4))) v))
 
 
 (defmethod add ((matrix1 float2x2) (matrix2 float2x2))
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(+ x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float2x2
+   (map 'vector	#'+
+	(in-list matrix1)
+	(in-list matrix2))))
 
 (defmethod add ((matrix1 float3x3) (matrix2 float3x3))
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(+ x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float3x3
+   (map 'vector	#'+
+	(in-list matrix1)
+	(in-list matrix2))))
 
 (defmethod add ((matrix1 float4x4) (matrix2 float4x4))
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(+ x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float4x4
+   (map 'vector	#'+
+	(in-list matrix1)
+	(in-list matrix2))))
 
 
 (defmethod sub ((matrix1 float2x2) (matrix2 float2x2))
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(- x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float2x2
+   (map 'vector	#'-
+	(in-list matrix1)
+	(in-list matrix2))))
 
 (defmethod sub ((matrix1 float3x3) (matrix2 float3x3))
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(- x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float3x3
+   (map 'vector #'-
+	(in-list matrix1)
+	(in-list matrix2))))
 
 (defmethod sub ((matrix1 float4x4) (matrix2 float4x4))
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      (lambda (x y)
-			(- x y))
-		      (in-list matrix1)
-		      (in-list matrix2))))
+  (make-float4x4
+   (map 'vector	#'-
+	(in-list matrix1)
+	(in-list matrix2))))
 
 
 (defmethod mul ((matrix float2x2) (value real))
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(* x value))
-		      (in-list matrix))))
+  (make-float2x2
+   (map 'vector
+	(lambda (x)
+	  (* x value))
+	(in-list matrix))))
 
 (defmethod mul ((matrix float3x3) (value real))
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(* x value))
-		      (in-list matrix))))
+  (make-float3x3
+   (map 'vector
+	(lambda (x)
+	  (* x value))
+	(in-list matrix))))
 
 (defmethod mul ((matrix float4x4) (value real))
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(* x value))
-		      (in-list matrix))))
+  (make-float4x4
+   (map 'vector
+	(lambda (x)
+	  (* x value))
+	(in-list matrix))))
 
 
 (defmethod div ((matrix float2x2) scalar)
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(/ x scalar))
-		      (in-list matrix))))
+  (make-float2x2
+   (map 'vector
+	(lambda (x)
+	  (/ x scalar))
+	(in-list matrix))))
 
 (defmethod div ((matrix float3x3) scalar)
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(/ x scalar))
-		      (in-list matrix))))
+  (make-float3x3
+   (map 'vector
+	(lambda (x)
+	  (/ x scalar))
+	(in-list matrix))))
 
 (defmethod div ((matrix float4x4) scalar)
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      (lambda (x)
-			(/ x scalar))
-		      (in-list matrix))))
+  (make-float4x4
+   (map 'vector
+	(lambda (x)
+	  (/ x scalar))
+	(in-list matrix))))
 
 ; definitely need to be macros
 (defun get-row (matrix j)
@@ -186,9 +200,10 @@
        below x collect
 	 (get-at matrix i j))))
 
-; also need to be macros
-(defmethod mul ((matrix float2x2) (value float2x2))
-  (let ((outm (make-instance 'float2x2)))
+; this is done in a stupid way because I'm also stupid
+(defun prod2x2 (matrix value)
+  (let ((outm (make-float2x2 #(0 0
+			       0 0))))
     (loop
        for i
        from 0
@@ -200,12 +215,14 @@
 	      (set-at outm i j
 		      (reduce #'+
 			      (mapcar #'*
-				      (get-row matrix i)
-				      (get-col value j))))))
+				      (get-col matrix i)
+				      (get-row value j))))))
     outm))
 
-(defmethod mul ((matrix float3x3) (value float3x3))
-  (let ((outm (make-instance 'float3x3)))
+(defun prod3x3 (matrix value)
+  (let ((outm (make-float3x3 #(0 0 0
+			       0 0 0
+			       0 0 0))))
     (loop
        for i
        from 0
@@ -217,12 +234,15 @@
 	      (set-at outm i j
 		      (reduce #'+
 			      (mapcar #'*
-				      (get-row matrix i)
-				      (get-col value j))))))
+				      (get-col matrix i)
+				      (get-row value j))))))
     outm))
 
-(defmethod mul ((matrix float4x4) (value float4x4))
-  (let ((outm (make-instance 'float2x2)))
+(defun prod4x4 (matrix value)
+  (let ((outm (make-float4x4 #(0 0 0 0
+			       0 0 0 0
+			       0 0 0 0
+			       0 0 0 0))))
     (loop
        for i
        from 0
@@ -237,6 +257,17 @@
 				      (get-row matrix i)
 				      (get-col value j))))))
     outm))
+
+
+(defmethod mul ((matrix float2x2) (value float2x2))
+  (prod2x2 value matrix))
+
+(defmethod mul ((matrix float3x3) (value float3x3))
+  (prod3x3 value matrix))
+
+(defmethod mul ((matrix float4x4) (value float4x4))
+  (prod4x4 value matrix))
+
 
 ; probably should be macros
 (defmethod mul ((matrix float2x2) (value float2))
@@ -384,41 +415,41 @@
 
 
 (defmethod absm ((matrix float2x2))
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      #'abs
-		      (in-list matrix))))
+  (make-float2x2
+   (map 'vector
+	#'abs
+	(in-list matrix))))
 
 (defmethod absm ((matrix float3x3))
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      #'abs
-		      (in-list matrix))))
+  (make-float3x3
+   (map 'vector
+	#'abs
+	(in-list matrix))))
 
 (defmethod absm ((matrix float4x4))
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      #'abs
-		      (in-list matrix))))
+  (make-float4x4
+   (map 'vector
+	#'abs
+	(in-list matrix))))
 
 
 (defmethod negm ((matrix float2x2))
-  (make-instance 'float2x2 :in-list
-		 (map 'vector
-		      #'-
-		      (in-list matrix))))
+  (make-float2x2
+   (map 'vector
+	#'-
+	(in-list matrix))))
 
 (defmethod negm ((matrix float3x3))
-  (make-instance 'float3x3 :in-list
-		 (map 'vector
-		      #'-
-		      (in-list matrix))))
+  (make-float3x3
+   (map 'vector
+	#'-
+	(in-list matrix))))
 
 (defmethod negm ((matrix float4x4))
-  (make-instance 'float4x4 :in-list
-		 (map 'vector
-		      #'-
-		      (in-list matrix))))
+  (make-float4x4
+   (map 'vector
+	#'-
+	(in-list matrix))))
 
 
 ; helper function for transpose
@@ -429,43 +460,86 @@
 
 
 (defmethod transpose ((matrix float2x2))
-  (make-instance 'float2x2 :in-list
-		 (make-array '(4) :initial-contents
-		      (flatten
-		       (loop
-			  for i
-			  from 0
-			  to 1 collect
-			    (loop
-			       for j
-			       from 0
-			       to 1 collect
-				 (get-at matrix i j)))))))
+  (make-float2x2
+   (make-array '(4) :initial-contents
+	       (flatten
+		(loop
+		   for i
+		   from 0
+		   to 1 collect
+		     (loop
+			for j
+			from 0
+			to 1 collect
+			  (get-at matrix i j)))))))
 
 (defmethod transpose ((matrix float3x3))
-  (make-instance 'float3x3 :in-list
-		 (make-array '(9) :initial-contents
-		      (flatten
-		       (loop
-			  for i
-			  from 0
-			  to 2 collect
-			    (loop
-			       for j
-			       from 0
-			       to 2 collect
-				 (get-at matrix i j)))))))
+  (make-float3x3
+   (make-array '(9) :initial-contents
+	       (flatten
+		(loop
+		   for i
+		   from 0
+		   to 2 collect
+		     (loop
+			for j
+			from 0
+			to 2 collect
+			  (get-at matrix i j)))))))
 
 (defmethod transpose ((matrix float4x4))
-  (make-instance 'float4x4 :in-list
-		 (make-array '(16) :initial-contents
-		      (flatten
-		       (loop
-			  for i
-			  from 0
-			  to 3 collect
-			    (loop
-			       for j
-			       from 0
-			       to 3 collect
-				 (get-at matrix i j)))))))
+  (make-float4x4
+   (make-array '(16) :initial-contents
+	       (flatten
+		(loop
+		   for i
+		   from 0
+		   to 3 collect
+		     (loop
+			for j
+			from 0
+			to 3 collect
+			  (get-at matrix i j)))))))
+
+(defun hand (x y)
+  (and x y))
+
+
+(defmethod eqm (matrix1 matrix2)
+  (reduce #'hand
+	  (map 'list #'=
+	       (in-list matrix1)
+	       (in-list matrix2))))
+
+(defmethod neqm (matrix1 matrix2)
+  (not (eqm matrix1 matrix2)))
+
+
+(defun float2x2-zero () (make-instance 'float2x2))
+(defun float3x3-zero () (make-instance 'float3x3))
+(defun float4x4-zero () (make-instance 'float4x4))
+
+(defun float2x2-one () (make-float2x2 #(1 1
+					1 1)))
+
+(defun float3x3-one () (make-float3x3 #(1 1 1
+					1 1 1
+					1 1 1)))
+
+(defun float4x4-one () (make-float4x4 #(1 1 1 1
+					1 1 1 1
+					1 1 1 1
+					1 1 1 1)))
+
+
+(defun float2x2-iden () (make-float2x2 #(1 0
+					 0 1)))
+
+(defun float3x3-iden () (make-float3x3 #(1 0 0
+					 0 1 0
+					 0 0 1)))
+
+(defun float4x4-iden () (make-float4x4 #(1 0 0 0
+					 0 1 0 0
+					 0 0 1 0
+					 0 0 0 1)))

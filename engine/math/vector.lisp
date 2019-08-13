@@ -1,40 +1,22 @@
 (in-package :lbge.math)
 
 (defclass float2 ()
-  ((x
-    :initarg :x
-    :accessor x)
-   (y
-    :initarg :y
-    :accessor y))
-  (:default-initargs :x 0 :y 0))
+  ((in-list
+    :initarg :in-list
+    :accessor in-list))
+  (:default-initargs :in-list #(0 0)))
 
 (defclass float3 ()
-  ((x
-    :initarg :x
-    :accessor x)
-   (y
-    :initarg :y
-    :accessor y)
-   (z
-    :initarg :z
-    :accessor z))
-  (:default-initargs :x 0 :y 0 :z 0))
+  ((in-list
+    :initarg :in-list
+    :accessor in-list))
+  (:default-initargs :in-list #(0 0 0)))
 
 (defclass float4 ()
-  ((x
-    :initarg :x
-    :accessor x)
-   (y
-    :initarg :y
-    :accessor y)
-   (z
-    :initarg :z
-    :accessor z)
-   (w
-    :initarg :w
-    :accessor w))
-  (:default-initargs :x 0 :y 0 :z 0 :w 0))
+  ((in-list
+    :initarg :in-list
+    :accessor in-list))
+  (:default-initargs :in-list #(0 0 0 0)))
 
 
 (defgeneric add (vector1 vector2)
@@ -76,198 +58,196 @@
 (defgeneric neqv (vector1 vector2)
   (:documentation "Test two vectors for inequality"))
 
-(defgeneric vec-to-list (vector)
-  (:documentation "Make the vector into a list"))
-
 ; doesn't work yet
 (defgeneric swizzle (vector values &optional signs)
   (:documentation "Perform swizzling on a given vector with optional sign flips"))
 
 
-(defun make-float2 (x y)
-  (make-instance 'float2 :x x :y y))
+(defun x (vec)
+  (aref (in-list vec) 0))
 
-(defun make-float3 (x y z)
-  (make-instance 'float3 :x x :y y :z z))
+(defun y (vec)
+  (aref (in-list vec) 1))
 
-(defun make-float4 (x y z w)
-  (make-instance 'float4 :x x :y y :z z :w w))
+(defun z (vec)
+  (aref (in-list vec) 2))
+
+(defun w (vec)
+  (aref (in-list vec) 3))
+
+
+(defun make-float2 (a1 &optional a2)
+  (if a2
+      (make-instance 'float2 :in-list (make-array '(2)
+						  :initial-contents (list a1 a2)))
+      (make-instance 'float2 :in-list a1)))
+
+(defun make-float3 (a1 &optional a2 a3)
+  (if (and a2 a3)
+      (make-instance 'float3 :in-list (make-array '(3)
+						  :initial-contents (list a1 a2 a3)))
+      (make-instance 'float3 :in-list a1)))
+
+(defun make-float4 (a1 &optional a2 a3 a4)
+  (if (and a2 a3 a4)
+      (make-instance 'float4 :in-list (make-array '(4)
+						  :initial-contents (list a1 a2 a3 a4)))
+      (make-instance 'float4 :in-list a1)))
 
 
 (defmethod add ((vector1 float2) vector2)
-  (make-float2 (+ (x vector1) (x vector2))
-	       (+ (y vector1) (y vector2))))
+  (make-float2 (map 'vector #'+
+		    (in-list vector1)
+		    (in-list vector2))))
 
 (defmethod add ((vector1 float3) vector2)
-  (make-float3 (+ (x vector1) (x vector2))
-	       (+ (y vector1) (y vector2))
-	       (+ (z vector1) (z vector2))))
+  (make-float3 (map 'vector #'+
+		    (in-list vector1)
+		    (in-list vector2))))
 
 (defmethod add ((vector1 float4) vector2)
-  (make-float4 (+ (x vector1) (x vector2))
-	       (+ (y vector1) (y vector2))
-	       (+ (z vector1) (z vector2))
-	       (+ (w vector1) (w vector2))))
+  (make-float4 (map 'vector #'+
+		    (in-list vector1)
+		    (in-list vector2))))
 
 
 (defmethod sub ((vector1 float2) vector2)
-  (make-float2 (- (x vector1) (x vector2))
-	       (- (y vector1) (y vector2))))
+  (make-float2 (map 'vector #'-
+		    (in-list vector1)
+		    (in-list vector2))))
 
 (defmethod sub ((vector1 float3) vector2)
-  (make-float3 (- (x vector1) (x vector2))
-	       (- (y vector1) (y vector2))
-	       (- (z vector1) (z vector2))))
+  (make-float3 (map 'vector #'-
+		    (in-list vector1)
+		    (in-list vector2))))
 
 (defmethod sub ((vector1 float4) vector2)
-  (make-float4 (- (x vector1) (x vector2))
-	       (- (y vector1) (y vector2))
-	       (- (z vector1) (z vector2))
-	       (- (w vector1) (w vector2))))
+  (make-float4 (map 'vector #'-
+		    (in-list vector1)
+		    (in-list vector2))))
 
 
 (defmethod mul ((vector float2) (value real))
-  (make-float2 (* (x vector) value)
-	       (* (y vector) value)))
+  (make-float2 (map 'vector
+		    (lambda (x)
+		      (* x value))
+		    (in-list vector))))
 
 (defmethod mul ((vector float3) (value real))
-  (make-float3 (* (x vector) value)
-	       (* (y vector) value)
-	       (* (z vector) value)))
+  (make-float3 (map 'vector
+		    (lambda (x)
+		      (* x value))
+		    (in-list vector))))
 
 (defmethod mul ((vector float4) (value real))
-  (make-float4 (* (x vector) value)
-	       (* (y vector) value)
-	       (* (z vector) value)
-	       (* (w vector) value)))
-
-
-(defmethod div ((vector float2) (value real))
-  (make-float2 (/ (x vector) value)
-	       (/ (y vector) value)))
-
-(defmethod div ((vector float3) (value real))
-  (make-float3 (/ (x vector) value)
-	       (/ (y vector) value)
-	       (/ (z vector) value)))
-
-(defmethod div ((vector float4) (value real))
-  (make-float4 (/ (x vector) value)
-	       (/ (y vector) value)
-	       (/ (z vector) value)
-	       (/ (w vector) value)))
+  (make-float4 (map 'vector
+		    (lambda (x)
+		      (* x value))
+		    (in-list vector))))
 
 
 (defmethod mul ((vector float2) (value float2))
-  (make-float2 (* (x vector) (x value))
-	       (* (y vector) (y value))))
+  (make-float2 (map 'vector #'*
+		    (in-list vector)
+		    (in-list value))))
 
 (defmethod mul ((vector float3) (value float3))
-  (make-float3 (* (x vector) (x value))
-	       (* (y vector) (y value))
-	       (* (z vector) (z value))))
+  (make-float3 (map 'vector #'*
+		    (in-list vector)
+		    (in-list value))))
 
-(defmethod mul ((vector float4) (value float4))
-  (make-float4 (* (x vector) (x value))
-	       (* (y vector) (y value))
-	       (* (z vector) (z value))
-	       (* (w vector) (w value))))
+(defmethod mul ((vector float4) (value float3))
+  (make-float4 (map 'vector #'*
+		    (in-list vector)
+		    (in-list value))))
+
+
+(defmethod div ((vector float2) (value real))
+  (make-float2 (map 'vector
+		    (lambda (x)
+		      (/ x value))
+		    (in-list vector))))
+
+(defmethod div ((vector float3) (value real))
+  (make-float3 (map 'vector
+		    (lambda (x)
+		      (/ x value))
+		    (in-list vector))))
+
+(defmethod div ((vector float4) (value real))
+  (make-float4 (map 'vector
+		    (lambda (x)
+		      (/ x value))
+		    (in-list vector))))
 
 
 (defmethod div ((vector float2) (value float2))
-  (make-float2 (/ (x vector) (x value))
-	       (/ (y vector) (y value))))
+  (make-float2 (map 'vector #'/
+		    (in-list vector)
+		    (in-list value))))
 
 (defmethod div ((vector float3) (value float3))
-  (make-float3 (/ (x vector) (x value))
-	       (/ (y vector) (y value))
-	       (/ (z vector) (z value))))
+  (make-float3 (map 'vector #'/
+		    (in-list vector)
+		    (in-list value))))
 
-(defmethod div ((vector float4) (value float4))
-  (make-float4 (/ (x vector) (x value))
-	       (/ (y vector) (y value))
-	       (/ (z vector) (z value))
-	       (/ (w vector) (w value))))
-
-
-(defmethod dot ((vector1 float2) vector2)
-  (+ (* (x vector1) (x vector2))
-     (* (y vector1) (y vector2))))
-
-(defmethod dot ((vector1 float3) vector2)
-  (+ (* (x vector1) (x vector2))
-     (* (y vector1) (y vector2))
-     (* (z vector1) (z vector2))))
-
-(defmethod dot ((vector1 float4) vector2)
-  (+ (* (x vector1) (x vector2))
-     (* (y vector1) (y vector2))
-     (* (z vector1) (z vector2))
-     (* (w vector1) (w vector2))))
+(defmethod div ((vector float4) (value float3))
+  (make-float4 (map 'vector #'/
+		    (in-list vector)
+		    (in-list value))))
 
 
-(defmethod norm ((vector float2))
-  (sqrt (+ (expt (x vector) 2)
-	   (expt (y vector) 2))))
-  
-(defmethod norm ((vector float3))
-  (sqrt (+ (expt (x vector) 2)
-	   (expt (y vector) 2)
-	   (expt (z vector) 2))))
-  
-(defmethod norm ((vector float4))
-  (sqrt (+ (expt (x vector) 2)
-	   (expt (y vector) 2)
-	   (expt (z vector) 2)
-	   (expt (w vector) 2))))
+(defmethod dot (vector1 vector2)
+  (reduce #'+
+	  (map 'list #'*
+	       (in-list vector1)
+	       (in-list vector2))))
+
+
+(defmethod norm (vector)
+  (sqrt (reduce #'+
+		(map 'list
+		     (lambda (x)
+		       (expt x 2))
+		     (in-list vector)))))
 
 
 (defmethod negate ((vector float2))
-  (make-float2 (- (x vector))
-	       (- (y vector))))
+  (make-float2 (map 'vector #'-
+		    (in-list vector))))
 
-(defmethod negate ((vector float3))
-  (make-float3 (- (x vector))
-	       (- (y vector))
-	       (- (z vector))))
+(defmethod negate ((vector float2))
+  (make-float3 (map 'vector #'-
+		    (in-list vector))))
 
-(defmethod negate ((vector float4))
-  (make-float4 (- (x vector))
-	       (- (y vector))
-	       (- (z vector))
-	       (- (w vector))))
+(defmethod negate ((vector float2))
+  (make-float4 (map 'vector #'-
+		    (in-list vector))))
 
 
 (defmethod absv ((vector float2))
-  (make-float2 (abs (x vector))
-	       (abs (y vector))))
+  (make-float2 (map 'vector #'abs
+		    (in-list vector))))
+
 
 (defmethod absv ((vector float3))
-  (make-float3 (abs (x vector))
-	       (abs (y vector))
-	       (abs (z vector))))
+  (make-float3 (map 'vector #'abs
+		    (in-list vector))))
 
 (defmethod absv ((vector float4))
-  (make-float4 (abs (x vector))
-	       (abs (y vector))
-	       (abs (z vector))
-	       (abs (w vector))))
+  (make-float4 (map 'vector #'abs
+		    (in-list vector))))
+
+; a small helper function for eqv
+(defun hand (x y)
+  (and x y))
 
 
-(defmethod eqv ((vector1 float2) vector2)
-  (and (= (x vector1) (x vector2))
-       (= (y vector1) (y vector2))))
-
-(defmethod eqv ((vector1 float3) vector2)
-  (and (= (x vector1) (x vector2))
-       (= (y vector1) (y vector2))
-       (= (z vector1) (z vector2))))
-
-(defmethod eqv ((vector1 float2) vector2)
-  (and (= (x vector1) (x vector2))
-       (= (y vector1) (y vector2))
-       (= (z vector1) (z vector2))
-       (= (w vector1) (w vector2))))
+(defmethod eqv (vector1 vector2)
+  (reduce #'hand
+	  (map 'vector #'=
+	       (in-list vector1)
+	       (in-list vector2))))
 
 
 (defmethod neqv (vector1 vector2)
@@ -296,24 +276,6 @@
 (defmethod project (vector1 vector2)
   (dot vector1 (normalize vector2)))
 
-
-(defmethod vec-to-list ((vector float2))
-  (list (x vector) (y vector)))
-
-(defmethod vec-to-list ((vector float3))
-  (list (x vector) (y vector) (z vector)))
-
-(defmethod vec-to-list ((vector float4))
-  (list (x vector) (y vector) (z vector) (w vector)))
-
-
-(defun list-to-vec (list)
-  (ecase (list-length list)
-    (2 (make-float2 (car list) (cdar list)))
-    (3 (make-float3 (car list) (cdar list) (cddar list)))
-    (4 (make-float4 (car list) (cdar list) (cddar list) (cdddar list)))))
-
-
 ; doesnt work yet
 (defmethod swizzle ((vector float2) values &optional signs)
     (with-slots (x y) vector
@@ -328,22 +290,22 @@
 	 (symbol-name signs)))))
 
 
-(defun float2-zero () (make-instance 'float2))
-(defun float3-zero () (make-instance 'float3))
-(defun float4-zero () (make-instance 'float4))
+(defun float2-zero () (make-float2 0 0))
+(defun float3-zero () (make-float3 0 0 0))
+(defun float4-zero () (make-float4 0 0 0 0))
 
-(defun float2-one () (make-instance 'float2 :x 1 :y 1))
-(defun float3-one () (make-instance 'float3 :x 1 :y 1 :z 1))
-(defun float4-one () (make-instance 'float4 :x 1 :y 1 :z 1 :w 1))
+(defun float2-one () (make-float2 1 1))
+(defun float3-one () (make-float3 1 1 1))
+(defun float4-one () (make-float4 1 1 1 1))
 
-(defun float2-x () (make-instance 'float2 :x 1))
-(defun float2-y () (make-instance 'float2 :y 1))
+(defun float2-x () (make-float2 1 0))
+(defun float2-y () (make-float2 0 1))
 
-(defun float3-x () (make-instance 'float3 :x 1))
-(defun float3-y () (make-instance 'float3 :y 1))
-(defun float3-z () (make-instance 'float3 :z 1))
+(defun float3-x () (make-float3 1 0 0))
+(defun float3-y () (make-float3 0 1 0))
+(defun float3-z () (make-float3 0 0 1))
 
-(defun float4-x () (make-instance 'float4 :x 1))
-(defun float4-y () (make-instance 'float4 :y 1))
-(defun float4-z () (make-instance 'float4 :z 1))
-(defun float4-w () (make-instance 'float4 :w 1))
+(defun float4-x () (make-float4 1 0 0 0))
+(defun float4-y () (make-float4 0 1 0 0))
+(defun float4-z () (make-float4 0 0 1 0))
+(defun float4-w () (make-float4 0 0 0 1))
