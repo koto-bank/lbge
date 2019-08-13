@@ -1,8 +1,8 @@
-(defpackage :lbge-unittests
+(defpackage :lbge-unit-tests
   (:use :cl :rove)
   (:export :run :collect-test-packages))
 
-(in-package :lbge-unittests)
+(in-package :lbge-unit-tests)
 
 (defun collect-test-files (root)
   (let (files)
