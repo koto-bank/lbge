@@ -6,87 +6,87 @@
 (deftest add-test
   (testing "2d vector addition"
     (ok (eq (add (make-float2 1 2)
-		 (make-float2 3 4))
-	    (make-float2 4 6))))
+                 (make-float2 3 4))
+            (make-float2 4 6))))
 
   (testing "3d vector addition"
     (ok (eq (add (make-float3 1 2 3)
-		 (make-float3 4 5 6))
-	    (make-float3 5 7 9))))
+                 (make-float3 4 5 6))
+            (make-float3 5 7 9))))
 
   (testing "4d vector addition"
     (ok (eq (add (make-float4 1 2 3 4)
-		 (make-float4 5 6 7 8))
-	    (make-float4 6 8 10 12)))))
+                 (make-float4 5 6 7 8))
+            (make-float4 6 8 10 12)))))
 
 
 (deftest sub-test
   (testing "2d vector subtraction"
     (ok (eq (sub (make-float2 1 2)
-		 (make-float2 3 4))
-	    (make-float2 -2 -2))))
+                 (make-float2 3 4))
+            (make-float2 -2 -2))))
 
   (testing "3d vector subtraction"
     (ok (eq (sub (make-float3 1 2 3)
-		 (make-float3 4 5 6))
-	    (make-float3 -3 -3 -3))))
+                 (make-float3 4 5 6))
+            (make-float3 -3 -3 -3))))
 
   (testing "4d vector subtraction"
     (ok (eq (sub (make-float4 1 2 3 4)
-		 (make-float4 5 6 7 8))
-	    (make-float4 -4 -4 -4 -4)))))
+                 (make-float4 5 6 7 8))
+            (make-float4 -4 -4 -4 -4)))))
 
 
 (deftest mul-test
   (testing "2d vector multiplication"
     (ok (eq (mul (make-float2 1 2) 2)
-	    (make-float2 2 3))))
+            (make-float2 2 3))))
 
   (testing "3d vector multiplication"
     (ok (eq (mul (make-float3 1 2 3) 2)
-	    (make-float3 2 4 6))))
+            (make-float3 2 4 6))))
 
   (testing "4d vector multiplication"
     (ok (eq (mul (make-float4 1 2 3 4) 2)
-	    (make-float4 2 4 6 8)))))
+            (make-float4 2 4 6 8)))))
 
 
 (deftest div-test
   (testing "2d vector division"
     (ok (eq (div (make-float2 1 2) 2)
-	    (make-float2 (/ 1 2) 1))))
+            (make-float2 (/ 1 2) 1))))
 
   (testing "3d vector division"
     (ok (eq (div (make-float3 1 2 3) 2)
-	    (make-float3 (/ 1 2) 1 (/ 3 2)))))
+            (make-float3 (/ 1 2) 1 (/ 3 2)))))
 
   (testing "4d vector division"
     (ok (eq (div (make-float4 1 2 3 4) 2)
-	    (make-float4 (/ 1 2) 1 (/ 3 2) 2)))))
+            (make-float4 (/ 1 2) 1 (/ 3 2) 2)))))
 
 
 (deftest dot-test
   (testing "2d dot product"
     (ok (= (dot (make-float2 1 2)
-		(make-float2 3 4))
-	   11)))
+                (make-float2 3 4))
+           11)))
 
   (testing "3d dot product"
     (ok (= (dot (make-float3 1 2 3)
-		(make-float3 4 5 6))
-	   32)))
+                (make-float3 4 5 6))
+           32)))
 
   (testing "4d dot product"
     (ok (= (dot (make-float4 1 2 3 4)
-		(make-float4 5 6 7 8))
-	   70))))
+                (make-float4 5 6 7 8))
+           70))))
 
 
 (deftest cross-test
   (testing "Cross product"
     (ok (eq (cross (make-float3 1 2 3)
-		   (make-float3 4 5 6))
-	    (make-float3 -3 6 -3)))))
+                   (make-float3 4 5 6))
+            (make-float3 -3 6 -3)))))
 
 
 (deftest norm-test
