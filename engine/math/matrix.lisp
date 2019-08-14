@@ -25,11 +25,8 @@
 		0 0 0 0))))
 
 
-(defgeneric get-at (matrix i j)
-  (:documentation "Get element from the matrix at row i column j starting from (0,0)"))
-
-(defgeneric set-at (matrix i j v)
-  (:documentation "Set element to the matrix at row i column j starting from (0,0)"))
+(defgeneric mat-size (matrix)
+  (:documentation "Get the size of a matrix"))
 
 (defgeneric add (matrix1 matrix2)
   (:documentation "Add two matrices"))
@@ -75,31 +72,21 @@
 		 :in-list vec))
 
 
-; should probably be a macro
-(defmethod get-at ((matrix float2x2) i j)
-  (aref (in-list matrix)
-	(+ i (* j 2))))
+(defmethod mat-size ((matrix float2x2)) 2)
+(defmethod mat-size ((matrix float3x3)) 3)
+(defmethod mat-size ((matrix float4x4)) 4)
 
-(defmethod get-at ((matrix float3x3) i j)
-  (aref (in-list matrix)
-	(+ i (* j 3))))
 
-(defmethod get-at ((matrix float4x4) i j)
-  (aref (in-list matrix)
-	(+ i (* j 4))))
+(defmacro get-at (matrix i j)
+  (list 'aref (list 'in-list matrix)
+	(list '+ j (list '* i
+			 (list 'mat-size matrix)))))
 
-; should probably be a macro
-(defmethod set-at ((matrix float2x2) i j v)
-  (setf (aref (in-list matrix)
-	      (+ i (* j 2))) v))
-
-(defmethod set-at ((matrix float3x3) i j v)
-  (setf (aref (in-list matrix)
-	      (+ i (* j 3))) v))
-
-(defmethod set-at ((matrix float4x4) i j v)
-  (setf (aref (in-list matrix)
-	      (+ i (* j 4))) v))
+(defmacro set-at (matrix i j v)
+  (list 'setf (list 'aref (list 'in-list matrix)
+		    (list '+ j
+			  (list '* i (list 'mat-size matrix))))
+	v))
 
 
 (defmethod add ((matrix1 float2x2) (matrix2 float2x2))
@@ -183,79 +170,47 @@
 	  (/ x scalar))
 	(in-list matrix))))
 
-; definitely need to be macros
-(defun get-row (matrix j)
-  (let ((x (isqrt (length (in-list matrix)))))
-    (loop
-       for i
-       from 0
-       below x collect
-	 (get-at matrix i j))))
 
-(defun get-col (matrix i)
-  (let ((x (isqrt (length (in-list matrix)))))
-    (loop
-       for j
-       from 0
-       below x collect
-	 (get-at matrix i j))))
+(defmacro get-row (matrix j)
+  (list 'loop for i from 0 below (mat-size matrix) collect
+	(list 'get-at matrix i j)))
+
+(defmacro get-col (matrix i)
+  (list 'loop for j from 0 below (mat-size matrix) collect
+	(list 'get-at matrix i j)))
 
 ; this is done in a stupid way because I'm also stupid
 (defun prod2x2 (matrix value)
-  (let ((outm (make-float2x2 #(0 0
-			       0 0))))
-    (loop
-       for i
-       from 0
-       to 1 do
-	 (loop
-	    for j
-	    from 0
-	    to 1 do
-	      (set-at outm i j
-		      (reduce #'+
-			      (mapcar #'*
-				      (get-col matrix i)
-				      (get-row value j))))))
+  (let ((outm (float2x2-zero)))
+    (dotimes (i 2)
+      (dotimes (j 2)
+	(set-at outm i j
+		(reduce #'+
+			(mapcar #'*
+				(get-col matrix i)
+				(get-row value j))))))
     outm))
 
 (defun prod3x3 (matrix value)
-  (let ((outm (make-float3x3 #(0 0 0
-			       0 0 0
-			       0 0 0))))
-    (loop
-       for i
-       from 0
-       to 2 do
-	 (loop
-	    for j
-	    from 0
-	    to 2 do
-	      (set-at outm i j
-		      (reduce #'+
-			      (mapcar #'*
-				      (get-col matrix i)
-				      (get-row value j))))))
+  (let ((outm (float3x3-zero)))
+    (dotimes (i 3)
+      (dotimes (j 3)
+	(set-at outm i j
+		(reduce #'+
+			(mapcar #'*
+				(get-col matrix i)
+				(get-row value j))))))
     outm))
 
 (defun prod4x4 (matrix value)
-  (let ((outm (make-float4x4 #(0 0 0 0
-			       0 0 0 0
-			       0 0 0 0
-			       0 0 0 0))))
-    (loop
-       for i
-       from 0
-       to 3 do
-	 (loop
-	    for j
-	    from 0
-	    to 3 do
-	      (set-at outm i j
-		      (reduce #'+
-			      (mapcar #'*
-				      (get-row matrix i)
-				      (get-col value j))))))
+  (let ((outm (float4x4-zero)))
+    (dotimes (i 4)
+      (dotimes (j 4)
+	(set-at outm i j
+		(reduce #'+
+			(mapcar #'*
+				(get-row matrix i)
+				(get-col value j))))))
     outm))
 
 
@@ -273,74 +228,47 @@
 (defmethod mul ((matrix float2x2) (value float2))
   (make-float2
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 1 collect
-		(* (get-at matrix 0 i)
-		   (x value))))
+	   (loop for i from 0 to 1 collect
+		 (* (get-at matrix 0 i)
+		    (x value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 1 collect
-		(* (get-at matrix 1 i)
-		   (y value))))))
+	   (loop for i from 0 to 1 collect
+		 (* (get-at matrix 1 i)
+		    (y value))))))
 
 (defmethod mul ((matrix float3x3) (value float3))
   (make-float3
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 2 collect
-		(* (get-at matrix 0 i)
-		   (x value))))
+	   (loop for i from 0 to 2 collect
+		 (* (get-at matrix 0 i)
+		    (x value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 2 collect
-		(* (get-at matrix 1 i)
-		   (y value))))
+	   (loop for i from 0 to 2 collect
+		 (* (get-at matrix 1 i)
+		    (y value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 2 collect
-		(* (get-at matrix 2 i)
-		   (z value))))))
+	   (loop for i from 0 to 2 collect
+		 (* (get-at matrix 2 i)
+		    (z value))))))
 
 (defmethod mul ((matrix float4x4) (value float4))
   (make-float4
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 3 collect
-		(* (get-at matrix 0 i)
-		   (x value))))
+	   (loop for i from 0 to 3 collect
+		 (* (get-at matrix 0 i)
+		    (x value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 3 collect
-		(* (get-at matrix 1 i)
-		   (y value))))
+	   (loop for i from 0 to 3 collect
+		 (* (get-at matrix 1 i)
+		    (y value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 3 collect
-		(* (get-at matrix 2 i)
-		   (z value))))
+	   (loop for i from 0 to 3 collect
+		 (* (get-at matrix 2 i)
+		    (z value))))
    (reduce #'+
-	   (loop
-	      for i
-	      from 0
-	      to 3 collect
-		(* (get-at matrix 3 i)
-		   (w value))))))
+	   (loop for i from 0 to 3 collect
+		 (* (get-at matrix 3 i)
+		    (w value))))))
 
 
 ; small helper functions for determinants, maybe should be macros
@@ -416,94 +344,60 @@
 
 (defmethod absm ((matrix float2x2))
   (make-float2x2
-   (map 'vector
-	#'abs
+   (map 'vector #'abs
 	(in-list matrix))))
 
 (defmethod absm ((matrix float3x3))
   (make-float3x3
-   (map 'vector
-	#'abs
+   (map 'vector #'abs
 	(in-list matrix))))
 
 (defmethod absm ((matrix float4x4))
   (make-float4x4
-   (map 'vector
-	#'abs
+   (map 'vector #'abs
 	(in-list matrix))))
 
 
 (defmethod negm ((matrix float2x2))
   (make-float2x2
-   (map 'vector
-	#'-
+   (map 'vector #'-
 	(in-list matrix))))
 
 (defmethod negm ((matrix float3x3))
   (make-float3x3
-   (map 'vector
-	#'-
+   (map 'vector #'-
 	(in-list matrix))))
 
 (defmethod negm ((matrix float4x4))
   (make-float4x4
-   (map 'vector
-	#'-
+   (map 'vector #'-
 	(in-list matrix))))
-
-
-; helper function for transpose
-(defun flatten (l)
-  (cond ((null l) nil)
-        ((atom l) (list l))
-        (t (loop for a in l appending (flatten a)))))
 
 
 (defmethod transpose ((matrix float2x2))
   (make-float2x2
    (make-array '(4) :initial-contents
-	       (flatten
-		(loop
-		   for i
-		   from 0
-		   to 1 collect
-		     (loop
-			for j
-			from 0
-			to 1 collect
-			  (get-at matrix i j)))))))
+	       ((get-at matrix 0 0) (get-at matrix 1 0)
+		(get-at matrix 0 1) (get-at matrix 1 1)))))
 
 (defmethod transpose ((matrix float3x3))
   (make-float3x3
    (make-array '(9) :initial-contents
-	       (flatten
-		(loop
-		   for i
-		   from 0
-		   to 2 collect
-		     (loop
-			for j
-			from 0
-			to 2 collect
-			  (get-at matrix i j)))))))
+	       ((get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0)
+		(get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1)
+		(get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2)))))
 
 (defmethod transpose ((matrix float4x4))
   (make-float4x4
    (make-array '(16) :initial-contents
-	       (flatten
-		(loop
-		   for i
-		   from 0
-		   to 3 collect
-		     (loop
-			for j
-			from 0
-			to 3 collect
-			  (get-at matrix i j)))))))
+	       ((get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0) (get-at matrix 3 0)
+		(get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1) (get-at matrix 3 1)
+		(get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2) (get-at matrix 3 2)
+		(get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
+
 
 (defun hand (x y)
   (and x y))
-
 
 (defmethod eqm (matrix1 matrix2)
   (reduce #'hand
