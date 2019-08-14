@@ -79,164 +79,164 @@
 (defun make-float2 (a1 &optional a2)
   (if a2
       (make-instance 'float2 :in-list (make-array '(2)
-						  :initial-contents (list a1 a2)))
+                                                  :initial-contents (list a1 a2)))
       (make-instance 'float2 :in-list a1)))
 
 (defun make-float3 (a1 &optional a2 a3)
   (if (and a2 a3)
       (make-instance 'float3 :in-list (make-array '(3)
-						  :initial-contents (list a1 a2 a3)))
+                                                  :initial-contents (list a1 a2 a3)))
       (make-instance 'float3 :in-list a1)))
 
 (defun make-float4 (a1 &optional a2 a3 a4)
   (if (and a2 a3 a4)
       (make-instance 'float4 :in-list (make-array '(4)
-						  :initial-contents (list a1 a2 a3 a4)))
+                                                  :initial-contents (list a1 a2 a3 a4)))
       (make-instance 'float4 :in-list a1)))
 
 
 (defmethod add ((vector1 float2) vector2)
   (make-float2 (map 'vector #'+
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 (defmethod add ((vector1 float3) vector2)
   (make-float3 (map 'vector #'+
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 (defmethod add ((vector1 float4) vector2)
   (make-float4 (map 'vector #'+
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 
 (defmethod sub ((vector1 float2) vector2)
   (make-float2 (map 'vector #'-
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 (defmethod sub ((vector1 float3) vector2)
   (make-float3 (map 'vector #'-
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 (defmethod sub ((vector1 float4) vector2)
   (make-float4 (map 'vector #'-
-		    (in-list vector1)
-		    (in-list vector2))))
+                    (in-list vector1)
+                    (in-list vector2))))
 
 
 (defmethod mul ((vector float2) (value real))
   (make-float2 (map 'vector
-		    (lambda (x)
-		      (* x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (* x value))
+                    (in-list vector))))
 
 (defmethod mul ((vector float3) (value real))
   (make-float3 (map 'vector
-		    (lambda (x)
-		      (* x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (* x value))
+                    (in-list vector))))
 
 (defmethod mul ((vector float4) (value real))
   (make-float4 (map 'vector
-		    (lambda (x)
-		      (* x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (* x value))
+                    (in-list vector))))
 
 
 (defmethod mul ((vector float2) (value float2))
   (make-float2 (map 'vector #'*
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 (defmethod mul ((vector float3) (value float3))
   (make-float3 (map 'vector #'*
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 (defmethod mul ((vector float4) (value float3))
   (make-float4 (map 'vector #'*
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 
 (defmethod div ((vector float2) (value real))
   (make-float2 (map 'vector
-		    (lambda (x)
-		      (/ x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (/ x value))
+                    (in-list vector))))
 
 (defmethod div ((vector float3) (value real))
   (make-float3 (map 'vector
-		    (lambda (x)
-		      (/ x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (/ x value))
+                    (in-list vector))))
 
 (defmethod div ((vector float4) (value real))
   (make-float4 (map 'vector
-		    (lambda (x)
-		      (/ x value))
-		    (in-list vector))))
+                    (lambda (x)
+                      (/ x value))
+                    (in-list vector))))
 
 
 (defmethod div ((vector float2) (value float2))
   (make-float2 (map 'vector #'/
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 (defmethod div ((vector float3) (value float3))
   (make-float3 (map 'vector #'/
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 (defmethod div ((vector float4) (value float3))
   (make-float4 (map 'vector #'/
-		    (in-list vector)
-		    (in-list value))))
+                    (in-list vector)
+                    (in-list value))))
 
 
 (defmethod dot (vector1 vector2)
   (reduce #'+
-	  (map 'list #'*
-	       (in-list vector1)
-	       (in-list vector2))))
+          (map 'list #'*
+               (in-list vector1)
+               (in-list vector2))))
 
 
 (defmethod norm (vector)
   (sqrt (reduce #'+
-		(map 'list
-		     (lambda (x)
-		       (expt x 2))
-		     (in-list vector)))))
+                (map 'list
+                     (lambda (x)
+                       (expt x 2))
+                     (in-list vector)))))
 
 
 (defmethod negate ((vector float2))
   (make-float2 (map 'vector #'-
-		    (in-list vector))))
+                    (in-list vector))))
 
 (defmethod negate ((vector float2))
   (make-float3 (map 'vector #'-
-		    (in-list vector))))
+                    (in-list vector))))
 
 (defmethod negate ((vector float2))
   (make-float4 (map 'vector #'-
-		    (in-list vector))))
+                    (in-list vector))))
 
 
 (defmethod absv ((vector float2))
   (make-float2 (map 'vector #'abs
-		    (in-list vector))))
+                    (in-list vector))))
 
 
 (defmethod absv ((vector float3))
   (make-float3 (map 'vector #'abs
-		    (in-list vector))))
+                    (in-list vector))))
 
 (defmethod absv ((vector float4))
   (make-float4 (map 'vector #'abs
-		    (in-list vector))))
+                    (in-list vector))))
 
 ; a small helper function for eqv
 (defun hand (x y)
@@ -245,9 +245,9 @@
 
 (defmethod eqv (vector1 vector2)
   (reduce #'hand
-	  (map 'vector #'=
-	       (in-list vector1)
-	       (in-list vector2))))
+          (map 'vector #'=
+               (in-list vector1)
+               (in-list vector2))))
 
 
 (defmethod neqv (vector1 vector2)
@@ -256,11 +256,11 @@
 
 (defun cross (vector1 vector2)
   (make-float3 (- (* (y vector1) (z vector2))
-		  (* (z vector1) (y vector2)))
-	       (- (* (z vector1) (x vector2))
-		  (* (x vector1) (z vector2)))
-	       (- (* (x vector1) (y vector2))
-		  (* (y vector1) (x vector2)))))
+                  (* (z vector1) (y vector2)))
+               (- (* (z vector1) (x vector2))
+                  (* (x vector1) (z vector2)))
+               (- (* (x vector1) (y vector2))
+                  (* (y vector1) (x vector2))))) 
 
 
 (defmethod normalize (vector)
@@ -269,8 +269,8 @@
 
 (defmethod angle (vector1 vector2)
   (acos (/ (dot vector1 vector2)
-	   (* (norm vector1)
-	      (norm vector2)))))
+           (* (norm vector1)
+              (norm vector2)))))
 
 
 (defmethod project (vector1 vector2)
@@ -282,12 +282,12 @@
     (map nil
      (lambda (c s)
        (ecase c
-	 (#\X (funcall (intern (string s)) x))
-	 (#\Y (funcall (intern (string s)) y))))
+         (#\X (funcall (intern (string s)) x))
+         (#\Y (funcall (intern (string s)) y))))
      (symbol-name values)
      (if (null signs)
-	 "++"
-	 (symbol-name signs)))))
+         "++"
+         (symbol-name signs)))))
 
 
 (defun float2-zero () (make-float2 0 0))
