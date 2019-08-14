@@ -34,4 +34,27 @@
    :negate
    :project
    :eqv
-   :neq))
+   :neqv
+   :det
+   :transpose
+   :absm
+   :negm
+   :eqm
+   :neqm
+   :make-float2x2
+   :make-float3x3
+   :make-float4x4
+   :float2x2-zero
+   :float3x3-zero
+   :float4x4-zero
+   :float2x2-one
+   :float3x3-one
+   :float4x4-one
+   :float2x2-iden
+   :float3x3-iden
+   :float4x4-iden
+   :mat-size
+   :get-at
+   :set-at
+   :get-row
+   :get-col))
