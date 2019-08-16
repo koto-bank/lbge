@@ -32,11 +32,19 @@ If it does, then it is a test package."
         nil
         (string= "LBGE.TEST." (subseq name 0 10)))))
 
-(defun collect-test-packages ()
-  (let ((packages (list-all-packages)))
-    (delete-if-not #'test-package-p packages)))
+(defun collect-test-packages (&optional selected-package)
+  (let* ((packages (list-all-packages))
+         (lbge-packages (delete-if-not #'test-package-p packages)))
+    (if selected-package
+        (let ((s (string selected-package)))
+          (delete-if-not (lambda (package)
+                           (string= s (subseq (package-name package)
+                                              10
+                                              (+ 10 (length s))))) 
+                         lbge-packages))
+        lbge-packages)))
 
-(defun run ()
+(defun run (&optional selected-package)
   (load-test-files)
-  (let ((test-packages (collect-test-packages)))
+  (let ((test-packages (collect-test-packages selected-package)))
     (mapcar #'rove:run-suite test-packages)))
