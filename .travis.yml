@@ -1,0 +1,24 @@
+language: common-lisp
+sudo: required
+
+install:
+  - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
+  - ros install ./engine/lbge.asd
+  - ros install ./a/unit-tests/lbge-unit-tests.asd
+
+env:
+  global:
+    - LISP=sbcl
+  matrix:
+
+os:
+  - osx
+  - linux
+
+script:
+  - ros -s lbge-unit-tests -e '(lbge-unit-tests:run)'
+
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
