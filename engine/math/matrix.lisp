@@ -25,9 +25,6 @@
                 0 0 0 0))))
 
 
-(defgeneric mat-size (matrix)
-  (:documentation "Get the size of a matrix"))
-
 (defgeneric add (matrix1 matrix2)
   (:documentation "Add two matrices"))
 
@@ -59,34 +56,78 @@
   (:documentation "Test two matrices for inequality"))
 
 
-(defun make-float2x2 (vec)
-  (make-instance 'float2x2
-                 :in-list vec))
+(defun make-float2x2 (a00 &optional a01 a10 a11)
+  (if a11
+      (make-instance 'float2x2
+                     :in-list (make-array '(4) :initial-contents
+                                          (list a00 a01
+                                                a10 a11)))
+      (make-instance 'float2x2
+                     :in-list a00)))
 
-(defun make-float3x3 (vec)
-  (make-instance 'float3x3
-                 :in-list vec))
+(defun make-float3x3 (a00 &optional a01 a02 a10 a11 a12 a20 a21 a22)
+  (if a22
+      (make-instance 'float3x3
+                     :in-list (make-array '(9) :initial-contents
+                                          (list a00 a01 a02
+                                                a10 a11 a12
+                                                a20 a21 a22)))
+      (make-instance 'float3x3
+                     :in-list a00)))
 
-(defun make-float4x4 (vec)
-  (make-instance 'float4x4
-                 :in-list vec))
+(defun make-float4x4 (a00 &optional a01 a02 a03 a10 a11 a12 a13 a20 a21 a22 a23 a30 a31 a32 a33)
+  (if a33
+      (make-instance 'float4x4
+                     :in-list (make-array '(16) :initial-contents
+                                          (list a00 a01 a02 a03
+                                                a10 a11 a12 a13
+                                                a20 a21 a22 a23
+                                                a30 a31 a32 a33)))
+      (make-instance 'float4x4
+                        :in-list a00)))
 
 
-(defmethod mat-size ((matrix float2x2)) 2)
-(defmethod mat-size ((matrix float3x3)) 3)
-(defmethod mat-size ((matrix float4x4)) 4)
+(defun float2x2-zero () (make-instance 'float2x2))
+(defun float3x3-zero () (make-instance 'float3x3))
+(defun float4x4-zero () (make-instance 'float4x4))
 
+(defun float2x2-one () (make-float2x2 1 1
+                                      1 1))
+
+(defun float3x3-one () (make-float3x3 1 1 1
+                                      1 1 1
+                                      1 1 1))
+
+(defun float4x4-one () (make-float4x4 1 1 1 1
+                                      1 1 1 1
+                                      1 1 1 1
+                                      1 1 1 1))
+
+
+(defun float2x2-iden () (make-float2x2 1 0
+                                       0 1))
+
+(defun float3x3-iden () (make-float3x3 1 0 0
+                                       0 1 0
+                                       0 0 1))
+
+(defun float4x4-iden () (make-float4x4 1 0 0 0
+                                       0 1 0 0
+                                       0 0 1 0
+                                       0 0 0 1))
+
+
+(defmacro mat-size (matrix)
+  `(isqrt (length (in-list ,matrix))))
 
 (defmacro get-at (matrix i j)
-  (list 'aref (list 'in-list matrix)
-        (list '+ j (list '* i
-                         (list 'mat-size matrix)))))
+  `(aref (in-list ,matrix)
+        (+ ,j (* ,i (mat-size ,matrix)))))
 
 (defmacro set-at (matrix i j v)
-  (list 'setf (list 'aref (list 'in-list matrix)
-                    (list '+ j
-                          (list '* i (list 'mat-size matrix))))
-        v))
+  `(setf (aref (in-list ,matrix)
+          (+ ,j (* ,i (mat-size ,matrix))))
+         ,v))
 
 
 (defmethod add ((matrix1 float2x2) (matrix2 float2x2))
@@ -172,24 +213,24 @@
 
 
 (defmacro get-row (matrix j)
-  (list 'loop for i from 0 below (mat-size matrix) collect
-        (list 'get-at matrix i j)))
+  `(loop for i from 0 below (mat-size ,matrix) collect
+        (get-at matrix i ,j)))
 
 (defmacro get-col (matrix i)
-  (list 'loop for j from 0 below (mat-size matrix) collect
-        (list 'get-at matrix i j)))
+  `(loop for j from 0 below (mat-size ,matrix) collect
+        (get-at matrix ,i j)))
 
 ; this is done in a stupid way because I'm also stupid
 (defun prod2x2 (matrix value)
-  (let ((outm (float2x2-zero)))
-    (dotimes (i 2)
-      (dotimes (j 2)
-        (set-at outm i j
-                (reduce #'+
-                        (mapcar #'*
-                                (get-col matrix i)
-                                (get-row value j))))))
-    outm))
+  (let ((outv (make-array 4 :initial-element 0)))
+    (dotimes (n 4)
+      (multiple-value-bind (i j) (floor n 2)
+       (setf (aref outv n)
+               (reduce #'+
+                       (mapcar #'*
+                               (get-col matrix i)
+                               (get-row value j))))))
+    (make-float2x2 outv)))
 
 (defun prod3x3 (matrix value)
   (let ((outm (float3x3-zero)))
@@ -272,38 +313,38 @@
 
 
 ; small helper functions for determinants, maybe should be macros
-(defun det2x2 (a11 a12 a21 a22)
-  (- (* a11 a22)
-     (* a12 a21)))
+(defmacro det2x2 (a11 a12 a21 a22)
+  `(- (* ,a11 ,a22)
+     (* ,a12 ,a21)))
 
-(defun det3x3 (a11 a12 a13 a21 a22 a23 a31 a32 a33)
-  (- (+ (* a11
-           (det2x2 a22 a23
-                   a32 a33))
-        (* a13
-           (det2x2 a21 a22
-                   a31 a32)))
-     (* a12
-        (det2x2 a21 a23
-                a31 a33))))
+(defmacro det3x3 (a11 a12 a13 a21 a22 a23 a31 a32 a33)
+  `(- (+ (* ,a11
+           (det2x2 ,a22 ,a23
+                   ,a32 ,a33))
+        (* ,a13
+           (det2x2 ,a21 ,a22
+                   ,a31 ,a32)))
+     (* ,a12
+        (det2x2 ,a21 ,a23
+                ,a31 ,a33))))
 
-(defun det4x4 (a11 a12 a13 a14 a21 a22 a23 a24 a31 a32 a33 a34 a41 a42 a43 a44)
-  (- (+ (* a11
-           (det3x3 a22 a23 a24
-                   a32 a33 a34
-                   a42 a43 a44))
-        (* a13
-           (det3x3 a21 a22 a24
-                   a31 a32 a34
-                   a41 a42 a44)))
-     (+ (* a12
-           (det3x3 a21 a23 a24
-                   a31 a33 a34
-                   a41 a43 a44))
-        (* a14
-           (det3x3 a21 a22 a23
-                   a31 a32 a33
-                   a41 a42 a43)))))
+(defmacro det4x4 (a11 a12 a13 a14 a21 a22 a23 a24 a31 a32 a33 a34 a41 a42 a43 a44)
+  `(- (+ (* ,a11
+           (det3x3 ,a22 ,a23 ,a24
+                   ,a32 ,a33 ,a34
+                   ,a42 ,a43 ,a44))
+        (* ,a13
+           (det3x3 ,a21 ,a22 ,a24
+                   ,a31 ,a32 ,a34
+                   ,a41 ,a42 ,a44)))
+     (+ (* ,a12
+           (det3x3 ,a21 ,a23 ,a24
+                   ,a31 ,a33 ,a34
+                   ,a41 ,a43 ,a44))
+        (* ,a14
+           (det3x3 ,a21 ,a22 ,a23
+                   ,a31 ,a32 ,a33
+                   ,a41 ,a42 ,a43)))))
 
 ; should be macros too I think
 (defmethod det ((matrix float2x2))
@@ -377,23 +418,23 @@
 (defmethod transpose ((matrix float2x2))
   (make-float2x2
    (make-array '(4) :initial-contents
-               ((get-at matrix 0 0) (get-at matrix 1 0)
-                (get-at matrix 0 1) (get-at matrix 1 1)))))
+               (list (get-at matrix 0 0) (get-at matrix 1 0)
+                     (get-at matrix 0 1) (get-at matrix 1 1)))))
 
 (defmethod transpose ((matrix float3x3))
   (make-float3x3
    (make-array '(9) :initial-contents
-               ((get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0)
-                (get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1)
-                (get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2)))))
+               (list (get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0)
+                     (get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1)
+                     (get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2)))))
 
 (defmethod transpose ((matrix float4x4))
   (make-float4x4
    (make-array '(16) :initial-contents
-               ((get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0) (get-at matrix 3 0)
-                (get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1) (get-at matrix 3 1)
-                (get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2) (get-at matrix 3 2)
-                (get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
+               (list (get-at matrix 0 0) (get-at matrix 1 0) (get-at matrix 2 0) (get-at matrix 3 0)
+                     (get-at matrix 0 1) (get-at matrix 1 1) (get-at matrix 2 1) (get-at matrix 3 1)
+                     (get-at matrix 0 2) (get-at matrix 1 2) (get-at matrix 2 2) (get-at matrix 3 2)
+                     (get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
 
 
 (defun hand (x y)
@@ -407,33 +448,3 @@
 
 (defmethod neqm (matrix1 matrix2)
   (not (eqm matrix1 matrix2)))
-
-
-(defun float2x2-zero () (make-instance 'float2x2))
-(defun float3x3-zero () (make-instance 'float3x3))
-(defun float4x4-zero () (make-instance 'float4x4))
-
-(defun float2x2-one () (make-float2x2 #(1 1
-                                        1 1)))
-
-(defun float3x3-one () (make-float3x3 #(1 1 1
-                                        1 1 1
-                                        1 1 1)))
-
-(defun float4x4-one () (make-float4x4 #(1 1 1 1
-                                        1 1 1 1
-                                        1 1 1 1
-                                        1 1 1 1)))
-
-
-(defun float2x2-iden () (make-float2x2 #(1 0
-                                         0 1)))
-
-(defun float3x3-iden () (make-float3x3 #(1 0 0
-                                         0 1 0
-                                         0 0 1)))
-
-(defun float4x4-iden () (make-float4x4 #(1 0 0 0
-                                         0 1 0 0
-                                         0 0 1 0
-                                         0 0 0 1)))
