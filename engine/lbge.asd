@@ -13,8 +13,9 @@
    (:module math
     :components
     ((:file "package")
-     (:file "matrix")
-     (:file "vector")))
+     (:file "common")
+     (:file "vector")
+     (:file "matrix")))
    (:module ecs
     :components
     ((:file "package")

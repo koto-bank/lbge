@@ -214,25 +214,25 @@
 
 (defmacro get-row (matrix j)
   `(loop for i from 0 below (mat-size ,matrix) collect
-        (get-at matrix i ,j)))
+        (get-at ,matrix i ,j)))
 
 (defmacro get-col (matrix i)
   `(loop for j from 0 below (mat-size ,matrix) collect
-        (get-at matrix ,i j)))
+        (get-at ,matrix ,i j)))
 
-; this is done in a stupid way because I'm also stupid
-(defun prod2x2 (matrix value)
-  (let ((outv (make-array 4 :initial-element 0)))
-    (dotimes (n 4)
-      (multiple-value-bind (i j) (floor n 2)
-       (setf (aref outv n)
+
+(defmethod mul ((matrix float2x2) (value float2x2))
+  (let ((outm (float2x2-zero)))
+    (dotimes (i 2)
+      (dotimes (j 2)
+       (set-at outm i j
                (reduce #'+
                        (mapcar #'*
                                (get-col matrix i)
                                (get-row value j))))))
-    (make-float2x2 outv)))
+    outm))
 
-(defun prod3x3 (matrix value)
+(defmethod mul ((matrix float3x3) (value float3x3))
   (let ((outm (float3x3-zero)))
     (dotimes (i 3)
       (dotimes (j 3)
@@ -243,29 +243,18 @@
                                 (get-row value j))))))
     outm))
 
-(defun prod4x4 (matrix value)
+(defmethod mul ((matrix float4x4) (value float4x4))
   (let ((outm (float4x4-zero)))
     (dotimes (i 4)
       (dotimes (j 4)
         (set-at outm i j
                 (reduce #'+
                         (mapcar #'*
-                                (get-row matrix i)
-                                (get-col value j))))))
+                                (get-col matrix i)
+                                (get-row value j))))))
     outm))
+ 
 
-
-(defmethod mul ((matrix float2x2) (value float2x2))
-  (prod2x2 value matrix))
-
-(defmethod mul ((matrix float3x3) (value float3x3))
-  (prod3x3 value matrix))
-
-(defmethod mul ((matrix float4x4) (value float4x4))
-  (prod4x4 value matrix))
-
-
-; probably should be macros
 (defmethod mul ((matrix float2x2) (value float2))
   (make-float2
    (reduce #'+
@@ -312,7 +301,6 @@
                     (w value))))))
 
 
-; small helper functions for determinants, maybe should be macros
 (defmacro det2x2 (a11 a12 a21 a22)
   `(- (* ,a11 ,a22)
      (* ,a12 ,a21)))
@@ -437,14 +425,12 @@
                      (get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
 
 
-(defun hand (x y)
-  (and x y))
-
 (defmethod eqm (matrix1 matrix2)
   (reduce #'hand
-          (map 'list #'=
+          (map 'list #'eqfp
                (in-list matrix1)
                (in-list matrix2))))
+
 
 (defmethod neqm (matrix1 matrix2)
   (not (eqm matrix1 matrix2)))
