@@ -100,37 +100,37 @@
                             26 28 30 32))))
 
   (testing "2x2 by 2x2 matrix multiplication"
-    (ok (eqm (mul (make-float2x2 1 2
-                                 3 4)
-                  (make-float2x2 5 6
-                                 7 8))
-             (make-float2x2 19 22
-                            43 50))))
+    (ok (eqm (mul (make-float2x2 5 8
+                                 3 8)
+                  (make-float2x2 3 8
+                                 8 9))
+             (make-float2x2 79 112
+                            73 96))))
   
   (testing "3x3 by 3x3 matrix multiplication"
-    (ok (eqm (mul (make-float3x3 1 2 3
+    (ok (eqm (mul (make-float3x3 10 20 10
                                  4 5 6
-                                 7 8 9)
-                  (make-float3x3 10 11 12
-                                 13 14 15
-                                 16 17 18))
-             (make-float3x3 84 90 96
-                            201 216 231
-                            318 342 366))))
+                                 2 3 5)
+                  (make-float3x3 3 2 4
+                                 3 3 9
+                                 4 4 2))
+             (make-float3x3 130 120 240
+                            51 47 73
+                            35 33 45))))
   
   (testing "4x4 by 4x4 matrix multiplication"
-    (ok (eqm (mul (make-float4x4 1 2 3 4
-                                 5 6 7 8
-                                 9 10 11 12
-                                 13 14 15 16)
-                  (make-float4x4 17 18 19 20
-                                 21 22 23 24
-                                 25 26 27 28
-                                 29 30 31 32))
-             (make-float4x4 250 260 270 280
-                            618 644 670 696
-                            986 1028 1070 1112
-                            1354 1412 1470 1528))))
+    (ok (eqm (mul (make-float4x4 5 7 9 10
+                                 2 3 3 8
+                                 8 10 2 3
+                                 3 3 4 8)
+                  (make-float4x4 3 10 12 18
+                                 12 1 4 9
+                                 9 10 12 2
+                                 3 12 4 10))
+             (make-float4x4 210 267 236 271
+                            93 149 104 149
+                            171 146 172 268
+                            105 169 128 169))))
 
   (testing "2x2 matrix by 2d vector multiplication"
     (ok (eqv (mul (make-float2x2 1 2
