@@ -1,6 +1,10 @@
 (defpackage :lbge.math
   (:use :cl)
   (:export
+   ; exports from common.lisp
+   :eqfp
+   :neqfp
+   ; exports from vector.lisp
    :float2
    :float3
    :float4
@@ -31,10 +35,12 @@
    :cross
    :normalize
    :angle
-   :negate
+   :negv
+   :absv
    :project
    :eqv
    :neqv
+   ; exports from matrix.lisp
    :det
    :transpose
    :absm

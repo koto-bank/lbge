@@ -43,14 +43,14 @@
 (defgeneric angle (vector1 vector2)
   (:documentation "Angle between two vectors in radians"))
 
-(defgeneric negate (vector)
+(defgeneric negv (vector)
   (:documentation "Negate a vector"))
 
 (defgeneric absv (vector)
   (:documentation "Make all elemets of a vector absolute values"))
 
 (defgeneric project (vector1 vector2)
-  (:documentation "Projects vector1 onto vector2"))
+  (:documentation "Return the projection of vector1 onto vector2"))
 
 (defgeneric eqv (vector1 vector2)
   (:documentation "Test two vectors for equality"))
@@ -156,7 +156,7 @@
                     (in-list vector)
                     (in-list value))))
 
-(defmethod mul ((vector float4) (value float3))
+(defmethod mul ((vector float4) (value float4))
   (make-float4 (map 'vector #'*
                     (in-list vector)
                     (in-list value))))
@@ -191,7 +191,7 @@
                     (in-list vector)
                     (in-list value))))
 
-(defmethod div ((vector float4) (value float3))
+(defmethod div ((vector float4) (value float4))
   (make-float4 (map 'vector #'/
                     (in-list vector)
                     (in-list value))))
@@ -212,15 +212,15 @@
                      (in-list vector)))))
 
 
-(defmethod negate ((vector float2))
+(defmethod negv ((vector float2))
   (make-float2 (map 'vector #'-
                     (in-list vector))))
 
-(defmethod negate ((vector float2))
+(defmethod negv ((vector float3))
   (make-float3 (map 'vector #'-
                     (in-list vector))))
 
-(defmethod negate ((vector float2))
+(defmethod negv ((vector float4))
   (make-float4 (map 'vector #'-
                     (in-list vector))))
 
@@ -228,7 +228,6 @@
 (defmethod absv ((vector float2))
   (make-float2 (map 'vector #'abs
                     (in-list vector))))
-
 
 (defmethod absv ((vector float3))
   (make-float3 (map 'vector #'abs
@@ -238,14 +237,10 @@
   (make-float4 (map 'vector #'abs
                     (in-list vector))))
 
-; a small helper function for eqv
-(defun hand (x y)
-  (and x y))
-
 
 (defmethod eqv (vector1 vector2)
   (reduce #'hand
-          (map 'vector #'=
+          (map 'vector #'eqfp
                (in-list vector1)
                (in-list vector2))))
 
@@ -272,9 +267,8 @@
            (* (norm vector1)
               (norm vector2)))))
 
-
 (defmethod project (vector1 vector2)
-  (dot vector1 (normalize vector2)))
+  (mul (normalize vector2) (dot vector1 (normalize vector2))))
 
 ; doesnt work yet
 (defmethod swizzle ((vector float2) values &optional signs)
