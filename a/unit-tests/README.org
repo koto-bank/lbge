@@ -14,7 +14,7 @@ We use rove for unit testing, so use it for actually writing test
 cases.
 
 * An example:
-`lbge/engine/math/t/vector.lisp:`
+~lbge/engine/math/t/vector.lisp:~
 #+BEGIN_SRC common-lisp
   (defpackage :lbge.test.math-vector
     (:use :cl :rove :lbge.math))
