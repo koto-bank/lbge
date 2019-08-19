@@ -1,2 +1,4 @@
 * LBGE - lisp butts game engine
+[[file:https://travis-ci.org/koto-bank/lbge.svg?branch=master]]
+
 ECS Lisp game engine for creating Lisp-powered games.
