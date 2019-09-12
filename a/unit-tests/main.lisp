@@ -1,6 +1,6 @@
 (defpackage :lbge-unit-tests
   (:use :cl :rove)
-  (:export :run :collect-test-packages))
+  (:export :run :collect-test-packages :run-on-travis-agent))
 
 (in-package :lbge-unit-tests)
 
@@ -40,11 +40,20 @@ If it does, then it is a test package."
           (delete-if-not (lambda (package)
                            (string= s (subseq (package-name package)
                                               10
-                                              (+ 10 (length s))))) 
+                                              (+ 10 (length s)))))
                          lbge-packages))
         lbge-packages)))
 
 (defun run (&optional selected-package)
   (load-test-files)
-  (let ((test-packages (collect-test-packages selected-package)))
-    (mapcar #'rove:run-suite test-packages)))
+  (let* ((test-packages (collect-test-packages selected-package))
+         (results (mapcar #'rove:run-suite test-packages)))
+    ;;; combine test results
+    (reduce (lambda (res acc)
+              (and acc res))
+            results
+            :initial-value t)))
+
+(defun run-on-travis-agent ()
+  (unless (run)
+    (sb-ext::quit :unix-status 1)))
