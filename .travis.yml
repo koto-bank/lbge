@@ -16,7 +16,7 @@ os:
   - linux
 
 script:
-  - ros -s lbge-unit-tests -e '(lbge-unit-tests:run)'
+  - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
 
 cache:
   directories:
