@@ -1,6 +1,10 @@
 language: common-lisp
 sudo: required
 
+branches:
+  only:
+  - master
+
 install:
   - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
   - ros install ./engine/lbge.asd
