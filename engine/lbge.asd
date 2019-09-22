@@ -8,6 +8,7 @@
    (:module image-loader
     :components
     ((:file "packages")
+     (:file "image")
      (:file "image-loader")
      (:file "tga")))
    (:module math
