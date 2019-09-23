@@ -3,6 +3,8 @@
 
 (in-package :lbge.test.image-loader)
 
+(defvar *lbge-skip-test*)
+
 (defun instance-of-p (class obj)
   (eq class (type-of obj)))
 
