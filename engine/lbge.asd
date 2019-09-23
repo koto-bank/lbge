@@ -23,6 +23,10 @@
      (:file "asset")
      (:file "asset-handler")
      (:file "asset-manager")))
+   (:module engine
+    :components
+    ((:file "package")
+     (:file "engine")))
    (:module ecs
     :components
     ((:file "package")
