@@ -3,6 +3,8 @@
 
 (in-package :lbge.test.tga)
 
+(defvar *lbge-skip-test*)
+
 (deftest tga-test
     (let ((image (tga "test-file.tga")))
       (ok (instance-of-p 'lbge.image-loader::image image))

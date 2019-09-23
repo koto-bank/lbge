@@ -32,7 +32,7 @@ If it does, then it is a test package."
         nil
         (string= "LBGE.TEST." (subseq name 0 10)))))
 
-(defun collect-test-packages (&optional selected-package)
+(defun collect-all-packages (&optional selected-package)
   (let* ((packages (list-all-packages))
          (lbge-packages (delete-if-not #'test-package-p packages)))
     (if selected-package
@@ -44,15 +44,29 @@ If it does, then it is a test package."
                          lbge-packages))
         lbge-packages)))
 
-(defun run (&optional selected-package)
+(defun delete-test-packages ()
+  (let ((all-packages (collect-all-packages)))
+    (mapcar #'delete-package all-packages)))
+
+(defun collect-test-packages (&optional selected-package)
+  (filter-disabled-packages (collect-all-packages selected-package)))
+
+(defun test-package-disabled-p (package)
+  (find-symbol "*LBGE-SKIP-TEST*" package))
+
+(defun filter-disabled-packages (package-list)
+  (delete-if #'test-package-disabled-p package-list))
+
+(defun run (&key (reporter :spec) selected-package)
+  (delete-test-packages)
   (load-test-files)
-  (let* ((test-packages (collect-test-packages selected-package))
-         (results (mapcar #'rove:run-suite test-packages)))
-    ;;; combine test results
-    (reduce (lambda (res acc)
-              (and acc res))
-            results
-            :initial-value t)))
+  (rove:use-reporter reporter)
+  (let* ((all-packages (collect-test-packages selected-package))
+         (filtered-packages (filter-disabled-packages all-packages)))
+    (format t "filtered packages: ~S~%" filtered-packages)
+    (mapcar #'rove:run-suite filtered-packages)
+    ;; if all tests passed?
+    (= 0 (length (rove/core/stats:stats-failed rove:*stats*)))))
 
 (defun run-on-travis-agent ()
   (unless (run)
