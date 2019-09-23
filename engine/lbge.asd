@@ -16,6 +16,13 @@
      (:file "common")
      (:file "vector")
      (:file "matrix")))
+   (:module assets
+    :pathname "base/asset"
+    :components
+    ((:file "package")
+     (:file "asset")
+     (:file "asset-handler")
+     (:file "asset-manager")))
    (:module ecs
     :components
     ((:file "package")
