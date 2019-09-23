@@ -1,7 +1,5 @@
 (in-package :lbge.asset)
 
-(defvar *asset-manager*)
-
 (defclass asset-manager ()
   ((roots
     :initform (list))
