@@ -1,5 +1,8 @@
 (defpackage :lbge.hash
-  (:use :cl))
+  (:use :cl)
+  (:export :make-hash
+           :get-hash
+           :set-hash))
 
 (in-package :lbge.hash)
 
@@ -9,8 +12,8 @@
 (defun make-hash ()
   (let ((h (make-instance 'hash)))
     (setf (slot-value h 'internal)
-          (make-hash-table)))
-  h)
+          (make-hash-table))
+    h))
 
 (defun get-hash (hash key)
   (gethash key hash))
