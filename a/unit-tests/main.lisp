@@ -45,8 +45,9 @@ If it does, then it is a test package."
         lbge-packages)))
 
 (defun delete-test-packages ()
-  (let ((all-packages (collect-all-packages)))
-    (mapcar #'delete-package all-packages)))
+  "Find and delete all test packages"
+  (let ((all-test-packages (collect-all-packages)))
+    (mapcar #'delete-package all-test-packages)))
 
 (defun collect-active-tests ()
   (filter-disabled-packages (collect-all-packages)))
