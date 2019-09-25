@@ -55,6 +55,15 @@ If it does, then it is a test package."
       (rove:run-suite suite)
       (format t "Could not run test suite: package ~A not found~%" selected-test-suite))))
 
+(defun print-start-message ()
+  (terpri)
+  (terpri)
+  (terpri)
+  (princ ",---------------------------------------.") (terpri)
+  (princ "| :~-<==={ Starting unit tests }===>-~: |") (terpri)
+  (princ "`---------------------------------------'") (terpri)
+  (terpri))
+
 (defun run (&key (reporter :spec) selected-test-suite)
   "Run unit tests and report the result.
 `reporter`: rove reporter. Default is :spec
@@ -68,6 +77,7 @@ Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
     (when selected-test-suite
         (run-selected-test-suite filtered-packages selected-test-suite)
         (return-from run (report-results)))
+    (print-start-message)
     (mapcar #'rove:run-suite filtered-packages)
     ;; if all tests passed?
     (= 0 (length (rove/core/stats:stats-failed rove:*stats*)))))
