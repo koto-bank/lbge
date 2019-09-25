@@ -32,17 +32,8 @@ If it does, then it is a test package."
         nil
         (string= "LBGE.TEST." (subseq name 0 10)))))
 
-(defun collect-all-packages (&optional selected-package)
-  (let* ((packages (list-all-packages))
-         (lbge-packages (delete-if-not #'test-package-p packages)))
-    (if selected-package
-        (let ((s (string selected-package)))
-          (delete-if-not (lambda (package)
-                           (string= s (subseq (package-name package)
-                                              10
-                                              (+ 10 (length s)))))
-                         lbge-packages))
-        lbge-packages)))
+(defun collect-all-packages ()
+  (delete-if-not #'test-package-p (list-all-packages)))
 
 (defun delete-test-packages ()
   "Find and delete all test packages"
