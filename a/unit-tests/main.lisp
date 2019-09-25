@@ -48,8 +48,8 @@ If it does, then it is a test package."
   (let ((all-packages (collect-all-packages)))
     (mapcar #'delete-package all-packages)))
 
-(defun collect-test-packages (&optional selected-package)
-  (filter-disabled-packages (collect-all-packages selected-package)))
+(defun collect-active-tests ()
+  (filter-disabled-packages (collect-all-packages)))
 
 (defun test-package-disabled-p (package)
   (find-symbol "*LBGE-SKIP-TEST*" package))
@@ -61,7 +61,7 @@ If it does, then it is a test package."
   (delete-test-packages)
   (load-test-files)
   (rove:use-reporter reporter)
-  (let* ((all-packages (collect-test-packages selected-package))
+  (let* ((all-packages (collect-active-tests))
          (filtered-packages (filter-disabled-packages all-packages)))
     (format t "filtered packages: ~S~%" filtered-packages)
     (mapcar #'rove:run-suite filtered-packages)
