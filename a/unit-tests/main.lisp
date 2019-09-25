@@ -55,6 +55,22 @@ If it does, then it is a test package."
       (rove:run-suite suite)
       (format t "Could not run test suite: package ~A not found~%" selected-test-suite))))
 
+(defun report-results ()
+  (let ((failed (rove/core/stats:stats-failed rove:*stats*))
+        (passed (rove/core/stats:stats-passed rove:*stats*)))
+
+    (when (> (length passed) 0)
+      (format t "~%-------------~%Passed tests:~%")
+      (loop :for test :across (rove/core/stats:stats-passed rove:*stats*) :do
+        (format t "* ~A~%" (rove/core/result:test-name test))))
+    (when (> (length failed) 0)
+      (format t "~%-------------~%Failed tests:~%")
+      (loop :for test :across failed :do
+        (format t "* ~A~%" (rove/core/result:test-name test))))
+    (when (= (length failed) 0)
+      (format t "~%All tests passed successfully!~%"))
+    (= 0 (length failed))))
+
 (defun print-start-message ()
   (terpri)
   (terpri)
@@ -79,8 +95,7 @@ Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
         (return-from run (report-results)))
     (print-start-message)
     (mapcar #'rove:run-suite filtered-packages)
-    ;; if all tests passed?
-    (= 0 (length (rove/core/stats:stats-failed rove:*stats*)))))
+    (report-results)))
 
 (defun run-on-travis-agent ()
   (unless (run)
