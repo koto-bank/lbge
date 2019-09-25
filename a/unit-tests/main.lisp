@@ -58,13 +58,25 @@ If it does, then it is a test package."
 (defun filter-disabled-packages (package-list)
   (delete-if #'test-package-disabled-p package-list))
 
-(defun run (&key (reporter :spec) selected-package)
+(defun run-selected-test-suite (packages selected-test-suite)
+  (let ((suite (find-package selected-test-suite)))
+    (if suite
+      (rove:run-suite suite)
+      (format t "Could not run test suite: package ~A not found~%" selected-test-suite))))
+
+(defun run (&key (reporter :spec) selected-test-suite)
+  "Run unit tests and report the result.
+`reporter`: rove reporter. Default is :spec
+`selected-test-suite`: if present, only test suite with this name will run.
+Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
   (delete-test-packages)
   (load-test-files)
   (rove:use-reporter reporter)
   (let* ((all-packages (collect-active-tests))
          (filtered-packages (filter-disabled-packages all-packages)))
-    (format t "filtered packages: ~S~%" filtered-packages)
+    (when selected-test-suite
+        (run-selected-test-suite filtered-packages selected-test-suite)
+        (return-from run (report-results)))
     (mapcar #'rove:run-suite filtered-packages)
     ;; if all tests passed?
     (= 0 (length (rove/core/stats:stats-failed rove:*stats*)))))
