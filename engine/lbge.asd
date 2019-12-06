@@ -1,6 +1,6 @@
 (asdf:defsystem :lbge
   :license "BSD-2-Clause"
-  :depends-on (:rove :alexandria)
+  :depends-on (:rove :alexandria :sdl2 :cffi :cl-autowrap)
   :components
   ((:module base
     :components
@@ -27,7 +27,13 @@
    (:module engine
     :components
     ((:file "package")
+     (:file "window")
+     #+linux (:file "window.linux")
+     (:file "events")
      (:file "engine")))
+   (:module render
+    :components
+    ((:file "render")))
    (:module ecs
     :components
     ((:file "package")

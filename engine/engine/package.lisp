@@ -6,4 +6,14 @@
    :make-engine
    :get-engine
    :add-manager
-   :get-manager))
+   :get-manager
+   :engine-loop
+
+   ;;; Windows
+   :create-window
+   :window
+   :initialize-backend
+
+   ;;; Events
+   :process-event
+   ))

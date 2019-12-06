@@ -4,5 +4,5 @@
   ()
   (:documentation "Base class for all asset handlers"))
 
-(defgeneric load-asset (handler key))
-(defgeneric create-asset (handler key))
+(defgeneric handler-load-asset (handler key))
+(defgeneric handler-create-asset (handler key))
