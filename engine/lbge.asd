@@ -1,6 +1,6 @@
 (asdf:defsystem :lbge
   :license "BSD-2-Clause"
-  :depends-on (:rove :alexandria :sdl2 :cffi :cl-autowrap)
+  :depends-on (:alexandria :sdl2 :cffi :cl-autowrap)
   :components
   ((:module base
     :components
