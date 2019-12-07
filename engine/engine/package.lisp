@@ -1,3 +1,10 @@
+(defpackage :lbge.engine.events
+  (:use :cl :lbge.asset :lbge.hash)
+  (:export
+   :process-events
+   :add-event-handler
+   :add-event-handlers))
+
 (defpackage :lbge.engine
   (:use :cl :lbge.asset :lbge.hash)
   (:export
@@ -7,13 +14,11 @@
    :get-engine
    :add-manager
    :get-manager
-   :engine-loop
+   :make-engine-options
+   :start
 
    ;;; Windows
    :create-window
    :window
    :initialize-backend
-
-   ;;; Events
-   :process-event
    ))
