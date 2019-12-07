@@ -7,7 +7,8 @@
   (delete-engine)
   (testing "Engine creation"
     (signals (get-engine))
-    (let ((engine (make-engine)))
+    (make-engine)
+    (let ((engine (get-engine)))
       (ok engine)
       (pass (check-type engine engine))
       (ok (eq (get-engine) engine)))))
