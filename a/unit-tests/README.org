@@ -1,7 +1,7 @@
 * Unit test application
 This is the application for running LBGE unit tests.
 
-To run unit tests, import ~lbge-unittests~ system via quicklisp, and
+To run unit tests, import ~lbge-unit-tests~ system via quicklisp, and
 call ~(lbge-unit-tests:run)~.
 
 * Writing unit tests
