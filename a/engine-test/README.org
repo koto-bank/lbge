@@ -1,0 +1,4 @@
+* Engine test
+Aplication for testing basic engine capabilities.
+
+Import ~lbge-engine-test~ and call ~(lbge-engine-test:run)~.
