@@ -10,6 +10,15 @@ install:
   - ros install ./engine/lbge.asd
   - ros install ./a/unit-tests/lbge-unit-tests.asd
 
+addons:
+  apt:
+    packages:
+      - libsdl2-2.0-0
+      - libsdl2-dev
+  homebrew:
+    packages:
+      - sdl2
+
 env:
   global:
     - LISP=sbcl
