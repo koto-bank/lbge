@@ -28,6 +28,8 @@ os:
   - osx
   - linux
 
+osx_image: xcode11.2
+
 script:
   - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
 
