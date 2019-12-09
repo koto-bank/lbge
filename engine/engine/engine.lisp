@@ -15,7 +15,9 @@
   (:documentation "The engine"))
 
 (defstruct engine-options
-  window-title)
+  (window-title "LBGE Window")
+  (window-w 800)
+  (window-h 600))
 
 (defvar *engine* nil
   "Running engine instance.
