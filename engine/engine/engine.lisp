@@ -54,13 +54,27 @@ Asserts that it have been created earlier."
     (get-hash (managers manager-type))))
 
 (defun engine-loop ()
-  (sdl2:with-init (:audio :video :timer :joystick :gamecontroller :noparachute)
-    (sdl2:with-window (win :flags '(:shown))
-      (sdl2:with-sdl-event (sdl-event)
-        (loop :while (eq (slot-value *engine* 'state) :running)
-              ;; process-events is defined in events.lisp
-              :do (lbge.engine.events:process-events *engine* sdl-event))))))
+  (let ((options (slot-value *engine* 'options))
+        (init-flags (autowrap:mask-apply 'sdl2::sdl-init-flags '(:audio :video :timer :joystick :gamecontroller :noparachute))))
+    (unwind-protect
+         (progn
+           (sb-int:with-float-traps-masked (:invalid)
+             (sdl2::check-rc (sdl2-ffi.functions:sdl-init init-flags)))
+           (let* ((title (engine-options-window-title options))
+                  (h (engine-options-window-h options))
+                  (w (engine-options-window-w options))
+                  (win
+                    (sb-int:with-float-traps-masked (:overflow :invalid)
+                      (sdl2:create-window :x :centered :y :centered :title title :w h :h h :flags '(:shown)))))
+             (unwind-protect
+                  (sdl2:with-sdl-event (sdl-event)
+                    (loop :while (eq (slot-value *engine* 'state) :running)
+                          ;; process-events is defined in events.lisp
+                          :do (lbge.engine.events:process-events *engine* sdl-event)))
+               (sb-int:with-float-traps-masked (:invalid)
+                 (sdl2:destroy-window win)))))
+      (sdl2:sdl-quit))))
 
 (defun start ()
   (setf (slot-value *engine* 'state) :running)
-  (sdl2:make-this-thread-main #'engine-loop))
+  (engine-loop))

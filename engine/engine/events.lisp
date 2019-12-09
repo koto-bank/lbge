@@ -76,7 +76,8 @@
       (funcall (cdr handler) sdl-event))))
 
 (defun process-events (engine sdl-event)
-  (loop :as rc = (sdl2:next-event sdl-event :poll)
+  (loop :as rc = (sb-int:with-float-traps-masked (:invalid :overflow)
+                   (sdl2:next-event sdl-event :poll))
         :until (= 0 rc)
         :do (let ((event-type (sdl2:get-event-type sdl-event)))
               (if (eq event-type :quit)
