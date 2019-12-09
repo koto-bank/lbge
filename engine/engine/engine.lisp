@@ -33,8 +33,9 @@ Only one allowed per application.")
   (assert (null *engine*) nil
           "Engine already created")
   (setf *engine* (make-instance 'engine))
-  (when options
-    (setf (slot-value egnine 'options) options)))
+  (unless options
+    (setf options (make-engine-options)))
+  (setf (slot-value *engine* 'options) options))
 
 (defun get-engine ()
   "Return engine isntance.
