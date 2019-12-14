@@ -16,9 +16,4 @@
    :get-manager
    :make-engine-options
    :start
-
-   ;;; Windows
-   :create-window
-   :window
-   :initialize-backend
    ))
