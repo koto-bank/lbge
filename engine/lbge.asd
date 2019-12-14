@@ -2,6 +2,7 @@
   :license "BSD-2-Clause"
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
+               :lbge-render
                :closer-mop :cl-ppcre)
   :components
   ((:module base
@@ -38,13 +39,8 @@
    (:module engine
     :components
     ((:file "package")
-     (:file "window")
-     #+linux (:file "window.linux")
      (:file "events")
      (:file "engine")))
-   (:module render
-    :components
-    ((:file "render")))
    (:module ecs
     :components
     ((:file "package")

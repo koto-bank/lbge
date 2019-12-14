@@ -1,3 +1,9 @@
-(defpackage :lbge.engine
-  (:use :cl :lbge.asset :lbge.hash)
-  (:export))
+(defpackage :lbge.render
+  (:use :cl :lbge.hash)
+  (:export
+   :renderer
+
+   ;;; Windows
+   :create-window
+   :window
+   :initialize-backend))
