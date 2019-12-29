@@ -8,10 +8,11 @@
   (eq class (type-of obj)))
 
 (deftest tga-test
-    (let ((image (lbge.image-loader.tga:tga "test-file.tga"))
-          (test-data (alexandria:read-file-into-byte-vector)))
+    (let ((image (lbge.image-loader.tga:tga "t/test-file-no-rsa.tga"))
+          (test-data (alexandria:read-file-into-byte-vector
+                      "t/test-file-no-rsa.tga.image-data")))
       (ok (instance-of-p 'lbge.image-loader.image::image image)())
-      (ok (= 128 (width  image)))
-      (ok (= 128 (height image)))
+      (ok (= 1419 (width  image)))
+      (ok (= 1001 (height image)))
       (ok (string= "rgba8" (channels image)))
-      (ok (= (data image) (subseq test-data 0 (- (* 128 128) 1))))))
+      (ok (= (data image) test-data))))

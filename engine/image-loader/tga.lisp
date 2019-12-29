@@ -9,7 +9,7 @@
                 :height height
                 :channels (get-channels raw)
                 :data (get-data (* width height) raw))))
-
+(tga "~/USER/code/cl/lbge/engine/image-loader/t/test-file.tga")
 (defun get-width (raw)
   (+ (* (aref raw 13) 256)
      (aref raw 12)))
@@ -21,8 +21,8 @@
 (defun get-channels (raw)
   (format nil "rgba~a" (aref raw 16)))
 
-(defun get-data (image-lenght raw)
-  (let* ((header-lenght 17)
+(defun get-data (image-length raw)
+  (let* ((header-length 17)
          (image-id-length (aref raw 0))
          (color-map-included? (aref raw 1))
          (first-data-byte
@@ -32,4 +32,4 @@
                 (* (+ (* (aref raw 6) 256)
                       (aref raw 5))
                    (aref raw 7))))))
-    (subseq raw first-data-byte (+ first-data-byte (- image-lenght 1)))))
+    (subseq raw first-data-byte (+ first-data-byte (- image-length 1)))))
