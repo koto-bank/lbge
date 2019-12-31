@@ -5,6 +5,14 @@
   ((:module base
     :components
     ((:file "hash-map")))
+   (:module application
+    :components
+    ((:file "package")
+     (:file "misc")))
+   (:module filesystem
+    :components
+    ((:file "package")
+     (:file "misc")))
    (:module image-loader
     :components
     ((:file "packages")
