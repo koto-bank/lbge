@@ -18,6 +18,11 @@ If you want testing process to skip the unit test, define a variable
 named ~*lbge-skip-test*~ in the package. But make sure that the code
 at least compiles.
 
+** How to run only selected test suite
+Use ~:selected-test-suite~ keyword argument:
+~(lbge-unit-tests:run :selected-test-suite :lbge.test.assets)~
+
+
 * An example:
 ~lbge/engine/math/t/vector.lisp:~
 #+BEGIN_SRC common-lisp
