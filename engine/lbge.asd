@@ -33,7 +33,8 @@
     ((:file "package")
      (:file "asset")
      (:file "asset-handler")
-     (:file "asset-manager")))
+     (:file "asset-manager")
+     (:file "sexp-asset-handler")))
    (:module engine
     :components
     ((:file "package")
