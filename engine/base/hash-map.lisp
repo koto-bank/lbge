@@ -16,7 +16,7 @@
     h))
 
 (defun get-hash (hash key)
-  (gethash key hash))
+  (gethash key (slot-value hash 'internal)))
 
 (defmacro set-hash (hash (key value))
   `(setf
