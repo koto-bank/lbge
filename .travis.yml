@@ -5,6 +5,10 @@ branches:
   only:
   - master
 
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y libsdl2-2.0-0; fi
+
 install:
   - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
   - ros install ./engine/lbge.asd
@@ -12,9 +16,7 @@ install:
 
 addons:
   apt:
-    packages:
-      - libsdl2-2.0-0
-      - libsdl2-dev
+    update: true
   homebrew:
     packages:
       - sdl2
