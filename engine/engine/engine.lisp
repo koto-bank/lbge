@@ -10,6 +10,10 @@
 :stopping")
    (options
     :documentation "Options passed at startup")
+   (beacons
+    :documentation "Available engine beacons. Current list:
+:before-start - blinks just before the start of the main loop"
+    :initform (list (beacon:make :before-start)))
    (main-window
     :documentation "Engine main window"))
   (:documentation "The engine"))
@@ -28,6 +32,15 @@ Only one allowed per application.")
 
 (defun set-main-window (window)
   (setf (slot-value *engine* 'main-window) window))
+
+(defun create-window (title width height)
+  (sb-int:with-float-traps-masked (:overflow :invalid)
+    (sdl2:create-window :x :centered :y :centered
+                        :title title :w width :h height
+                        :flags '(:shown))))
+
+(defun get-main-window ()
+  (slot-value *engine* 'main-window))
 
 (defun make-engine (&rest options)
   (assert (null *engine*) nil
@@ -53,9 +66,24 @@ Asserts that it have been created earlier."
   (let ((managers (slot-value *engine* 'managers)))
     (get-hash (managers manager-type))))
 
+;;; Beacons
+(defun link (name callback)
+  (let ((beacon (get-beacon name)))
+    (assert beacon nil
+            "Beacon ~S not found int the engine" name)
+    (beacon:link beacon callback)))
+
+(defun get-beacon (name)
+  (find name (slot-value *engine* 'beacons) :key #'beacon:name))
+
+(defun blink (name)
+  (beacon:blink (get-beacon name)))
+
 (defun engine-loop ()
   (let ((options (slot-value *engine* 'options))
-        (init-flags (autowrap:mask-apply 'sdl2::sdl-init-flags '(:audio :video :timer :joystick :gamecontroller :noparachute))))
+        (init-flags (autowrap:mask-apply
+                     'sdl2::sdl-init-flags
+                     '(:audio :video :timer :joystick :gamecontroller :noparachute))))
     (unwind-protect
          (progn
            (sb-int:with-float-traps-masked (:invalid)
@@ -63,10 +91,10 @@ Asserts that it have been created earlier."
            (let* ((title (engine-options-window-title options))
                   (h (engine-options-window-h options))
                   (w (engine-options-window-w options))
-                  (win
-                    (sb-int:with-float-traps-masked (:overflow :invalid)
-                      (sdl2:create-window :x :centered :y :centered :title title :w h :h h :flags '(:shown)))))
+                  (win (create-window title w h)))
+             (set-main-window win)
              (unwind-protect
+                  (blink :before-start)
                   (sdl2:with-sdl-event (sdl-event)
                     (loop :while (eq (slot-value *engine* 'state) :running)
                           ;; process-events is defined in events.lisp
