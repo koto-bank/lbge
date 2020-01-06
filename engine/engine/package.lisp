@@ -16,4 +16,11 @@
    :get-manager
    :make-engine-options
    :start
-   ))
+
+   ;; Engine beacons
+   :get-beacon
+   :link
+
+   ;; Windows
+   :create-window
+   :get-main-window))
