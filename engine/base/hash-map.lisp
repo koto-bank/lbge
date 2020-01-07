@@ -3,16 +3,16 @@
 (defclass hash ()
   (internal))
 
-(defun make-hash ()
+(defun make-hash (&optional pairs)
   (let ((h (make-instance 'hash)))
-    (setf (slot-value h 'internal)
-          (make-hash-table))
+    (setf (slot-value h 'internal) (make-hash-table))
+    (set-hash h pairs)
     h))
 
 (defun get-hash (hash key)
   (gethash key (slot-value hash 'internal)))
 
-(defmacro set-hash (hash (key value))
-  `(setf
-    (gethash ,key (slot-value ,hash 'internal))
-    ,value))
+(defun set-hash (hash &optional pairs)
+  (dolist (pair pairs hash)
+    (setf (gethash (first pair) (slot-value hash 'internal))
+          (last pair))))

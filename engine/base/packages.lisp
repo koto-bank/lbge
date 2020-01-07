@@ -1,3 +1,5 @@
+(in-package :cl)
+
 (defpackage :lbge.hash
   (:use :cl)
   (:export :make-hash
@@ -7,16 +9,14 @@
 (defpackage :lbge.beacon
   (:use :cl)
   (:nicknames :beacon)
-  (:export
-   :make
-   :name
-   :links
-   :link
-   :unlink
-   :unlink-all
-   :blink))
+  (:export :make
+           :name
+           :links
+           :link
+           :unlink
+           :unlink-all
+           :blink))
 
 (defpackage :lbge.utils
   (:use :cl)
-  (:export
-   :println))
+  (:export :println))
