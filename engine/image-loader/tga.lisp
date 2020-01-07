@@ -1,35 +1,44 @@
 (in-package :lbge.image-loader.tga)
 
 (defun tga (path)
-  "Returns the `lbge.image-loader.image::image` object for `path` file."
-  (let* ((raw (alexandria:read-file-into-byte-vector path))
-         (width (get-width raw))
-         (height (get-height raw)))
-    (make-image :width width
-                :height height
-                :channels (get-channels raw)
-                :data (get-data (* width height) raw))))
-(tga "~/USER/code/cl/lbge/engine/image-loader/t/test-file.tga")
-(defun get-width (raw)
-  (+ (* (aref raw 13) 256)
-     (aref raw 12)))
+  (let* ((raw (alexandria:read-file-into-byte-vector))
+         (data (parse raw)))
+    (make-image :width (make-16bits (aref raw 12) (aref raw 13))
+                :height (make-16bits (aref raw 14) (aref raw 15))
+                :channels (format nil "rgba~a" (aref raw 16))
+                :data (get-data raw (* width height)))))
 
-(defun get-height (raw)
-  (+ (* (aref raw 15) 256)
-     (aref raw 14)))
+(defun get-data (raw)
+  (let* ((bytes-count (* (make-16bits (aref raw 12) (aref raw 13)) ; Width pixels
+                         (make-16bits (aref raw 14) (aref raw 15)) ; Height pixels
+                         (aref raw 16))) ; Bytes per pixel
+         (screen-destination (logand (aref raw 17) #0b00110000))
+         (data-start-pos (get-data-start-pos raw))
+         (data (if * (> 3 (aref raw 2)) ; RLE check
+                   (decode-rle raw data-start-pos bytes-count)
+                   (subseq raw data-start-pos (+ data-start-pos bytes-count)))))
+    (cond ;; TODO
+      ((= #0b00 screen-destination)q)
+      ((= #0b01 screen-destination))
+      ((= #0b10 screen-destination) data)
+      ((= #0b11 screen-destination)))))
 
-(defun get-channels (raw)
-  (format nil "rgba~a" (aref raw 16)))
+(defun decode-rle (raw start-pos bytes-count))
+  ;; TODO
 
-(defun get-data (image-length raw)
-  (let* ((header-length 17)
-         (image-id-length (aref raw 0))
-         (color-map-included? (aref raw 1))
-         (first-data-byte
-           (+ header-length
-              image-id-length
-              (unless (= color-map-included? 0)
-                (* (+ (* (aref raw 6) 256)
-                      (aref raw 5))
-                   (aref raw 7))))))
-    (subseq raw first-data-byte (+ first-data-byte (- image-length 1)))))
+(defun get-data-start-pos (raw)
+  (+ 17 ; Header last byte position
+     (aref raw 0) ; Image ID field's size
+     (get-color-map-size raw)))
+
+(defun get-color-map-size (raw)
+  (if (= (aref raw 2) 0)
+      0
+      (* (make-16bits (aref raw 6) (aref raw 7)) ; Count of entries
+         (aref raw 8)))) ; Size of entry
+
+(defun make-16bits (f-byte s-byte)
+  "Merge two bytes to one 2 byte value."
+  (+ (ash f-byte 8) s-byte))
+
+
