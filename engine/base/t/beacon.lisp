@@ -26,18 +26,18 @@
       (beacon:link beacon #'mult)
       (beacon:link beacon callback)
       (ok (= 2 (length (beacon:links beacon))))
-      (ok (eq (first (beacon:links beacon)) #'mult))
-      (ok (eq (second (beacon:links beacon)) callback))
+      (ok (eq (first (beacon:links beacon)) callback))
+      (ok (eq (second (beacon:links beacon)) #'mult))
 
       (beacon:unlink beacon #'mult)
       (ok (= 1 (length (beacon:links beacon))))
-      (ok (eq (first (beacon:links beacon) callback)))
+      (ok (eq (first (beacon:links beacon)) callback))
       (ok (signals (beacon:link beacon callback)))
 
       (beacon:link beacon #'mult)
       (ok (= 2 (length (beacon:links beacon))))
-      (ok (eq (first (beacon:links beacon)) callback))
-      (ok (eq (second (beacon:links beacon)) #'mult))
+      (ok (eq (first (beacon:links beacon)) #'mult))
+      (ok (eq (second (beacon:links beacon)) callback))
 
       (beacon:unlink-all beacon)
       (ok (null (beacon:links beacon))))
