@@ -39,7 +39,8 @@
   (push callback (links beacon)))
 
 (defun unlink (beacon callback)
-  (delete callback (links beacon)))
+  (setf (links beacon)
+        (delete callback (links beacon))))
 
 (defun unlink-all (beacon)
   (rplacd beacon nil))
