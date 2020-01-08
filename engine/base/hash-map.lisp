@@ -1,9 +1,3 @@
-(defpackage :lbge.hash
-  (:use :cl)
-  (:export :make-hash
-           :get-hash
-           :set-hash))
-
 (in-package :lbge.hash)
 
 (defclass hash ()

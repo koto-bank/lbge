@@ -7,7 +7,8 @@
   :components
   ((:module base
     :components
-    ((:file "hash-map")
+    ((:file "packages")
+     (:file "hash-map")
      (:file "utils")
      (:file "beacon")))
    (:module application

@@ -1,15 +1,3 @@
-(defpackage :lbge.beacon
-  (:use :cl)
-  (:nicknames :beacon)
-  (:export
-   :make
-   :name
-   :links
-   :link
-   :unlink
-   :unlink-all
-   :blink))
-
 (in-package :lbge.beacon)
 
 ;;; Beacon can be linked to an unlimited number of callbacks,
