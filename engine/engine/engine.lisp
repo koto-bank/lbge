@@ -86,7 +86,7 @@ Asserts that it have been created earlier."
                      '(:audio :video :timer :joystick :gamecontroller :noparachute))))
     (unwind-protect
          (progn
-           (sb-int:with-float-traps-masked (:invalid)
+           (sb-int:with-float-traps-masked (:invalid :overflow)
              (sdl2::check-rc (sdl2-ffi.functions:sdl-init init-flags)))
            (let* ((title (engine-options-window-title options))
                   (h (engine-options-window-h options))
