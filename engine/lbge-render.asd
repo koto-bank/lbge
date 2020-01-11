@@ -21,5 +21,5 @@
      (:file "matrix")))
    (:module render
     :components
-    ((:file "package")
+    ((:file "packages")
      (:file "render")))))

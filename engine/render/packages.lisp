@@ -2,7 +2,7 @@
   (:use :cl :lbge.hash)
   (:export
    :renderer
-   :make-renderer
+   :make-renderer))
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
