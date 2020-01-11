@@ -37,4 +37,4 @@
   "Call all linked callbacks with `args'"
   (mapcar (lambda (callback)
             (apply callback args))
-          (links beacon)))
+          (reverse (links beacon))))
