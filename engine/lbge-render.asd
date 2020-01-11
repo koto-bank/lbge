@@ -22,9 +22,4 @@
    (:module render
     :components
     ((:file "package")
-     (:module window
-      :components
-      ((:file "window")
-       #+linux (:file "window.linux")
-       #+os-macosx (:file "window.macos")))
      (:file "render")))))
