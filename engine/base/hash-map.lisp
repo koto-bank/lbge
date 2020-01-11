@@ -15,4 +15,8 @@
 (defun set-hash (hash &optional pairs)
   (dolist (pair pairs hash)
     (setf (gethash (first pair) (slot-value hash 'internal))
-          (last pair))))
+          (second pair))))
+
+(defun equal-hash (hash-1 hash-2)
+  (equalp (slot-value hash-1 'internal)
+          (slot-value hash-2 'internal)))
