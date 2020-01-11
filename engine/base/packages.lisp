@@ -4,7 +4,8 @@
   (:use :cl)
   (:export :make-hash
            :get-hash
-           :set-hash))
+           :set-hash
+           :equal-hash))
 
 (defpackage :lbge.beacon
   (:use :cl)
