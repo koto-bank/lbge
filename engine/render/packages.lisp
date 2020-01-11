@@ -4,11 +4,6 @@
    :renderer
    :make-renderer
 
-   ;;; Windows
-   :make-window
-   :window
-   :initialize-backend))
-
 ;;; low-level stuff
 (defpackage :lbge.render.gl
   (:use :cl :lbge.render)
