@@ -12,8 +12,10 @@
     :documentation "Options passed at startup")
    (beacons
     :documentation "Available engine beacons. Current list:
-:before-start - blinks just before the start of the main loop"
-    :initform (list (beacon:make :before-start)))
+:before-start - blinks just before the start of the main loop
+:on-loop - blinks on every loop iteration"
+    :initform (list (beacon:make :before-start)
+                    (beacon:make :on-loop)))
    (main-window
     :documentation "Engine main window"))
   (:documentation "The engine"))
@@ -98,7 +100,8 @@ Asserts that it have been created earlier."
                   (sdl2:with-sdl-event (sdl-event)
                     (loop :while (eq (slot-value *engine* 'state) :running)
                           ;; process-events is defined in events.lisp
-                          :do (lbge.engine.events:process-events *engine* sdl-event)))
+                          :do (progn (lbge.engine.events:process-events *engine* sdl-event)
+                                     (blink :on-loop))))
                (sb-int:with-float-traps-masked (:invalid)
                  (sdl2:destroy-window win)))))
       (sdl2:sdl-quit))))
