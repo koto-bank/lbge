@@ -1,12 +1,20 @@
 (defpackage :lbge.test.hash
-  (:use :cl :rove :lbge.hash))
+  (:use :cl :rove))
 
 (in-package :lbge.test.hash)
 
 (deftest hash-test
-    (let ((h (hash-make '((:a 1) (:b 2)))))
-      (ok (eq (hash-get h :a) 1))
-      (ok (null (hash-get h :c)))
-      (ok (eq (hash-get h :c 3) 3))
-      (ok (hash-equal (hash-set (hash-make) '((:a 1) (:b 2))) h))
-      (ng (hash-equal (hash-set (hash-make) '((:c 3))) h))))
+  (testing "get"
+    (let ((h (hash:make :a 1)))
+      (ok (null (hash:get h :b)))
+      (ok (= (hash:get h :a) 1))
+      (ok (= (hash:get h :b 2) 2))))
+  (testing "set"
+    (let ((h (hash:make)))
+      (hash:set h :a '((:a 1)))
+      (ok (= (hash:get h :a) 1))))
+  (testing "equalp"
+    (let ((h1 (hash:make '((:a 1) (:b 2))))
+          (h2 (hash:make '((:c 3) (:d 4)))))
+      (ok (hash:equalp h1 (hash:make '((:a 1) (:b 2)))))
+      (ng (hash:equalp h1 h2)))))

@@ -2,10 +2,11 @@
 
 (defpackage :lbge.hash
   (:use :cl)
-  (:export :hash-make
-           :hash-get
-           :hash-set
-           :hash-equal))
+  (:nicknames :hash)
+  (:export :make
+           :get
+           :set
+           :equalp))
 
 (defpackage :lbge.beacon
   (:use :cl)
