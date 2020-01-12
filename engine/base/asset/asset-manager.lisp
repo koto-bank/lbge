@@ -23,14 +23,14 @@ E.g.: (:texture . #P\"assets/textures\")"
 (defun get-asset (asset-manager asset-key)
   "Get already loaded asset or attempt to load/create it by provided key"
   (with-slots (loaded-assets) asset-manager
-    (if (null (get-hash loaded-assets asset-key))
+    (if (null (hash-get loaded-assets asset-key))
       (let ((new-asset (load-asset asset-manager asset-key)))
         (push new-asset loaded-assets)
         new-asset)
       asset)))
 
 (defun add-handler (asset-manager type handler)
-"Add an asset handler
+  "Add an asset handler
 `type' is keyword denoting for what asset key types handler will be used (e.g. texture)
 `handler' is a constructed handler instance"
   (assert (closer-mop:subclassp (type-of handler)
