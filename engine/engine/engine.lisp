@@ -61,12 +61,12 @@ Asserts that it have been created earlier."
 (defun add-manager (engine manager-type)
   "Add new manager to engine"
   (let ((managers (slot-value *engine* 'managers)))
-    (assert (null (get-hash managers manager-type)) nil
+    (assert (null (hash-get managers manager-type)) nil
             "Manager ~S already registered" manager-type)))
 
 (defun get-manager (manager-type)
   (let ((managers (slot-value *engine* 'managers)))
-    (get-hash (managers manager-type))))
+    (hash-get (managers manager-type))))
 
 ;;; Beacons
 (defun link (name callback)
