@@ -64,4 +64,11 @@
    :get-at
    :set-at
    :get-row
-   :get-col))
+   :get-col
+
+   ;; quaternions
+   :make-quaternion
+   :quaternion-x
+   :quaternion-y
+   :quaternion-z
+   :quaternion-w))
