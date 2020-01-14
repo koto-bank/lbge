@@ -19,7 +19,8 @@
      (:file "common")
      (:file "vector")
      (:file "matrix")
-     (:file "quaternion")))
+     (:file "quaternion")
+     (:file "transform")))
    (:module render
     :components
     ((:file "packages")
