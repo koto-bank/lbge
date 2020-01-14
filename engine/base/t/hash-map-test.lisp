@@ -16,5 +16,5 @@
   (testing "equal-hash"
     (let ((h1 (make-hash '((:a 1) (:b 2))))
           (h2 (make-hash '((:c 3) (:d 4)))))
-      (ok (equal-hash h1 (make-hash '((:a 1) (:b 2)))))
-      (ng (equal-hash h1 h2)))))
+      (ok (hash-equal h1 (make-hash '((:a 1) (:b 2)))))
+      (ng (hash-equal h1 h2)))))
