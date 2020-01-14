@@ -17,6 +17,6 @@
     (setf (gethash (first pair) (slot-value hash 'internal))
           (second pair))))
 
-(defun equal-hash (hash-1 hash-2)
+(defun hash-equal (hash-1 hash-2)
   (equalp (slot-value hash-1 'internal)
           (slot-value hash-2 'internal)))
