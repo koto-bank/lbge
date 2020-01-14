@@ -71,4 +71,11 @@
    :quaternion-x
    :quaternion-y
    :quaternion-z
-   :quaternion-w))
+   :quaternion-w
+
+   ;; transform
+   :make-transform
+   :translation
+   :rotation
+   :scale
+   :transform-matrix))
