@@ -105,14 +105,15 @@ Asserts that it have been created earlier."
                   (win (make-window title w h)))
              (set-main-window win)
              (unwind-protect
-                  (blink :before-start)
-               (sdl2:with-sdl-event (sdl-event)
-                 (loop :while (eq (slot-value *engine* 'state) :running)
-                       ;; process-events is defined in events.lisp
-                       :do (progn (lbge.engine.events:process-events *engine* sdl-event)
-                                  (blink :on-loop))))
-               (sb-int:with-float-traps-masked (:invalid)
-                 (sdl2:destroy-window win)))))
+                  (progn
+                    (blink :before-start)
+                    (sdl2:with-sdl-event (sdl-event)
+                      (loop :while (eq (slot-value *engine* 'state) :running)
+                            ;; process-events is defined in events.lisp
+                            :do (progn (lbge.engine.events:process-events *engine* sdl-event)
+                                       (blink :on-loop))))
+                    (sb-int:with-float-traps-masked (:invalid)
+                      (sdl2:destroy-window win))))))
       (sdl2:sdl-quit))))
 
 (defun start ()
