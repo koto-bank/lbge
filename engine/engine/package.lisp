@@ -22,5 +22,8 @@
    :link
 
    ;; Windows
-   :create-window
-   :get-main-window))
+   :make-window
+   :get-main-window
+
+   ;; Renderer
+   :install-renderer))

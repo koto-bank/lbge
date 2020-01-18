@@ -17,7 +17,9 @@
     :initform (list (beacon:make :before-start)
                     (beacon:make :on-loop)))
    (main-window
-    :documentation "Engine main window"))
+    :documentation "Engine main window")
+   (renderer :documentation "Current renderer"
+             :initform nil))
   (:documentation "The engine"))
 
 (defstruct engine-options
@@ -35,11 +37,11 @@ Only one allowed per application.")
 (defun set-main-window (window)
   (setf (slot-value *engine* 'main-window) window))
 
-(defun create-window (title width height)
+(defun make-window (title width height)
   (sb-int:with-float-traps-masked (:overflow :invalid)
     (sdl2:create-window :x :centered :y :centered
                         :title title :w width :h height
-                        :flags '(:shown))))
+                        :flags '(:shown :opengl))))
 
 (defun get-main-window ()
   (slot-value *engine* 'main-window))
@@ -81,6 +83,13 @@ Asserts that it have been created earlier."
 (defun blink (name)
   (beacon:blink (get-beacon name)))
 
+;;; Renderer
+(defun install-renderer (renderer)
+  (unless (null renderer)
+    (assert (null (slot-value *engine* 'renderer))
+            nil "Renderer already installed"))
+  (setf (slot-value *engine* 'renderer) renderer))
+
 (defun engine-loop ()
   (let ((options (slot-value *engine* 'options))
         (init-flags (autowrap:mask-apply
@@ -93,15 +102,15 @@ Asserts that it have been created earlier."
            (let* ((title (engine-options-window-title options))
                   (h (engine-options-window-h options))
                   (w (engine-options-window-w options))
-                  (win (create-window title w h)))
+                  (win (make-window title w h)))
              (set-main-window win)
              (unwind-protect
                   (blink :before-start)
-                  (sdl2:with-sdl-event (sdl-event)
-                    (loop :while (eq (slot-value *engine* 'state) :running)
-                          ;; process-events is defined in events.lisp
-                          :do (progn (lbge.engine.events:process-events *engine* sdl-event)
-                                     (blink :on-loop))))
+               (sdl2:with-sdl-event (sdl-event)
+                 (loop :while (eq (slot-value *engine* 'state) :running)
+                       ;; process-events is defined in events.lisp
+                       :do (progn (lbge.engine.events:process-events *engine* sdl-event)
+                                  (blink :on-loop))))
                (sb-int:with-float-traps-masked (:invalid)
                  (sdl2:destroy-window win)))))
       (sdl2:sdl-quit))))
