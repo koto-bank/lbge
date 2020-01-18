@@ -24,4 +24,12 @@
    (:module render
     :components
     ((:file "packages")
-     (:file "render")))))
+     (:file "camera")
+     (:file "render-object")
+     (:file "render")
+     (:file "backend")
+     (:file "primitives")))
+   (:module gl
+    :pathname "render/low-level/gl"
+    :components
+    ((:file "backend")))))
