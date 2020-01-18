@@ -16,6 +16,19 @@
    :renderer
    :make-renderer
 
+   ;; Render functions
+   :render
+   :get-backend
+
+   ;; Render objects
+   :add-object
+   :add-objects
+
+   ;; Camera
+   :camera
+   :add-camera
+   :set-current-camera
+   :make-ortho-camera
 
    ;; Primitives
    :make-rect
