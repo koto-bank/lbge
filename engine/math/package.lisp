@@ -1,6 +1,5 @@
 (defpackage :lbge.math
   (:use :cl)
-  (:nicknames :m)
   (:export
    ; exports from common.lisp
    :eqfp

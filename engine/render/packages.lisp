@@ -1,6 +1,5 @@
 (defpackage :lbge.render.backend
   (:use :cl)
-  (:nicknames :b)
   (:export
    ;; Base backend class and middle API
    :backend
@@ -11,7 +10,9 @@
    :deinit))
 
 (defpackage :lbge.render
-  (:use :cl :lbge.hash)
+  (:use :cl)
+  (:local-nicknames (:b :lbge.render.backend)
+                    (:m :lbge.math))
   (:export
    :renderer
    :make-renderer
@@ -38,7 +39,11 @@
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
-  (:use :cl :lbge.render)
+  (:use
+   :cl)
+  (:local-nicknames (:b :lbge.render.backend)
+                    (:r :lbge.render))
   (:export
    :make-context
-   :compile-effect))
+   :gl-backend
+   :delete-context))
