@@ -65,6 +65,7 @@
    :set-at
    :get-row
    :get-col
+   :make-ortho-projection
 
    ;; quaternions
    :make-quaternion

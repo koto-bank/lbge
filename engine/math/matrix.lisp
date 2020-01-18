@@ -253,7 +253,7 @@
                                 (get-col matrix i)
                                 (get-row value j))))))
     outm))
- 
+
 
 (defmethod mul ((matrix float2x2) (value float2))
   (make-float2
@@ -434,3 +434,15 @@
 
 (defmethod neqm (matrix1 matrix2)
   (not (eqm matrix1 matrix2)))
+
+(defun make-ortho-projection (&keyword left right top bottom near far)
+  (let ((l left)
+        (r right)
+        (tp top)
+        (b bottom)
+        (n near)
+        (f far))
+    (make-float4x4 (/ 2 (- r l)) 0 0 (- (/ (+ r l) (- r l)))
+                   0 (/ 2 (- tp b)) 0 (- (/ (+ tp b) (- tp b)))
+                   0 0 (/ -2 (- n f)) (- (/ (+ f n) (- f n)))
+                   0 0 0 1)))
