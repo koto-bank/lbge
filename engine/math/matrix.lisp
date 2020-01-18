@@ -435,7 +435,7 @@
 (defmethod neqm (matrix1 matrix2)
   (not (eqm matrix1 matrix2)))
 
-(defun make-ortho-projection (&keyword left right top bottom near far)
+(defun make-ortho-projection (&key left right top bottom near far)
   (let ((l left)
         (r right)
         (tp top)
