@@ -1,13 +1,17 @@
 (in-package :lbge.math)
 
 (defclass transform ()
-  ((translation :initform (make-float3) :accessor translation)
-   (rotation :initform (make-quaternion) :accessor rotation)
-   (scale :initform (make-float3) :accessor scale))
+  ((translation :initform (make-float3 0.0f0)
+                :initarg :translation
+                :accessor translation)
+   (rotation :initform (make-quaternion)
+             :accessor rotation)
+   (scale :initform (make-float3 1.0f0)
+          :accessor scale))
   (:documentation "Contains transformation parameters"))
 
-(defun make-transform ()
-  (make-instance 'transform))
+(defun make-transform (&key pos)
+  (make-instance 'transform :translation pos))
 
 (defmethod mul ((t1 transform) (t2 transform))
   (let ((r (make-transform)))
