@@ -76,23 +76,44 @@
   (aref (in-list vec) 3))
 
 
-(defun make-float2 (a1 &optional a2)
-  (if a2
-      (make-instance 'float2 :in-list (make-array '(2)
-                                                  :initial-contents (list a1 a2)))
-      (make-instance 'float2 :in-list a1)))
+(defun make-float2 (&optional a1 a2)
+  (cond ((null a1)
+         (make-instance
+          'float2
+          :in-list 0.0f0))
+        ((and a1 a2)
+         (make-instance
+          'float2
+          :in-list (make-array
+                    '(2)
+                    :initial-contents (list a1 a2))))
+        (a1 (make-instance 'float2 :in-list a1))))
 
-(defun make-float3 (a1 &optional a2 a3)
-  (if (and a2 a3)
-      (make-instance 'float3 :in-list (make-array '(3)
-                                                  :initial-contents (list a1 a2 a3)))
-      (make-instance 'float3 :in-list a1)))
+(defun make-float3 (&optional a1 a2 a3)
+  (cond
+    ((null a1)
+     (make-instance
+      'float3
+      :in-list 0.0f0))
+    ((and a2 a3)
+     (make-instance
+      'float3
+      :in-list (make-array
+                '(3)
+                :initial-contents (list a1 a2 a3))))
+    (a1 (make-instance 'float3 :in-list a1))))
 
-(defun make-float4 (a1 &optional a2 a3 a4)
-  (if (and a2 a3 a4)
-      (make-instance 'float4 :in-list (make-array '(4)
-                                                  :initial-contents (list a1 a2 a3 a4)))
-      (make-instance 'float4 :in-list a1)))
+(defun make-float4 (&optional a1 a2 a3 a4)
+  (cond
+    ((null a1)
+     (make-instance 'float4
+                    :in-list 0.0f0))
+    ((and a1 a2 a3 a4)
+     (make-instance 'float4
+                    :in-list
+                    (make-array '(4)
+                                :initial-contents (list a1 a2 a3 a4))))
+    (a1 (make-instance 'float4 :in-list a1))))
 
 
 (defmethod add ((vector1 float2) vector2)
@@ -255,7 +276,7 @@
                (- (* (z vector1) (x vector2))
                   (* (x vector1) (z vector2)))
                (- (* (x vector1) (y vector2))
-                  (* (y vector1) (x vector2))))) 
+                  (* (y vector1) (x vector2)))))
 
 
 (defmethod normalize (vector)
