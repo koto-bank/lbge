@@ -9,6 +9,17 @@
    :present
    :deinit))
 
+(defpackage :lbge.render.shader
+  (:use :cl)
+  (:export
+   :shader
+   :add-stage
+   :compile
+   :link
+   :get-status
+   :get-errors
+   :delete))
+
 (defpackage :lbge.render
   (:use :cl)
   (:local-nicknames (:b :lbge.render.backend)
