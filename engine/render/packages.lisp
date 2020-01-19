@@ -7,7 +7,11 @@
    :clear
    :render
    :present
-   :deinit))
+   :deinit
+   ;; Shader handling
+   :add-shader
+   :shader-list
+   :use-shader))
 
 (defpackage :lbge.render.shader
   (:use :cl)
