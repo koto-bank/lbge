@@ -28,6 +28,7 @@
      (:file "render-object")
      (:file "render")
      (:file "backend")
+     (:file "shader")
      (:file "primitives")))
    (:module gl
     :pathname "render/low-level/gl"
