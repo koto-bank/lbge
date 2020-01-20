@@ -15,6 +15,9 @@
 
 (defpackage :lbge.render.shader
   (:use :cl)
+  (:shadow
+   cl:compile
+   cl:delete)
   (:export
    :shader
    :add-stage
