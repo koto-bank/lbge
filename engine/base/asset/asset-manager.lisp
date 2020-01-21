@@ -16,6 +16,9 @@ E.g.: (:texture . #P\"assets/textures\")"
     :documentation "An alist of pairs (handler-type . asset-handler)"
     :initform (list))))
 
+(defun make-asset-manager ()
+  (make-instance 'asset-handler))
+
 (defun add-root (asset-manager root-key new-root)
   (push (cons root-key new-root)
         (asset-roots asset-manager)))
