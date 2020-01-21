@@ -8,6 +8,7 @@
    :asset-data
    :asset-state
 
+   :make-asset-manager
    :asset-manager
    :asset-handler
    :add-handler
