@@ -17,9 +17,11 @@ E.g.: (:texture . #P\"assets/textures\")"
     :initform (list))))
 
 (defun make-asset-manager ()
-  (make-instance 'asset-handler))
+  (make-instance 'asset-manager))
 
 (defun add-root (asset-manager root-key new-root)
+  "Root key is a keyword, denoting friendly name of a new root: e.g.
+:texture #P\"assets/textures\")"
   (push (cons root-key new-root)
         (asset-roots asset-manager)))
 
@@ -28,7 +30,7 @@ E.g.: (:texture . #P\"assets/textures\")"
   (with-slots (loaded-assets) asset-manager
     (if (null (hash-get loaded-assets asset-key))
       (let ((new-asset (load-asset asset-manager asset-key)))
-        (push new-asset loaded-assets)
+        (hash-set loaded-assets (list (list asset-key new-asset)))
         new-asset)
       asset)))
 

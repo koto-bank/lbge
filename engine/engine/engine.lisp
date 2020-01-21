@@ -60,7 +60,7 @@ Asserts that it have been created earlier."
   (assert *engine* nil "Engine is not created")
   *engine*)
 
-(defun add-manager (engine manager-type)
+(defun add-manager (manager-type)
   "Add new manager to engine"
   (let ((managers (slot-value *engine* 'managers)))
     (assert (null (hash-get managers manager-type)) nil

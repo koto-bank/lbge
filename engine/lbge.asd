@@ -38,7 +38,8 @@
      (:file "asset")
      (:file "asset-handler")
      (:file "asset-manager")
-     (:file "sexp-asset-handler")))
+     (:file "sexp-asset-handler")
+     (:file "glsl-asset-handler")))
    (:module engine
     :components
     ((:file "package")
