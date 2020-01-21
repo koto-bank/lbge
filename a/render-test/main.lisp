@@ -20,10 +20,20 @@
         (c (lbge.render:make-ortho-camera :left 0.0f0 :right 1.0f0
                                           :top 1.0f0 :bottom 0.0f0
                                           :near 0.1f0 :far 1.0f0)))
-
     ;; Setup asset manager
-    (lbge.asset:add-root "a/render-test")
+    (lbge.asset:add-root a :root "a/render-test")
+    (lbge.asset:add-handler a :glsl-source (make-instance 'lbge.asset:glsl-asset-handler))
+    (lbge.engine:add-manager a)
 
+    ;; Install
+    (let ((frag-shader-asset
+            (lbge.asset:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/frag.glsl")))
+          (vert-shader-asset
+            (lbge.asset:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl"))))
+      (lbge.utils:println "Fragment shader:")
+      (lbge.utils:println (lbge.asset:asset-data frag-shader-asset))
+      (lbge.utils:println "Vertex shader:")
+      (lbge.utils:println (lbge.asset:asset-data vert-shader-asset)))
     (lbge.engine:install-renderer r)
     (lbge.render:add-camera r c)
     (lbge.render:set-current-camera r c)
