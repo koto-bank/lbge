@@ -12,7 +12,7 @@
     (if file-path
       (let ((shader-lines nil))
         (with-open-file (shader-file
-                         source
+                         file-path
                          :direction :input
                          :if-does-not-exist :error)
           (do ((line (read-line shader-file nil)
@@ -20,7 +20,8 @@
               ((null line))
             (setf shader-lines (cons (format nil "~a~%" line)
                                      shader-lines))))
-        (reverse shader-lines))
+        (setf (asset-data asset) (reverse shader-lines)
+              (asset-state asset) :loaded))
 
       (setf (asset-data asset) (format nil "File ~S not found" (slot-value key 'path))
             (asset-state asset) :error))

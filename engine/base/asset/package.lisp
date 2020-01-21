@@ -17,4 +17,5 @@
    :asset-roots
    :get-asset
 
-   :sexp-asset-handler))
+   :sexp-asset-handler
+   :glsl-asset-handler))
