@@ -7,6 +7,7 @@
 
 (defpackage :lbge.engine
   (:use :cl :lbge.asset :lbge.hash)
+  (:local-nicknames (:beacon :lbge.beacon))
   (:export
    :engine
    :delete-engine

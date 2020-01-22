@@ -9,7 +9,6 @@
 
 (defpackage :lbge.beacon
   (:use :cl)
-  (:nicknames :beacon)
   (:export :make
            :name
            :links
