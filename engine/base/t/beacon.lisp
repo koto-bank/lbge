@@ -1,5 +1,6 @@
 (defpackage :lbge.test.beacon
-  (:use :cl :rove))
+  (:use :cl :rove)
+  (:local-nicknames (:beacon :lbge.beacon)))
 
 (in-package :lbge.test.beacon)
 
