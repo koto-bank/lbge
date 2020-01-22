@@ -20,4 +20,6 @@
 
 (defpackage :lbge.utils
   (:use :cl)
-  (:export :println))
+  (:export
+   :println
+   :princln))
