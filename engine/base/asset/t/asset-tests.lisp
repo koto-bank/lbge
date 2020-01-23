@@ -6,7 +6,7 @@
 (deftest asset-path-test
   (testing "Asset path parsing"
     (let* ((path ":texture/path/to/file.tga")
-           (reference-path (make-pathname :name "path/to/file.tga"))
+           (reference-path (parse-namestring "path/to/file.tga"))
            (parsed-path (parse-asset-path path)))
       (ok (eql :texture (car parsed-path)))
       (ok (path-eq (cdr parsed-path) reference-path)))))

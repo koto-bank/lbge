@@ -25,7 +25,7 @@
   "Parse asset path and return pair (:root-name . #P\"rel-path\")"
   (cl-ppcre:register-groups-bind (root path)
       ("^(.*?)/(.*)$" asset-path)
-    (cons (read-from-string root) (uiop:make-pathname* :name path))))
+    (cons (read-from-string root) (parse-namestring path))))
 
 (defun merge-paths (path-1 path-2)
   (uiop:merge-pathnames* path-2 (uiop:ensure-directory-pathname path-1)))
