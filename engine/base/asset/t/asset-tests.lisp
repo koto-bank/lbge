@@ -20,7 +20,7 @@
         (ok (path-eq (cdr (assoc :tmp roots))
                      (make-path :dir "/tmp/")))))
     (add-root a :test-dir (root-relative-path "base/asset/t"))
-    (add-handler a :sexp-data (make-instance 'sexp-asset-handler))
+    (add-handler a (make-instance 'sexp-asset-handler))
     (testing "Asset manager loading sexp assets"
       (let* ((sexp-data-key (make-asset-key :sexp-data :disk ":test-dir/test-data.data"
                                             (find-package :lbge.test.assets)))

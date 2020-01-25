@@ -3,8 +3,14 @@
 (defclass glsl-asset-handler (asset-handler)
   ())
 
+(defun glsl-asset-type ()
+  :glsl-source)
+
+(defmethod handler-get-type ((h glsl-asset-handler))
+  (glsl-asset-type))
+
 (defmethod handler-get-asset ((handler glsl-asset-handler) asset-manager key)
-  (assert (eq (slot-value key 'asset-type) :glsl-source) nil)
+  (assert (eq (slot-value key 'asset-type) (glsl-asset-type)) nil)
   (let ((asset (make-instance 'asset))
         (file-path (find-asset-file-by-path
                     (asset-roots asset-manager)

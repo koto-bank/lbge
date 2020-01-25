@@ -34,7 +34,7 @@ E.g.: (:texture . #P\"assets/textures\")"
         new-asset)
       asset)))
 
-(defun add-handler (asset-manager type handler)
+(defun add-handler (asset-manager handler)
   "Add an asset handler
 `type' is keyword denoting for what asset key types handler will be used (e.g. texture)
 `handler' is a constructed handler instance"
@@ -42,10 +42,11 @@ E.g.: (:texture . #P\"assets/textures\")"
                                 (find-class 'asset-handler))
           nil "Handler must be a subclass of `asset-handler' class")
   (with-slots ((handlers asset-handlers)) asset-manager
-    (assert (not (assoc type handlers))
-            nil
-            "Handler for ~S already registered" type)
-    (push (cons type handler) handlers)))
+    (let ((type (handler-get-type handler)))
+      (assert (not (assoc type handlers))
+              nil
+              "Handler for ~S already registered" type)
+      (push (cons type handler) handlers))))
 
 (defun load-asset (asset-manager asset-key)
   "Load asset by key.
