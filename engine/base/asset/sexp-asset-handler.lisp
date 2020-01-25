@@ -3,8 +3,14 @@
 (defclass sexp-asset-handler (asset-handler)
   ())
 
+(defun sexp-asset-type ()
+  :sexp-data)
+
+(defmethod handler-get-type ((h sexp-asset-handler))
+  (sexp-asset-type))
+
 (defmethod handler-get-asset ((handler sexp-asset-handler) asset-manager key)
-  (assert (eq (slot-value key 'asset-type) :sexp-data) nil)
+  (assert (eq (slot-value key 'asset-type) (sexp-asset-type)) nil)
   (let ((asset (make-instance 'asset))
         (package-to-intern (slot-value key 'options))
         (file-path (find-asset-file-by-path

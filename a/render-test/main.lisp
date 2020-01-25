@@ -22,7 +22,7 @@
                                           :near 0.1f0 :far 1.0f0)))
     ;; Setup asset manager
     (lbge.asset:add-root a :root "a/render-test")
-    (lbge.asset:add-handler a :glsl-source (make-instance 'lbge.asset:glsl-asset-handler))
+    (lbge.asset:add-handler a (make-instance 'lbge.asset:glsl-asset-handler))
     (lbge.engine:add-manager a)
 
     ;; Install
