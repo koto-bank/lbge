@@ -15,6 +15,8 @@
         (file-path (find-asset-file-by-path
                     (asset-roots asset-manager)
                     (slot-value key 'path))))
+    (log:debug "File path ~S" file-path)
+    (log:debug "Asset key ~S" key)
     (if file-path
       (let ((shader-lines nil))
         (with-open-file (shader-file

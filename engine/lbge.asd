@@ -3,6 +3,7 @@
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
                :lbge-render
+               :log4cl
                :closer-mop :cl-ppcre)
   :components
   ((:module base
