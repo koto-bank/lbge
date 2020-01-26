@@ -7,6 +7,7 @@
 (in-package :lbge-render-test)
 
 (defun run ()
+  (log:config :info)
   (lbge.engine:delete-engine)
   (lbge.engine:make-engine)
   (lbge.engine.events:add-event-handlers
@@ -30,10 +31,11 @@
             (lbge.asset:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/frag.glsl")))
           (vert-shader-asset
             (lbge.asset:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl"))))
-      (lbge.utils:println "Fragment shader:")
-      (lbge.utils:println (lbge.asset:asset-data frag-shader-asset))
-      (lbge.utils:println "Vertex shader:")
-      (lbge.utils:println (lbge.asset:asset-data vert-shader-asset)))
+      (log:info "Fragment shader:")
+      (log:info (lbge.asset:asset-data frag-shader-asset))
+      (log:info "Vertex shader:")
+      (log:info (lbge.asset:asset-data vert-shader-asset)))
+    (log:debug "Load truename: ~S" *load-truename*)
     (lbge.engine:install-renderer r)
     (lbge.render:add-camera r c)
     (lbge.render:set-current-camera r c)
