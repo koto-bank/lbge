@@ -31,6 +31,6 @@
         (setf (asset-data asset) (reverse shader-lines)
               (asset-state asset) :loaded))
 
-      (setf (asset-data asset) (format nil "File ~S not found" (slot-value key 'path))
+      (setf (asset-data asset) (format nil "File '~A' not found" (slot-value key 'path))
             (asset-state asset) :error))
     asset))

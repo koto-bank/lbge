@@ -21,8 +21,9 @@ E.g.: (:texture . #P\"assets/textures\")"
 
 (defun add-root (asset-manager root-key new-root)
   "Root key is a keyword, denoting friendly name of a new root: e.g.
-:texture #P\"assets/textures\")"
-  (push (cons root-key new-root)
+:texture #P\"assets/textures\")
+Root pathname must be set relative to the app root (see lbge.filesystem)"
+  (push (cons root-key (f:root-relative-path new-root))
         (asset-roots asset-manager)))
 
 (defun get-asset (asset-manager asset-key)

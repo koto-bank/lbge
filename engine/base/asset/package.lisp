@@ -1,5 +1,6 @@
 (defpackage :lbge.asset
-  (:use :cl :lbge.hash :lbge.filesystem)
+  (:use :cl :lbge.hash)
+  (:local-nicknames (:f :lbge.filesystem))
   (:export
    :asset-key
    :make-asset-key
