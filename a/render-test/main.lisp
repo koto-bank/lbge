@@ -21,8 +21,9 @@
         (c (lbge.render:make-ortho-camera :left 0.0f0 :right 1.0f0
                                           :top 1.0f0 :bottom 0.0f0
                                           :near 0.1f0 :far 1.0f0)))
+    (lbge.filesystem:set-app-root-to-system 'lbge-render-test)
     ;; Setup asset manager
-    (lbge.asset:add-root a :root "a/render-test")
+    (lbge.asset:add-root a :root ".")
     (lbge.asset:add-handler a (make-instance 'lbge.asset:glsl-asset-handler))
     (lbge.engine:add-manager a)
 

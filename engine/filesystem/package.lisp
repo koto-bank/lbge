@@ -2,6 +2,8 @@
   (:use :cl)
   (:export
    :get-app-root
+   :set-app-root
+   :set-app-root-to-system
    :is-exist
    :is-file
    :is-dir
