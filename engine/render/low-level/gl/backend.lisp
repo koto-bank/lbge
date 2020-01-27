@@ -18,6 +18,10 @@
 
 (defmethod b:render ((backend gl-backend) renderer))
 
+(defmethod b:make-shader ((backend gl-backend))
+  (let ((shader (make-instance 'gl-shader)))
+    ()))
+
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)
     (sdl2:gl-swap-window (slot-value backend 'window))))
