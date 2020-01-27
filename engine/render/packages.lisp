@@ -60,7 +60,8 @@
   (:use
    :cl)
   (:local-nicknames (:b :lbge.render.backend)
-                    (:r :lbge.render))
+                    (:r :lbge.render)
+                    (:h :lbge.hash))
   (:export
    :make-context
    :gl-backend

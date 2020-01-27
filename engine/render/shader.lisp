@@ -6,9 +6,9 @@
 (defgeneric get-status (shader)
   (:documentation "Return shader state: :error, :compiled, :unknown"))
 
-(defgeneric add-stage (shader stage)
+(defgeneric add-stage (shader stages)
   (:documentation "Stage is backend pipeline step: fragment, hull,
- tesselation, etc. Specified by alist"))
+ tesselation, etc. Specified by alist, e.g. (:fragment frag-asset :vertex vert-asset"))
 (defgeneric compile (shader))
 (defgeneric link (shader))
 (defgeneric get-errors (shader)
