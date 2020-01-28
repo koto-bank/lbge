@@ -12,7 +12,8 @@
   ((:module base
     :components
     ((:file "packages")
-     (:file "hash-map")))
+     (:file "hash-map")
+     (:file "utils")))
    (:module math
     :components
     ((:file "package")
