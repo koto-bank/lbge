@@ -1,7 +1,8 @@
 (defpackage :lbge-render-test
   (:use :cl)
   (:local-nicknames (:b :lbge.render.backend)
-                    (:m :lbge.math))
+                    (:m :lbge.math)
+                    (:u :lbge.utils))
   (:export :run))
 
 (in-package :lbge-render-test)
@@ -33,9 +34,11 @@
           (vert-shader-asset
             (lbge.asset:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl"))))
       (log:info "Fragment shader:")
-      (log:info (lbge.asset:asset-data frag-shader-asset))
+      (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
+        (log:info lines))
       (log:info "Vertex shader:")
-      (log:info (lbge.asset:asset-data vert-shader-asset)))
+      (let ((lines (u:merge-lines (lbge.asset:asset-data vert-shader-asset))))
+        (log:info lines)))
     (log:debug "Load truename: ~S" *load-truename*)
     (lbge.engine:install-renderer r)
     (lbge.render:add-camera r c)
