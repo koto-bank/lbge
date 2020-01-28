@@ -21,4 +21,6 @@
   (:use :cl)
   (:export
    :println
+   :trim-newlines
+   :merge-lines
    :princln))
