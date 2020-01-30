@@ -35,24 +35,6 @@
     (le:add-manager a)
 
     ;; Install
-    (let ((frag-shader-asset
-            (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
-          (vert-shader-asset
-            (a:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-          (shader (b:make-shader (r:get-backend r))))
-      (log:info "Fragment shader:")
-      (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
-        (log:info lines))
-      (log:info "Vertex shader:")
-      (let ((lines (u:merge-lines (lbge.asset:asset-data vert-shader-asset))))
-        (log:info lines))
-      (s:add-stage shader :vertex vert-shader-asset)
-      (s:add-stage shader :fragment frag-shader-asset)
-      (s:compile shader)
-      (when (eq (s:get-status shader)
-                :error)
-        (log:info "Shader compilation failed")
-        (log:info (s:get-errors shader))))
     (le:install-renderer r)
     (r:add-camera r c)
     (r:set-current-camera r c)
@@ -74,12 +56,29 @@
              (lambda ()
                (b:init (r:get-backend r)
                        (le:get-main-window))
-
-             (format t "OpenGL version string: ~a~%" (gl:gl-version))
-             (format t "GLSL version string: ~a~%" (gl:glsl-version))
-             (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)))
-  (le:link :on-loop
-           (lambda ()
-             (gl:clear :color-buffer-bit)
-             (b:present (r:get-backend r)))))
+               (format t "OpenGL version string: ~a~%" (gl:gl-version))
+               (format t "GLSL version string: ~a~%" (gl:glsl-version))
+               (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
+               (let ((frag-shader-asset
+                       (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
+                     (vert-shader-asset
+                       (a:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl")))
+                     (shader (b:make-shader (r:get-backend r))))
+                 (log:info "Fragment shader:")
+                 (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
+                   (log:info lines))
+                 (log:info "Vertex shader:")
+                 (let ((lines (u:merge-lines (lbge.asset:asset-data vert-shader-asset))))
+                   (log:info lines))
+                 (s:add-stage shader (list :vertex vert-shader-asset
+                                           :fragment frag-shader-asset))
+                 (s:compile-shader shader)
+                 (when (eq (s:get-status shader)
+                           :error)
+                   (log:info "Shader compilation failed")
+                   (log:info (s:get-errors shader))))))
+    (le:link :on-loop
+             (lambda ()
+               (gl:clear :color-buffer-bit)
+               (b:present (r:get-backend r)))))
   (le:start))
