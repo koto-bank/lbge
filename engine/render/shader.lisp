@@ -4,7 +4,11 @@
   (:documentation "Protocol class for individual shaders"))
 
 (defgeneric get-status (shader)
-  (:documentation "Return shader state: :error, :compiled, :unknown"))
+  (:documentation "Return shader state:
+:unknown - default state
+:error - error occured
+:loaded - some sources are loaded and not compiled
+:compiled - program successfully compiled and linked"))
 
 (defgeneric add-stage (shader stages)
   (:documentation "Stage is backend pipeline step: fragment, hull,
