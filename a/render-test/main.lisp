@@ -76,7 +76,10 @@
                  (when (eq (s:get-status shader)
                            :error)
                    (log:info "Shader compilation failed")
-                   (log:info (s:get-errors shader))))))
+                   (log:info (s:get-errors shader)))
+                 (when (eq (s:get-status shader)
+                           :compiled)
+                   (log:info "Shader successfully compiled!")))))
     (le:link :on-loop
              (lambda ()
                (gl:clear :color-buffer-bit)
