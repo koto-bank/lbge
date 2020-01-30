@@ -11,6 +11,7 @@
    ;; Shader handling
    :add-shader
    :shader-list
+   :make-shader
    :use-shader))
 
 (defpackage :lbge.render.shader
@@ -21,11 +22,10 @@
   (:export
    :shader
    :add-stage
-   :compile
-   :link
+   :compile-shader
    :get-status
    :get-errors
-   :delete))
+   :delete-shader))
 
 (defpackage :lbge.render
   (:use :cl)
@@ -61,7 +61,8 @@
    :cl)
   (:local-nicknames (:b :lbge.render.backend)
                     (:r :lbge.render)
-                    (:h :lbge.hash))
+                    (:h :lbge.hash)
+                    (:s :lbge.render.shader))
   (:export
    :make-context
    :gl-backend

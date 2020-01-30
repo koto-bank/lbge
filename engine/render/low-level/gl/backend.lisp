@@ -20,7 +20,9 @@
 
 (defmethod b:make-shader ((backend gl-backend))
   (let ((shader (make-instance 'gl-shader)))
-    ()))
+    (setf (slot-value shader 'handle)
+          (gl:create-program))
+    shader))
 
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)
