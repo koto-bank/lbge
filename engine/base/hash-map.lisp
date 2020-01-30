@@ -9,6 +9,9 @@
     (hash-set h pairs)
     h))
 
+(defun get-internal (hash)
+  (slot-value hash 'internal))
+
 (defun hash-get (hash key &optional default)
   (gethash key (slot-value hash 'internal) default))
 
