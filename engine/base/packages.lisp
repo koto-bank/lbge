@@ -5,6 +5,7 @@
   (:export :make-hash
            :hash-get
            :hash-set
+           :get-internal
            :hash-equal))
 
 (defpackage :lbge.beacon
