@@ -1,7 +1,7 @@
 (in-package :lbge.render.gl)
 
 (defclass gl-shader (s:shader)
-  ((shader-map :documentation "Map from shader-type to shader asset"
+  ((shader-map :documentation "Map from shader-type to shader sources"
                :initform (h:make-hash))
    (status :initform :unknown)
    (handle :documentation "Internal shader program handle")
@@ -57,7 +57,7 @@
         :do (let ((res (compile-shader-part
                         s
                         (cadr (assoc type type-to-gl-type))
-                        (lbge.asset:asset-data source))))
+                        source)))
               (when (eq res :error)
                 (return))
               (push res attached-shaders)))
@@ -66,9 +66,9 @@
         (gl:link-program handle)
         (let ((errors (get-link-errors handle)))
           (if (> (length errors) 0)
-              (setf status :error
-                    (slot-value s 'log) errors)
-              (setf status :compiled))))
+            (setf status :error
+                  (slot-value s 'log) errors)
+            (setf status :compiled))))
       (loop
         :for id :in attached-shaders
         :do (gl:detach-shader handle id)
