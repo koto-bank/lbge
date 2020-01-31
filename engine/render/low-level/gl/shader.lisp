@@ -35,8 +35,8 @@
     (let ((errors (get-compile-errors id)))
       (if (> (length errors) 0)
           (progn
-            (setf (slot-value shader 'status :error)
-                  (slot-value shader 'log errors))
+            (setf (slot-value shader 'status) :error
+                  (slot-value shader 'log) errors)
             :error)
           id))))
 
