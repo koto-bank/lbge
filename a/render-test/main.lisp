@@ -70,8 +70,8 @@
                  (log:info "Vertex shader:")
                  (let ((lines (u:merge-lines (lbge.asset:asset-data vert-shader-asset))))
                    (log:info lines))
-                 (s:add-stage shader (list :vertex vert-shader-asset
-                                           :fragment frag-shader-asset))
+                 (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
+                                           :fragment (a:asset-data frag-shader-asset)))
                  (s:compile-shader shader)
                  (when (eq (s:get-status shader)
                            :error)
