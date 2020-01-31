@@ -55,7 +55,8 @@
     (le:link :before-start
              (lambda ()
                (b:init (r:get-backend r)
-                       (le:get-main-window))
+                       (le:get-main-window)
+                       '((:gl-version (4 . 1))))
                (format t "OpenGL version string: ~a~%" (gl:gl-version))
                (format t "GLSL version string: ~a~%" (gl:glsl-version))
                (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)

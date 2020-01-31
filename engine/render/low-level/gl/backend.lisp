@@ -4,12 +4,20 @@
   ((context :documentation "GL context" :initform nil)
    (window :documentation "SDL window" :initform nil)))
 
-(defmethod b:init ((backend gl-backend) window)
-  "Init GL backend"
+(defmethod b:init ((backend gl-backend) window &optional info)
+  "Init GL backend.
+info is an alist, which may contain following keys:
+:gl-version - a cons pair of maj . min context version"
   (with-slots (context (win window)) backend
     (assert (null context) nil
             "Context already initialized for renderer")
     (sb-int:with-float-traps-masked (:invalid)
+      (let ((version (cadr (assoc :gl-version info))))
+        (when version
+          (sdl2:gl-set-attr :context-major-version (car version))
+          (sdl2:gl-set-attr :context-minor-version (cdr version))
+          (sdl2:gl-set-attr sdl2-ffi:+sdl-gl-context-profile-mask+
+                            sdl2-ffi:+sdl-gl-context-profile-core+)))
       (setf context (sdl2:gl-create-context window)))
     (setf win window)))
 
