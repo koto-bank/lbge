@@ -5,7 +5,9 @@
 Each backend should implement the methods for this protocol,
 renderer interacts with backend through this protocol"))
 
-(defgeneric init (backend window))
+(defgeneric init (backend window &optional info)
+  (:documentation "Render intialization.
+info is custom info, what can be placed there, depends on backend"))
 (defgeneric clear (backend))
 (defgeneric render (backend renderer))
 (defgeneric present (backend))
