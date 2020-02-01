@@ -24,7 +24,7 @@
    :add-stage
    :compile-shader
    :get-status
-   :get-errors
+   :get-compile-log
    :delete-shader))
 
 (defpackage :lbge.render
