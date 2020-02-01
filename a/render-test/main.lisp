@@ -80,7 +80,10 @@
                    (log:info (s:get-compile-log shader)))
                  (when (eq (s:get-status shader)
                            :compiled)
-                   (log:info "Shader successfully compiled!")))))
+                   (log:info "Shader successfully compiled and linked!"))
+                 (let ((log (s:get-compile-log shader)))
+                   (when (> (length log) 0)
+                     (log:info "Compilation log: ~A" log))))))
     (le:link :on-loop
              (lambda ()
                (gl:clear :color-buffer-bit)
