@@ -5,7 +5,7 @@
                :initform (h:make-hash))
    (status :initform :unknown)
    (handle :documentation "Internal shader program handle")
-   (log :documentation "Error logs storage" :initform nil))
+   (log :documentation "Compilation log" :initform ""))
   (:documentation "OpenGL shader program"))
 
 (defmethod s:get-status ((s gl-shader))
@@ -26,19 +26,22 @@
 (defun get-link-errors (handle)
   (gl:get-program-info-log handle))
 
+(defun add-to-log (shader lines)
+  (with-slots (log) shader
+    (setf log
+          (concatenate 'string log lines))))
+
 (defun compile-shader-part (shader type source)
   (let ((id (gl:create-shader type))
         (handle (slot-value shader 'handle)))
     (gl:attach-shader handle id)
     (gl:shader-source id source)
     (gl:compile-shader id)
-    (let ((errors (get-compile-errors id)))
-      (if (> (length errors) 0)
-          (progn
-            (setf (slot-value shader 'status) :error
-                  (slot-value shader 'log) errors)
-            :error)
-          id))))
+    (add-to-log shader (get-compile-errors id))
+    (let ((status (gl:get-shader id :compile-status)))
+      (if (not status)
+        (setf (slot-value shader 'status) :error)
+        id))))
 
 (defmethod s:compile-shader ((s gl-shader))
   (let ((type-to-gl-type
@@ -49,6 +52,7 @@
         (attached-shaders (list)))
     (with-slots ((sources shader-map)
                  handle
+                 log
                  status)
         s
       (loop
@@ -61,13 +65,12 @@
               (when (eq res :error)
                 (return))
               (push res attached-shaders)))
-      (when (eq :unknown                ; not error
-                status)
+      (unless (eq :error status)
         (gl:link-program handle)
-        (let ((errors (get-link-errors handle)))
-          (if (> (length errors) 0)
-            (setf status :error
-                  (slot-value s 'log) errors)
+        (let ((link-status (gl:get-program handle :link-status)))
+          (add-to-log s (get-link-errors handle))
+          (if (not link-status)
+            (setf status :error)
             (setf status :compiled))))
       (loop
         :for id :in attached-shaders
