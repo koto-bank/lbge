@@ -74,7 +74,7 @@
         :do (gl:detach-shader handle id)
             (gl:delete-shader id)))))
 
-(defmethod s:get-errors ((s gl-shader))
+(defmethod s:get-compile-log ((s gl-shader))
   (slot-value s 'log))
 
 (defmethod s:delete-shader ((s gl-shader)))

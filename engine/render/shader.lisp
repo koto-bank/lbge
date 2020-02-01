@@ -17,7 +17,7 @@
 (defgeneric compile-shader (shader)
   (:documentation "Compile and link shader"))
 
-(defgeneric get-errors (shader)
-  (:documentation "Return compilation/link error descriptions"))
+(defgeneric get-compile-log (shader)
+  (:documentation "Return shader compilation/link log"))
 
 (defgeneric delete-shader (shader))
