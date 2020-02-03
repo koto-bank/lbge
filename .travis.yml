@@ -34,6 +34,7 @@ osx_image: xcode11.2
 
 script:
   - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
+  - ros -s lbge-render-test -e '(quit)' # check that it compiles
 
 cache:
   directories:
