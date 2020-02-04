@@ -34,6 +34,7 @@
   (:export
    :renderer
    :make-renderer
+   :render-objects
 
    ;; Render functions
    :render
@@ -43,6 +44,8 @@
    :add-object
    :add-objects
    :backend-data
+   :make-render-object
+   :add-batch
 
    ;; Camera
    :camera
