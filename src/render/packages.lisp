@@ -42,6 +42,7 @@
    ;; Render objects
    :add-object
    :add-objects
+   :backend-data
 
    ;; Camera
    :camera
