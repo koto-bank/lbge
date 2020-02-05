@@ -8,15 +8,18 @@
 
 (defclass render-object ()
   ((batches :documentation "Adjustable vector of batches"
-            :initform (make-arrray 0 :adjustable t)
+            :initform (make-arrray 0 :adjustable t
+                                     :fill-pointer 0)
             :initarg :batches)
    (backend-data :documentation "Backend-dependent data. Opaque"))
   (:documentation "Render object. The thing that contains backend-independent info for rendering"))
 
 (defun make-render-object (batches)
   (make-instance 'render-object
-                 :batches (make-array 0 :initial-contents batches
-                                        :adjustable t)))
+                 :batches (make-array (length batches)
+                                      :initial-contents batches
+                                      :adjustable t
+                                      :fill-pointer (length batches))))
 
 (defun add-batch (object batch)
-  (vector-push batch (slot-value 'batches object)))
+  (vector-push-extend batch (slot-value 'batches object)))
