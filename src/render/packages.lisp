@@ -44,6 +44,8 @@
    :add-object
    :add-objects
    :backend-data
+   :vertices
+   :indices
    :make-render-object
    :add-batch
 
