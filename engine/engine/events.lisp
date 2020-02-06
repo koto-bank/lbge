@@ -59,8 +59,7 @@
 
 (defmacro add-event-handlers (&body handlers)
   (let ((forms (mapcar
-                (lambda (handler)
-                  (list 'add-event-handler handler))
+                (ax:curry #'list 'add-event-handler)
                 handlers)))
     `(progn ,@forms)))
 

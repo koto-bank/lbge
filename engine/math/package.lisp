@@ -1,5 +1,6 @@
 (defpackage :lbge.math
   (:use :cl)
+  (:local-nicknames (:ax :alexandria))
   (:export
    ; exports from common.lisp
    :eqfp

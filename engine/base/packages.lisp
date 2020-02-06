@@ -10,6 +10,7 @@
 
 (defpackage :lbge.beacon
   (:use :cl)
+  (:local-nicknames (:ax :alexandria))
   (:export :make
            :name
            :links
