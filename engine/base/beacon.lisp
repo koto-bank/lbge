@@ -35,6 +35,5 @@
 
 (defun blink (beacon &rest args)
   "Call all linked callbacks with `args'"
-  (mapcar (lambda (callback)
-            (apply callback args))
+  (mapcar (ax:rcurry #'apply args)
           (reverse (links beacon))))

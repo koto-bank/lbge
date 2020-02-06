@@ -171,44 +171,38 @@
 (defmethod mul ((matrix float2x2) (value real))
   (make-float2x2
    (map 'vector
-        (lambda (x)
-          (* x value))
+        (ax:curry #'* value)
         (in-list matrix))))
 
 (defmethod mul ((matrix float3x3) (value real))
   (make-float3x3
    (map 'vector
-        (lambda (x)
-          (* x value))
+        (ax:curry #'* value)
         (in-list matrix))))
 
 (defmethod mul ((matrix float4x4) (value real))
   (make-float4x4
    (map 'vector
-        (lambda (x)
-          (* x value))
+        (ax:curry #'* value)
         (in-list matrix))))
 
 
 (defmethod div ((matrix float2x2) scalar)
   (make-float2x2
    (map 'vector
-        (lambda (x)
-          (/ x scalar))
+        (ax:rcurry #'/ scalar)
         (in-list matrix))))
 
 (defmethod div ((matrix float3x3) scalar)
   (make-float3x3
    (map 'vector
-        (lambda (x)
-          (/ x scalar))
+        (ax:rcurry #'/ scalar)
         (in-list matrix))))
 
 (defmethod div ((matrix float4x4) scalar)
   (make-float4x4
    (map 'vector
-        (lambda (x)
-          (/ x scalar))
+        (ax:rcurry #'/ scalar)
         (in-list matrix))))
 
 

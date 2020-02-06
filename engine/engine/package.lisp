@@ -1,5 +1,6 @@
 (defpackage :lbge.engine.events
   (:use :cl :lbge.asset :lbge.hash)
+  (:local-nicknames (:ax :alexandria))
   (:export
    :process-events
    :add-event-handler
