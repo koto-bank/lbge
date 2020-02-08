@@ -11,8 +11,8 @@ before_install:
 
 install:
   - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
-  - ros install ./engine/lbge.asd
-  - ros install ./a/unit-tests/lbge-unit-tests.asd
+  - ros install ./src/lbge.asd
+  - ros install ./test/unit-tests/lbge-unit-tests.asd
 
 addons:
   apt:
