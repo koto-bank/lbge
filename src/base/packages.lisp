@@ -25,4 +25,5 @@
    :println
    :trim-newlines
    :merge-lines
-   :princln))
+   :princln
+   :bind))
