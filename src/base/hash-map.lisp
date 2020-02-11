@@ -3,10 +3,10 @@
 (defclass hash ()
   (internal))
 
-(defun make-hash (&optional pairs)
+(defun make-hash (&rest pairs)
   (let ((h (make-instance 'hash)))
     (setf (slot-value h 'internal) (make-hash-table))
-    (hash-set h pairs)
+    (apply #'hash-set (cons h pairs))
     h))
 
 (defun get-internal (hash)
@@ -15,10 +15,11 @@
 (defun hash-get (hash key &optional default)
   (gethash key (slot-value hash 'internal) default))
 
-(defun hash-set (hash &optional pairs)
-  (dolist (pair pairs hash)
-    (setf (gethash (first pair) (slot-value hash 'internal))
-          (second pair))))
+(defun hash-set (hash &rest pairs)
+  (assert (evenp (length pairs)) nil "Odd number of hash-set arguments")
+  (loop
+    :for (key value) :on pairs :by #'cddr :do
+      (setf (gethash key (slot-value hash 'internal)) value)))
 
 (defun hash-equal (hash-1 hash-2)
   (equalp (slot-value hash-1 'internal)

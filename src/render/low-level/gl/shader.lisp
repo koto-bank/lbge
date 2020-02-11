@@ -18,7 +18,7 @@
       (let ((stage (car s))
             (source (cadr s)))
         (assert (null (h:hash-get shader-map stage)))
-        (h:hash-set shader-map (list (list stage source)))))))
+        (h:hash-set shader-map stage source)))))
 
 (defun get-compile-errors (id)
   (gl:get-shader-info-log id))

@@ -31,7 +31,7 @@ Root pathname must be set relative to the app root (see lbge.filesystem)"
   (with-slots (loaded-assets) asset-manager
     (if (null (hash-get loaded-assets asset-key))
       (let ((new-asset (load-asset asset-manager asset-key)))
-        (hash-set loaded-assets (list (list asset-key new-asset)))
+        (hash-set loaded-assets asset-key new-asset)
         new-asset)
       asset)))
 
