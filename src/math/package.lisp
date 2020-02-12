@@ -27,6 +27,8 @@
    :make-float2
    :make-float3
    :make-float4
+   :in-list
+   :get-size
    :add
    :sub
    :mul

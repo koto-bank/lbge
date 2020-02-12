@@ -18,6 +18,8 @@
     :accessor in-list))
   (:default-initargs :in-list #(0 0 0 0)))
 
+(defgeneric get-size (vector)
+  (:documentation "Return number of vector components"))
 
 (defgeneric add (vector1 vector2)
   (:documentation "Add two vector2 to vector1"))
@@ -115,6 +117,14 @@
                                 :initial-contents (list a1 a2 a3 a4))))
     (a1 (make-instance 'float4 :in-list a1))))
 
+(defmethod get-size ((vec float2))
+  2)
+
+(defmethod get-size ((vec float3))
+  3)
+
+(defmethod get-size ((vec float4))
+  4)
 
 (defmethod add ((vector1 float2) vector2)
   (make-float2 (map 'vector #'+
