@@ -34,5 +34,6 @@
    (:module gl
     :pathname "render/low-level/gl"
     :components
-    ((:file "backend")
-     (:file "shader")))))
+    ((:file "shader")
+     (:file "backend")
+     (:file "render-object")))))
