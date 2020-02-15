@@ -7,6 +7,7 @@
   :license "BSD-2-Clause"
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
+               :log4cl
                :cl-opengl)
   :components
   ((:module base
