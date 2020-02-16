@@ -1,7 +1,7 @@
 (in-package :lbge.math)
 
 (defclass quaternion ()
-  ((x :accessor quaternion-z :initarg :x)
+  ((x :accessor quaternion-x :initarg :x)
    (y :accessor quaternion-y :initarg :y)
    (z :accessor quaternion-z :initarg :z)
    (w :accessor quaternion-w :initarg :w)))
