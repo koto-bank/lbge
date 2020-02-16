@@ -27,7 +27,7 @@
    :make-float2
    :make-float3
    :make-float4
-   :in-list
+   :in-vec
    :get-size
    :add
    :sub
