@@ -14,7 +14,7 @@
 (in-package :lbge-render-test)
 
 (defun run ()
-  (log:config :info)
+  (log:config :debug)
   (le:delete-engine)
   (le:make-engine)
   (e:add-event-handlers
@@ -40,18 +40,18 @@
     (r:set-current-camera r c)
     (r:add-objects
      r
-     (list (r:make-rect :w 0.1f0 :h 0.1f0
-                        :transform
-                        (m:make-transform :pos (m:make-float3 0.3f0 0.3f0 0.0f0)))
-           (r:make-triangle :size 0.1f0
-                            :transform
-                            (m:make-transform :pos (m:make-float3 0.3f0 0.6f0 0.0f0)))
-           (r:make-ellipse :w 0.1f0 :h 0.1f0
-                           :transform
-                           (m:make-transform :pos (m:make-float3 0.6f0 0.6f0 0.0f0)))
-           (r:make-ring :w 0.1f0 :h 0.1f0 :thickness 0.02f0
-                        :transform
-                        (m:make-transform :pos (m:make-float3 0.6f0 0.3f0 0.0f0)))))
+     (r:make-rect :w 0.3f0 :h 0.3f0
+                  :transform
+                  (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0)))
+     (r:make-triangle :size 0.3f0
+                      :transform
+                      (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0)))
+     (r:make-ellipse :w 0.3f0 :h 0.3f0
+                     :transform
+                     (m:make-transform :pos (m:make-float4 -0.3f0 -0.3f0 0.0f0 1.0f0)))
+     (r:make-ring :w 0.3f0 :h 0.3f0 :thickness 0.02f0
+                  :transform
+                  (m:make-transform :pos (m:make-float4 0.3f0 -0.3f0 0.0f0 1.0f0))))
     (le:link :before-start
              (lambda ()
                (b:init (r:get-backend r)
@@ -64,7 +64,7 @@
                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
                      (vert-shader-asset
                        (a:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-                     (shader (b:make-shader (r:get-backend r))))
+                     (shader (b:make-shader (r:get-backend r) "simple-shader")))
                  (log:info "Fragment shader:")
                  (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
                    (log:info lines))
@@ -83,9 +83,12 @@
                    (log:info "Shader successfully compiled and linked!"))
                  (let ((log (s:get-compile-log shader)))
                    (when (> (length log) 0)
-                     (log:info "Compilation log: ~A" log))))))
+                     (log:info "Compilation log: ~A" log)))
+                 (b:use-shader (r:get-backend r) shader))))
     (le:link :on-loop
              (lambda ()
-               (gl:clear :color-buffer-bit)
-               (b:present (r:get-backend r)))))
+               (let ((backend (r:get-backend r)))
+                 (b:clear backend)
+                 (b:render backend r)
+                 (b:present backend)))))
   (le:start))
