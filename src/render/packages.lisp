@@ -9,7 +9,6 @@
    :present
    :deinit
    ;; Shader handling
-   :add-shader
    :shader-list
    :make-shader
    :use-shader))
@@ -47,7 +46,9 @@
    :vertices
    :indices
    :make-render-object
+   :batches
    :add-batch
+   :transform
 
    ;; Camera
    :camera
