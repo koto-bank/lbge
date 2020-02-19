@@ -41,3 +41,12 @@
 
 (defun render (renderer)
   (b:render (slot-value renderer 'backend) renderer))
+
+(defmacro gl-check-error (gl-call)
+  (let ((code (gensym))
+        (fun-name (car gl-call)))
+    `(progn
+       ,gl-call
+       (let ((,code (gl:get-error)))
+         (unless (eq ,code :zero)
+           (log:debug "Gl erorr: ~A returned ~A" ,fun-name ,code))))))
