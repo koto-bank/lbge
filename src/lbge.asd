@@ -31,7 +31,8 @@
     ((:file "package")
      (:file "common")
      (:file "vector")
-     (:file "matrix")))
+     (:file "matrix")
+     (:file "transform")))
    (:module assets
     :pathname "base/asset"
     :components
