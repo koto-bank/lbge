@@ -1,19 +1,18 @@
 (in-package :lbge.render.gl)
 
 (defclass gl-render-object-data ()
-  ((vertex-vbo :documentation "VBO for vertices")
-   (index-vbo :documentation "VBO for indices")
-   (indices :documentation "Index array"))
+  ((base-vertex :documentation "Index of the first vertex in vertex buffer")
+   (index-size :documentation "Byte size of indices")
+   (index-offset :documentation "Index of the first index in index buffer")
+   (num-instances :documentation "Number of instances"))
   (:documentation "GL specific render object data"))
 
 (defun vertices-to-gl-array (float-vector)
   (let* ((vector-len (length float-vector))
          (elt-size (m:get-size (aref float-vector 0)))
          (array (gl:alloc-gl-array :float (* vector-len elt-size))))
-    (log:debug "Alloc array of size ~A" (* vector-len elt-size))
     (dotimes (i vector-len)
-      (let ((current (m:in-list (aref float-vector i))))
-        (log:debug current)
+      (let ((current (m:in-vec (aref float-vector i))))
         (dotimes (j elt-size)
           (setf (gl:glaref array (+ (* i elt-size) j))
                 (aref current j)))))
@@ -21,17 +20,22 @@
 
 (defun indices-to-gl-array (index-vector)
   (let* ((vector-len (length index-vector))
-         (array (gl:alloc-gl-array :unsigned-int vector-len)))
+         (array (gl:alloc-gl-array :unsigned-short vector-len)))
     (dotimes (i vector-len)
       (setf (gl:glaref array i)
             (aref index-vector i)))
-    (log:debug index-vector)
     array))
 
-(defun ensure-buffers (render-object)
-  "Check if the object has internal data, create if not"
-  (unless (slot-boundp render-object 'r:backend-data)
-    (let ((gl-data (make-instance 'gl-render-object-data)))
+(defun ensure-buffer-data (backend render-object)
+  "Check if the object has internal data, create if not, store data"
+  (when (slot-boundp render-object 'r:backend-data)
+    (return-from ensure-buffer-data))
+
+  (let ((gl-data (make-instance 'gl-render-object-data)))
+    (with-slots (vertex-bo index-bo
+                 last-index-index last-vertex-index
+                 total-index-size total-vertex-size)
+        backend
       (loop
         :for batch :across (slot-value render-object 'r:batches)
         :do
@@ -39,33 +43,47 @@
                         r:indices)
                batch
              (let ((verts (vertices-to-gl-array r:vertices))
-                   (inds (indices-to-gl-array r:indices))
-                   (vertex-buf (gl:gen-buffer))
-                   (index-buf (gl:gen-buffer)))
-               (gl:enable-vertex-attrib-array 0) ; vertices
+                   (inds (indices-to-gl-array r:indices)))
+               (gl:bind-buffer :array-buffer vertex-bo)
+               (log:debug "Filling VBO, offset: ~A count: ~A" total-vertex-size
+                          (gl:gl-array-byte-size verts))
+               (gl:buffer-sub-data :array-buffer verts
+                                   :buffer-offset total-vertex-size)
 
-               ;; Load vertices
-               (gl:bind-buffer :array-buffer vertex-buf)
-               (gl:vertex-attrib-pointer 0 4 :float nil 0 0)
-               (gl:buffer-data :array-buffer :static-draw verts)
-               (gl:free-gl-array verts)
-
-               ;; Load indices
-               (gl:bind-buffer :element-array-buffer index-buf)
-               (gl:buffer-data :element-array-buffer :static-draw inds)
-
-               ;; Initialize render object gl data
-               (with-slots (vertex-vbo index-vbo
-                            index-count indices)
+               (gl:bind-buffer :element-array-buffer index-bo)
+               (log:debug "Filling IBO, offset: ~A count: ~A" total-index-size
+                          (gl:gl-array-byte-size inds))
+               (gl:buffer-sub-data :element-array-buffer inds
+                                   :buffer-offset total-index-size)
+               (with-slots (base-vertex index-size index-offset)
                    gl-data
-                 (setf indices inds)
-                 (setf vertex-vbo vertex-buf)
-                 (setf index-vbo index-buf)))))
-      (setf (slot-value render-object 'r:backend-data) gl-data))))
+                 (setf base-vertex last-vertex-index
+                       index-size (length r:indices)
+                       index-offset last-index-index)
 
-(defun draw-object (render-object)
-  (with-slots ((gl-data r:backend-data)) render-object
-    (gl:bind-buffer :array-buffer (slot-value gl-data 'vertex-vbo))
-    (gl:vertex-attrib-pointer 0 4 :float nil 0 0)
-    (gl:draw-arrays :triangle-strip 0 4)
-    (gl:draw-elements :triangles (slot-value gl-data 'indices))))
+                 (setf last-vertex-index
+                       (+ last-vertex-index (length r:vertices))
+                       last-index-index
+                       (+ last-index-index index-size)
+                       total-index-size
+                       (+ total-index-size (gl:gl-array-byte-size inds))
+                       total-vertex-size
+                       (+ total-vertex-size (gl:gl-array-byte-size verts))))
+               (gl:free-gl-array verts)
+               (gl:free-gl-array inds)))))
+    (setf (slot-value render-object 'r:backend-data) gl-data)))
+
+(defun draw-object (backend render-object)
+  (with-slots ((gl-data r:backend-data)
+               (transform r:transform))
+      render-object
+    (with-slots (active-shader) backend
+      (gl:uniform-matrix (slot-value active-shader 'model-view-uniform)
+                         4
+                         (vector (m:transform-matrix transform)))
+      (with-slots (base-vertex index-size index-offset)
+          gl-data
+        (gl:draw-elements-base-vertex :triangles (gl:make-null-gl-array :unsigned-short)
+                                      base-vertex
+                                      :count index-size
+                                      :offset index-offset)))))
