@@ -12,9 +12,9 @@
       (setf vertices (vector (m:make-float4 -w/2 h/2 0.0f0 1.0f0)
                              (m:make-float4 w/2 h/2 0.0f0 1.0f0)
                              (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
-                             (m:make-float4 -w/2 h/2 0.0f0 1.0f0))
-            indices (vector 0 1 2 2 3 1)))
-    (make-render-object (list b))))
+                             (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))
+            indices (vector 0 2 1 0 3 2)))
+    (make-render-object (list b) transform)))
 
 (defun make-triangle (&key size (transform (m:make-transform)))
   (assert (> size 0.0f0) nil "Triangle size must be positive, current value: ~S" size)
@@ -28,7 +28,7 @@
                              (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
                              (m:make-float4 size/2 -r-insc 0.0f0 1.0f0))
             indices (vector 0 1 2)))
-    (make-render-object (list b))))
+    (make-render-object (list b) transform)))
 
 (defun make-ellipse (&key w h (transform (m:make-transform)))
   ;; Temp!
