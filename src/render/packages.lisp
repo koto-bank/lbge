@@ -59,15 +59,20 @@
    :make-rect
    :make-triangle
    :make-ellipse
-   :make-ring))
+   :make-ring
+
+   ;;Misc
+   :gl-check-error))
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
   (:use
    :cl)
   (:local-nicknames (:b :lbge.render.backend)
+                    (:m :lbge.math)
                     (:r :lbge.render)
                     (:h :lbge.hash)
+                    (:ax :alexandria)
                     (:s :lbge.render.shader))
   (:export
    :make-context
