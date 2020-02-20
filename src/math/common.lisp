@@ -10,16 +10,16 @@
 
 
 (defun eqfp (x y &optional (eps 0.00001))
-  (let ((absX (abs x))
-        (absY (abs y))
+  (let ((abs-x (abs x))
+        (abs-y (abs y))
         (diff (abs (- x y))))
 
-    (if (= x y) (return-from eqfp T))
+    (if (= x y) (return-from eqfp t))
     (if (or (= x 0) (= y 0)
-            (< (+ absX absY)
+            (< (+ abs-x abs-y)
                +single-float-min-normal+))
         (< diff (* eps +single-float-min-normal+))
-        (< (/ diff (min (+ absX absY) +single-float-max-value+)) eps))))
+        (< (/ diff (min (+ abs-x abs-y) +single-float-max-value+)) eps))))
 
 
 (defun neqfp (x y &optional (eps 0.00001))
