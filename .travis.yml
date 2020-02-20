@@ -5,32 +5,29 @@ branches:
   only:
   - master
 
-before_install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y libsdl2-2.0-0; fi
-
 install:
   - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
   - ros install ./src/lbge.asd
   - ros install ./test/unit-tests/lbge-unit-tests.asd
-
-addons:
-  apt:
-    update: true
-  homebrew:
-    packages:
-      - sdl2
 
 env:
   global:
     - LISP=sbcl
   matrix:
 
+addons:
+  homebrew:
+    update: true
+    packages:
+      - sdl2
+  apt:
+    update: true
+    packages: libsdl2-2.0-0
+
+osx_image: xcode11.2
 os:
   - osx
   - linux
-
-osx_image: xcode11.2
 
 script:
   - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
