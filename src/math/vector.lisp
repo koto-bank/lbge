@@ -60,32 +60,11 @@
 (defgeneric div (vector value)
   (:documentation "Divide vector by a scalar or each respective element"))
 
-(defgeneric dot (vector1 vector2)
-  (:documentation "Dot product of vector1 and vector2"))
-
-(defgeneric norm (vector)
-  (:documentation "The Euclidian norm of a vector"))
-
-(defgeneric normalize (vector)
-  (:documentation "Return a normalized vector"))
-
-(defgeneric angle (vector1 vector2)
-  (:documentation "Angle between two vectors in radians"))
-
 (defgeneric negv (vector)
   (:documentation "Negate a vector"))
 
 (defgeneric absv (vector)
   (:documentation "Make all elemets of a vector absolute values"))
-
-(defgeneric project (vector1 vector2)
-  (:documentation "Return the projection of vector1 onto vector2"))
-
-(defgeneric eqv (vector1 vector2)
-  (:documentation "Test two vectors for equality"))
-
-(defgeneric neqv (vector1 vector2)
-  (:documentation "Test two vectors for inequality"))
 
 ; doesn't work yet
 (defgeneric swizzle (vector values &optional signs)
@@ -148,151 +127,82 @@
 (defmethod get-size ((vec float4))
   4)
 
-(defmethod add ((vector1 float2) vector2)
-  (make-float2 (map 'vector #'+
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(defmacro define-vec-op (name result-type map-op)
+  `(defmethod ,name ((vector1 ,result-type) vector2)
+     (make-instance ',result-type :in-vec
+                    (map 'vector ,map-op
+                         (in-vec vector1)
+                         (in-vec vector2)))))
 
-(defmethod add ((vector1 float3) vector2)
-  (make-float3 (map 'vector #'+
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(define-vec-op add float2 #'+)
+(define-vec-op add float3 #'+)
+(define-vec-op add float4 #'+)
 
-(defmethod add ((vector1 float4) vector2)
-  (make-float4 (map 'vector #'+
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(define-vec-op sub float2 #'-)
+(define-vec-op sub float3 #'-)
+(define-vec-op sub float4 #'-)
 
+(define-vec-op mul float2 #'*)
+(define-vec-op mul float3 #'*)
+(define-vec-op mul float4 #'*)
 
-(defmethod sub ((vector1 float2) vector2)
-  (make-float2 (map 'vector #'-
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(define-vec-op div float2 #'/)
+(define-vec-op div float3 #'/)
+(define-vec-op div float4 #'/)
 
-(defmethod sub ((vector1 float3) vector2)
-  (make-float3 (map 'vector #'-
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(defmacro define-vec-num-op (name vec-type map-fun)
+  `(defmethod ,name ((vector ,vec-type) (value real))
+     (make-instance ',vec-type :in-vec
+                    (map 'vector (ax:rcurry ,map-fun value)
+                         (in-vec vector)))))
 
-(defmethod sub ((vector1 float4) vector2)
-  (make-float4 (map 'vector #'-
-                    (in-vec vector1)
-                    (in-vec vector2))))
+(define-vec-num-op mul float2 #'*)
+(define-vec-num-op mul float3 #'*)
+(define-vec-num-op mul float4 #'*)
 
+(define-vec-num-op div float2 #'/)
+(define-vec-num-op div float3 #'/)
+(define-vec-num-op div float4 #'/)
 
-(defmethod mul ((vector float2) (value real))
-  (make-float2 (map 'vector
-                    (ax:curry #'* value)
-                    (in-vec vector))))
-
-(defmethod mul ((vector float3) (value real))
-  (make-float3 (map 'vector
-                    (ax:curry #'* value)
-                    (in-vec vector))))
-
-(defmethod mul ((vector float4) (value real))
-  (make-float4 (map 'vector
-                    (ax:curry #'* value)
-                    (in-vec vector))))
-
-
-(defmethod mul ((vector float2) (value float2))
-  (make-float2 (map 'vector #'*
-                    (in-vec vector)
-                    (in-vec value))))
-
-(defmethod mul ((vector float3) (value float3))
-  (make-float3 (map 'vector #'*
-                    (in-vec vector)
-                    (in-vec value))))
-
-(defmethod mul ((vector float4) (value float4))
-  (make-float4 (map 'vector #'*
-                    (in-vec vector)
-                    (in-vec value))))
-
-
-(defmethod div ((vector float2) (value real))
-  (make-float2 (map 'vector
-                    (ax:rcurry #'/ value)
-                    (in-vec vector))))
-
-(defmethod div ((vector float3) (value real))
-  (make-float3 (map 'vector
-                    (ax:rcurry #'/ value)
-                    (in-vec vector))))
-
-(defmethod div ((vector float4) (value real))
-  (make-float4 (map 'vector
-                    (ax:rcurry #'/ value)
-                    (in-vec vector))))
-
-
-(defmethod div ((vector float2) (value float2))
-  (make-float2 (map 'vector #'/
-                    (in-vec vector)
-                    (in-vec value))))
-
-(defmethod div ((vector float3) (value float3))
-  (make-float3 (map 'vector #'/
-                    (in-vec vector)
-                    (in-vec value))))
-
-(defmethod div ((vector float4) (value float4))
-  (make-float4 (map 'vector #'/
-                    (in-vec vector)
-                    (in-vec value))))
-
-
-(defmethod dot (vector1 vector2)
+(defun dot (vector1 vector2)
+  "Dot product of vector1 and vector2"
   (reduce #'+
-          (map 'vec #'*
+          (map 'vector #'*
                (in-vec vector1)
                (in-vec vector2))))
 
-
-(defmethod norm (vector)
+(defun norm (vector)
+  "The Euclidian norm of a vector"
   (sqrt (reduce #'+
-                (map 'vec
+                (map 'vector
                      (lambda (x)
                        (expt x 2))
                      (in-vec vector)))))
 
+(defmacro define-vec-unary-op (name vec-type map-fun)
+  `(defmethod ,name ((vector ,vec-type))
+     (make-instance ',vec-type :in-vec
+                    (map 'vector ,map-fun
+                         (in-vec vector)))))
 
-(defmethod negv ((vector float2))
-  (make-float2 (map 'vector #'-
-                    (in-vec vector))))
+(define-vec-unary-op negv float2 #'-)
+(define-vec-unary-op negv float3 #'-)
+(define-vec-unary-op negv float4 #'-)
 
-(defmethod negv ((vector float3))
-  (make-float3 (map 'vector #'-
-                    (in-vec vector))))
+(define-vec-unary-op absv float2 #'abs)
+(define-vec-unary-op absv float3 #'abs)
+(define-vec-unary-op absv float4 #'abs)
 
-(defmethod negv ((vector float4))
-  (make-float4 (map 'vector #'-
-                    (in-vec vector))))
-
-
-(defmethod absv ((vector float2))
-  (make-float2 (map 'vector #'abs
-                    (in-vec vector))))
-
-(defmethod absv ((vector float3))
-  (make-float3 (map 'vector #'abs
-                    (in-vec vector))))
-
-(defmethod absv ((vector float4))
-  (make-float4 (map 'vector #'abs
-                    (in-vec vector))))
-
-
-(defmethod eqv (vector1 vector2)
+(defun eqv (vector1 vector2)
+  "Test two vectors for equality"
   (reduce #'hand
           (map 'vector #'eqfp
                (in-vec vector1)
                (in-vec vector2))))
 
 
-(defmethod neqv (vector1 vector2)
+(defun neqv (vector1 vector2)
+  "Test two vectors for inequality"
   (not (eqv vector1 vector2)))
 
 
@@ -305,16 +215,18 @@
                   (* (y vector1) (x vector2)))))
 
 
-(defmethod normalize (vector)
+(defun normalize (vector)
+  "Return a normalized vector"
   (div vector (norm vector)))
 
-
-(defmethod angle (vector1 vector2)
+(defun angle (vector1 vector2)
+  "Angle between two vectors in radians"
   (acos (/ (dot vector1 vector2)
            (* (norm vector1)
               (norm vector2)))))
 
-(defmethod project (vector1 vector2)
+(defun project (vector1 vector2)
+  "Return the projection of vector1 onto vector2"
   (mul (normalize vector2) (dot vector1 (normalize vector2))))
 
 ; doesnt work yet

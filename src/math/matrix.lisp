@@ -421,7 +421,7 @@
 
 (defmethod eqm (matrix1 matrix2)
   (reduce #'hand
-          (map 'vec #'eqfp
+          (map 'vector #'eqfp
                (in-vec matrix1)
                (in-vec matrix2))))
 
