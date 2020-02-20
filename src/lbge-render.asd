@@ -10,7 +10,8 @@
                :log4cl
                :cl-opengl)
   :components
-  ((:module base
+  ((:file "patches")
+   (:module base
     :components
     ((:file "packages")
      (:file "hash-map")
