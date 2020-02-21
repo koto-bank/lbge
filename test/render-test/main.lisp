@@ -46,7 +46,7 @@
      (r:make-triangle :size 0.3f0
                       :transform
                       (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0)))
-     (r:make-ellipse :w 0.3f0 :h 0.3f0
+     (r:make-ellipse :r-x 0.15f0 :r-y 0.15f0
                      :transform
                      (m:make-transform :pos (m:make-float4 -0.3f0 -0.3f0 0.0f0 1.0f0)))
      (r:make-ring :w 0.3f0 :h 0.3f0 :thickness 0.02f0
