@@ -108,15 +108,17 @@
     (a1 (make-instance 'float3 :in-vec (vector a1 a1 a1)))))
 
 (defun make-float4 (&optional a1 a2 a3 a4)
-  (cond
-    ((null a1)
-     (make-instance 'float4
-                    :in-vec #(0.0f0 0.0f0 0.0f0 0.0f0)))
-    ((and a1 a2 a3 a4)
-     (make-instance 'float4
-                    :in-vec
-                    (vector a1 a2 a3 a4)))
-    (a1 (make-instance 'float4 :in-vec (vector a1 a1 a1 a1)))))
+  (let (in-vec)
+    (cond
+      ((null a1)
+       (setf in-vec (vector 0.0f0 0.0f0 0.0f0 0.0f0)))
+      ((and a1 a2 a3 a4)
+       (setf in-vec (vector a1 a2 a3 a4)))
+      (a1
+       (setf in-vec (vector a1 a1 a1 a1))))
+    (make-instance 'float4 :in-vec
+                   (map 'vector (ax:rcurry #'coerce 'single-float)
+                        in-vec))))
 
 (defmethod get-size ((vec float2))
   2)
