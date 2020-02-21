@@ -59,6 +59,7 @@
    ;; Primitives
    :make-rect
    :make-triangle
+   :make-circle
    :make-ellipse
    :make-ring
 

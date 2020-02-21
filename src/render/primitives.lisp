@@ -30,10 +30,27 @@
             indices (vector 0 1 2)))
     (make-render-object (list b) transform)))
 
-(defun make-ellipse (&key w h (transform (m:make-transform)))
-  ;; Temp!
-  (make-rect :w w :h h :transform transform))
+(defun make-circle (&key radius (vert-num 16) (transform (m:make-transform)))
+  (make-ellipse :r-x radius :r-y radius :vert-num vert-num :transform transform))
 
 (defun make-ring (&key w h thickness (transform (m:make-transform)))
   ;; Temp!
   (make-triangle :size w :transform transform))
+(defun make-ellipse (&key r-x r-y (vert-num 16) (transform (m:make-transform)))
+  (assert (> vert-num 2) nil "Cant make an ellipse with ~A vertices" vert-num)
+  (let ((step (/ (* 2 pi) vert-num))
+        (inds (make-array  (list (* 3 vert-num))))
+        (verts (make-array (list (+ 1 vert-num))))
+        (base-ind 0))
+    (dotimes (i vert-num)
+      (let ((angle (* i step)))
+        (setf (aref verts i) (m:make-float4 (* r-x (cos angle)) (* r-y (sin angle)) 0.0f0 1.0f0)
+              (aref inds base-ind) i
+              (aref inds (+ base-ind 1)) vert-num
+              (aref inds (+ base-ind 2)) (+ i 1)
+              base-ind (+ 3 base-ind))))
+
+    (setf (aref verts vert-num) (m:make-float4 0.0f0 0.0f0 0.0f0 1.0f0)
+          (aref inds (1- (* 3 vert-num))) (aref inds 0))
+    (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
+                        transform)))
