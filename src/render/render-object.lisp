@@ -2,9 +2,9 @@
 
 (defclass batch ()
   ((vertices :documentation "Vertex array. A simple-vector"
-             :initform (vector))
+             :initform (vector) :initarg :vertices)
    (indices :documentation "Index array. A simple-vector"
-            :initform (vector))))
+            :initform (vector) :initarg :indices)))
 
 (defclass render-object ()
   ((batches :documentation "Adjustable vector of batches"
