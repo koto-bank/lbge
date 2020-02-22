@@ -49,7 +49,7 @@
      (r:make-ellipse :r-x 0.15f0 :r-y 0.15f0
                      :transform
                      (m:make-transform :pos (m:make-float4 -0.3f0 -0.3f0 0.0f0 1.0f0)))
-     (r:make-ring :w 0.3f0 :h 0.3f0 :thickness 0.02f0
+     (r:make-ring :out-r 0.15f0 :in-r 0.1f0
                   :transform
                   (m:make-transform :pos (m:make-float4 0.3f0 -0.3f0 0.0f0 1.0f0))))
     (le:link :before-start
