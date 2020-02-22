@@ -6,6 +6,7 @@
    (status :initform :unknown)
    (handle :documentation "Internal shader program handle")
    (model-view-uniform :documentation "Model-view matrix uniform location in the shader" :initform nil)
+   (projection-uniform :documentation "Projection matrix uniform location in the shader" :initform nil)
    (log :documentation "Compilation log" :initform ""))
   (:documentation "OpenGL shader program"))
 
@@ -45,12 +46,15 @@
           id))))
 
 (defun set-default-uniforms (shader)
-  (with-slots (model-view-uniform handle) shader
-    (let ((location (gl:get-uniform-location handle "model_view")))
-      (setf model-view-uniform location)
-      (assert (not (= location -1)) nil
-              "Invalid model_view location in shader ~A. Maybe it was optimized out?"
-              handle))))
+  (with-slots (model-view-uniform projection-uniform handle) shader
+    (setf model-view-uniform (gl:get-uniform-location handle "model_view"))
+    (assert (not (= model-view-uniform -1)) nil
+            "Invalid model_view location in shader ~A. Maybe it was optimized out?"
+            handle)
+    (setf projection-uniform (gl:get-uniform-location handle "projection"))
+    (assert (not (= projection-uniform -1)) nil
+            "Invalid projection-uniform location in shader ~A. Maybe it was optimized out?"
+            handle)))
 
 (defmethod s:compile-shader ((s gl-shader))
   (let ((type-to-gl-type
@@ -84,8 +88,7 @@
       (loop
         :for id :in attached-shaders
         :do (gl:detach-shader handle id)
-            (gl:delete-shader id))
-      (set-default-uniforms s))))
+            (gl:delete-shader id)))))
 
 (defmethod s:get-compile-log ((s gl-shader))
   (slot-value s 'log))
