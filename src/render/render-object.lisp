@@ -16,6 +16,9 @@
    (backend-data :documentation "Backend-dependent data. Opaque"))
   (:documentation "Render object. The thing that contains backend-independent info for rendering"))
 
+(defun make-render-batch (&key indices vertices)
+  (make-instance 'batch :vertices vertices :indices indices))
+
 (defun make-render-object (batches &optional (transform (m:make-transform)))
   (make-instance 'render-object
                  :batches (make-array (length batches)
