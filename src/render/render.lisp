@@ -5,7 +5,8 @@
 :gl :vk :mtl :dx12" :initarg :backend)
    (backend :documentation "Rendering backend, providing actual drawing interface")
    (cameras :documentation "Available cameras" :initform (list))
-   (current-camera :documentation "Current rendering camera")
+   (current-camera :documentation "Current rendering camera"
+                   :initform nil)
    (render-objects :documentation "A list of all render objects"
                    :initform (list)))
   (:documentation "Renderer instance"))
@@ -26,6 +27,9 @@
   (assert (find camera (slot-value renderer 'cameras))
           nil "Cannot set camera as active, since it's not in camera list")
   (setf (slot-value renderer 'current-camera) camera))
+
+(defun get-current-camera (renderer)
+  (slot-value renderer 'current-camera))
 
 (defun add-object (renderer obj)
   (push obj (slot-value renderer 'render-objects)))
