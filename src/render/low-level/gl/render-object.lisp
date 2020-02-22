@@ -73,14 +73,21 @@
                (gl:free-gl-array inds)))))
     (setf (slot-value render-object 'r:backend-data) gl-data)))
 
-(defun draw-object (backend render-object)
+(defun draw-object (camera backend render-object)
   (with-slots ((gl-data r:backend-data)
                (transform r:transform))
       render-object
     (with-slots (active-shader) backend
       (gl:uniform-matrix (slot-value active-shader 'model-view-uniform)
                          4
-                         (vector (m:transform-matrix transform)))
+                         (vector (m:in-vec
+                                  (m:mul
+                                   (r:camera-view-matrix camera)
+                                   (m:transform-matrix transform)))))
+      (gl:uniform-matrix (slot-value active-shader 'projection-uniform)
+                         4
+                         (vector (m:in-vec
+                                  (r:camera-projection-matrix camera))))
       (with-slots (base-vertex index-size index-offset)
           gl-data
         (gl:draw-elements-base-vertex :triangles
