@@ -53,6 +53,8 @@
 
    ;; Camera
    :camera
+   :camera-projection-matrix
+   :camera-view-matrix
    :add-camera
    :set-current-camera
    :make-ortho-camera
