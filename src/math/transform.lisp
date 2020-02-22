@@ -34,32 +34,32 @@
           (yw (* (quaternion-y r) (quaternion-w r)))
           (zz (* (quaternion-z r) (quaternion-z r)))
           (zw (* (quaternion-z r) (quaternion-w r))))
-      (in-vec (make-float4x4
-               (* (float3-x s)
-                  (- 1.0f0 (* 2.0f0 (+ yy zz))))
-               (* (float3-y s)
-                  (* 2.0f0 (- xy zw)))
-               (* (float3-z s)
-                  (* 2.0f0 (+ xz yw)))
-               (float3-x tr)
+      (make-float4x4
+       (* (float3-x s)
+          (- 1.0f0 (* 2.0f0 (+ yy zz))))
+       (* (float3-y s)
+          (* 2.0f0 (- xy zw)))
+       (* (float3-z s)
+          (* 2.0f0 (+ xz yw)))
+       (float3-x tr)
 
-               (* (float3-x s)
-                  (* 2.0f0 (+ xy zw)))
-               (* (float3-y s)
-                  (- 1.0f0 (* 2.0f0 (+ xx zz))))
-               (* (float3-z s)
-                  (* 2.0f0 (- yz xw)))
-               (float3-y tr)
+       (* (float3-x s)
+          (* 2.0f0 (+ xy zw)))
+       (* (float3-y s)
+          (- 1.0f0 (* 2.0f0 (+ xx zz))))
+       (* (float3-z s)
+          (* 2.0f0 (- yz xw)))
+       (float3-y tr)
 
-               (* (float3-x s)
-                  (* 2.0f0 (- xz yw)))
-               (* (float3-y s)
-                  (* 2.0f0 (+ yz xw)))
-               (* (float3-z s)
-                  (- 1.0f0 (* 2.0f0 (+ xx yy))))
-               (float3-z tr)
+       (* (float3-x s)
+          (* 2.0f0 (- xz yw)))
+       (* (float3-y s)
+          (* 2.0f0 (+ yz xw)))
+       (* (float3-z s)
+          (- 1.0f0 (* 2.0f0 (+ xx yy))))
+       (float3-z tr)
 
-               0.0f0
-               0.0f0
-               0.0f0
-               1.0f0)))))
+       0.0f0
+       0.0f0
+       0.0f0
+       1.0f0))))
