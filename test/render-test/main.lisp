@@ -84,7 +84,8 @@
                  (let ((log (s:get-compile-log shader)))
                    (when (> (length log) 0)
                      (log:info "Compilation log: ~A" log)))
-                 (b:use-shader (r:get-backend r) shader))))
+                 (b:use-shader (r:get-backend r) shader)
+                 (gl:polygon-mode :front-and-back :fill))))  ; change to line to view wireframe
     (le:link :on-loop
              (lambda ()
                (let ((backend (r:get-backend r)))
