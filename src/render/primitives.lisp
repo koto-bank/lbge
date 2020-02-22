@@ -33,9 +33,6 @@
 (defun make-circle (&key radius (vert-num 32) (transform (m:make-transform)))
   (make-ellipse :r-x radius :r-y radius :vert-num vert-num :transform transform))
 
-(defun make-ring (&key w h thickness (transform (m:make-transform)))
-  ;; Temp!
-  (make-triangle :size w :transform transform))
 (defun make-ellipse (&key r-x r-y (vert-num 32) (transform (m:make-transform)))
   (assert (> vert-num 2) nil "Cant make an ellipse with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
@@ -52,5 +49,33 @@
 
     (setf (aref verts vert-num) (m:make-float4 0.0f0 0.0f0 0.0f0 1.0f0)
           (aref inds (1- (* 3 vert-num))) (aref inds 0))
+    (log:debug "Ellipse vertices: ~A" verts)
+    (log:debug "Ellipse indices: ~A" inds)
+    (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
+                        transform)))
+
+(defun make-ring (&key in-r out-r (vert-num 32) (transform (m:make-transform)))
+  (assert (> vert-num 2) nil "Cant make an ring with ~A vertices" vert-num)
+  (let ((step (/ (* 2 pi) vert-num))
+        (inds (make-array  (list (* 6 vert-num))))
+        (verts (make-array (list (* 2 vert-num))))
+        (base-ind 0))
+    (dotimes (i vert-num)
+      (let ((angle (* i step))
+            (base-vert (* 2 i)))
+        (setf (aref verts base-vert) (m:make-float4 (* out-r (cos angle)) (* out-r (sin angle)) 0.0f0 1.0f0)
+              (aref verts (1+ base-vert)) (m:make-float4 (* in-r (cos angle)) (* in-r (sin angle)) 0.0f0 1.0f0)
+
+              (aref inds base-ind) base-vert
+              (aref inds (+ base-ind 1)) (+ base-vert 1)
+              (aref inds (+ base-ind 2)) (+ base-vert 3)
+              (aref inds (+ base-ind 3)) (+ base-vert 2)
+              (aref inds (+ base-ind 4)) base-vert
+              (aref inds (+ base-ind 5)) (+ base-vert 3)
+              base-ind (+ 6 base-ind))))
+    (let ((last-index (1- (* 6 vert-num))))
+      (setf (aref inds last-index) 1)
+      (setf (aref inds (- last-index 2)) 0)
+      (setf (aref inds (- last-index 3)) 1))
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
                         transform)))

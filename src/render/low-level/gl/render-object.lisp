@@ -83,7 +83,8 @@
                          (vector (m:transform-matrix transform)))
       (with-slots (base-vertex index-size index-offset)
           gl-data
-        (gl:draw-elements-base-vertex :triangles (gl:make-null-gl-array :unsigned-short)
+        (gl:draw-elements-base-vertex :triangles
+                                      (gl:make-null-gl-array :unsigned-short)
                                       base-vertex
                                       :count index-size
                                       :offset index-offset)))))
