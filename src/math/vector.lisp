@@ -120,6 +120,9 @@
                    (map 'vector (ax:rcurry #'coerce 'single-float)
                         in-vec))))
 
+(defmethod print-object ((vec float4) out)
+  (format out "~S" (in-vec vec)))
+
 (defmethod get-size ((vec float2))
   2)
 
