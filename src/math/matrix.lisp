@@ -440,3 +440,28 @@
                    0 (/ 2 (- tp b)) 0 (- (/ (+ tp b) (- tp b)))
                    0 0 (/ -2 (- n f)) (- (/ (+ f n) (- f n)))
                    0 0 0 1)))
+
+(defun make-look-at (position target up)
+  (let* ((dir (normalize (sub target position)))
+         (norm-up (normalize up))
+         (right (normalize (cross dir norm-up))))
+    (make-float4x4
+     (float4-x dir)
+     (float4-x norm-up)
+     (float4-x right)
+     0.0
+
+     (float4-y dir)
+     (float4-y norm-up)
+     (float4-y right)
+     0.0
+
+     (float4-z dir)
+     (float4-z norm-up)
+     (float4-z right)
+     0.0
+
+     (dot dir (negv position))
+     (dot norm-up (negv position))
+     (dot right (negv position))
+     1.0)))
