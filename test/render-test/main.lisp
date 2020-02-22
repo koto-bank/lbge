@@ -25,9 +25,13 @@
      (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
   (let ((r (r:make-renderer :gl))
         (a (a:make-asset-manager))
-        (c (r:make-ortho-camera :left 0.0f0 :right 1.0f0
-                                :top 1.0f0 :bottom 0.0f0
-                                :near 0.1f0 :far 1.0f0)))
+        (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
+                                :top 0.75f0 :bottom -0.75f0
+                                :near -0.1f0 :far 3.0f0
+                                :view (m:make-look-at
+                                       (m:make-float3 0.0 0.0 1.0)
+                                       (m:make-float3 0.0 0.0 0.0)
+                                       (m:make-float3 0.0 1.0 0.0)))))
     (f:set-app-root-to-system 'lbge-render-test)
     ;; Setup asset manager
     (a:add-root a :root ".")
@@ -85,7 +89,7 @@
                    (when (> (length log) 0)
                      (log:info "Compilation log: ~A" log)))
                  (b:use-shader (r:get-backend r) shader)
-                 (gl:polygon-mode :front-and-back :fill))))  ; change to line to view wireframe
+                 (gl:polygon-mode :front-and-back :fill)))) ; change to line to view wireframe
     (le:link :on-loop
              (lambda ()
                (let ((backend (r:get-backend r)))

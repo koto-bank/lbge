@@ -70,12 +70,14 @@ cons pair of maj . min context version"
   (gl:clear :color-buffer-bit :depth-buffer-bit))
 
 (defmethod b:render ((backend gl-backend) renderer)
-  (with-slots ((objs r:render-objects)) renderer
+  (with-slots ((objs r:render-objects)
+               (camera r:current-camera))
+      renderer
     (with-slots (vao active-shader) backend
       (gl:bind-vertex-array vao)
       (gl:use-program (slot-value active-shader 'handle))
       (mapcar (ax:curry #'ensure-buffer-data backend) objs)
-      (mapcar (ax:curry #'draw-object backend) objs)
+      (mapcar (ax:curry #'draw-object camera backend) objs)
       (gl:use-program 0)
       (gl:bind-vertex-array 0))))
 
@@ -96,7 +98,8 @@ cons pair of maj . min context version"
   (with-slots (status handle) shader
     (assert (eq :compiled status) nil
             "Shader must be compiled in order to be used")
-    (setf (slot-value backend 'active-shader) shader)))
+    (setf (slot-value backend 'active-shader) shader)
+    (set-default-uniforms shader)))
 
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)

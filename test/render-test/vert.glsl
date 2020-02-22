@@ -6,6 +6,6 @@ uniform mat4 model_view;
 uniform mat4 projection;
 
 void main() {
-    mat4 proj = projection * inverse(projection);
-    gl_Position = proj * model_view * vert_pos;
+    mat4 proj = projection;
+    gl_Position = (proj * model_view) * vert_pos;
 }
