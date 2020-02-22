@@ -30,13 +30,13 @@
             indices (vector 0 1 2)))
     (make-render-object (list b) transform)))
 
-(defun make-circle (&key radius (vert-num 16) (transform (m:make-transform)))
+(defun make-circle (&key radius (vert-num 32) (transform (m:make-transform)))
   (make-ellipse :r-x radius :r-y radius :vert-num vert-num :transform transform))
 
 (defun make-ring (&key w h thickness (transform (m:make-transform)))
   ;; Temp!
   (make-triangle :size w :transform transform))
-(defun make-ellipse (&key r-x r-y (vert-num 16) (transform (m:make-transform)))
+(defun make-ellipse (&key r-x r-y (vert-num 32) (transform (m:make-transform)))
   (assert (> vert-num 2) nil "Cant make an ellipse with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
         (inds (make-array  (list (* 3 vert-num))))
