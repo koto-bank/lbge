@@ -46,6 +46,7 @@
    :vertices
    :indices
    :make-render-object
+   :make-render-batch
    :batches
    :add-batch
    :transform
