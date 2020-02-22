@@ -55,8 +55,10 @@
    :camera
    :camera-projection-matrix
    :camera-view-matrix
+   :current-camera
    :add-camera
    :set-current-camera
+   :get-current-camera
    :make-ortho-camera
 
    ;; Primitives
