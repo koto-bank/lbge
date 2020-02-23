@@ -33,6 +33,7 @@ cons pair of maj . min context version"
       (setf context (sdl2:gl-create-context window)))
     (setf win window)
     (gl:enable :depth-test)
+    (gl:enable :cull-face)
     (ensure-vao backend)))
 
 (defun ensure-vao (backend)
