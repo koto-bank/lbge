@@ -24,6 +24,11 @@
                 0 0 0 0
                 0 0 0 0))))
 
+(defmethod print-object ((mat float4x4) stream)
+  (loop
+    :for (a b c d) :on (coerce (in-vec mat) 'list)
+    :by #'cddddr
+    :do (format stream "~A ~A ~A ~A~%" a b c d)))
 
 (defgeneric add (matrix1 matrix2)
   (:documentation "Add two matrices"))
