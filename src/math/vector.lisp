@@ -123,6 +123,9 @@
 (defmethod print-object ((vec float4) out)
   (format out "~S" (in-vec vec)))
 
+(defmethod print-object ((vec float3) out)
+  (format out "~S" (in-vec vec)))
+
 (defmethod get-size ((vec float2))
   2)
 
@@ -180,8 +183,7 @@
   "The Euclidian norm of a vector"
   (sqrt (reduce #'+
                 (map 'vector
-                     (lambda (x)
-                       (expt x 2))
+                     (ax:rcurry #'expt 2)
                      (in-vec vector)))))
 
 (defmacro define-vec-unary-op (name vec-type map-fun)
