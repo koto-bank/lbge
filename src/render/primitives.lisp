@@ -27,7 +27,7 @@
       (setf vertices (vector (m:make-float4 -size/2 -r-insc 0.0f0 1.0f0)
                              (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
                              (m:make-float4 size/2 -r-insc 0.0f0 1.0f0))
-            indices (vector 0 1 2)))
+            indices (vector 0 2 1)))
     (make-render-object (list b) transform)))
 
 (defun make-circle (&key radius (vert-num 32) (transform (m:make-transform)))
@@ -43,12 +43,12 @@
       (let ((angle (* i step)))
         (setf (aref verts i) (m:make-float4 (* r-x (cos angle)) (* r-y (sin angle)) 0.0f0 1.0f0)
               (aref inds base-ind) i
-              (aref inds (+ base-ind 1)) vert-num
-              (aref inds (+ base-ind 2)) (+ i 1)
+              (aref inds (+ base-ind 1)) (+ i 1)
+              (aref inds (+ base-ind 2)) vert-num
               base-ind (+ 3 base-ind))))
 
     (setf (aref verts vert-num) (m:make-float4 0.0f0 0.0f0 0.0f0 1.0f0)
-          (aref inds (1- (* 3 vert-num))) (aref inds 0))
+          (aref inds (- (* 3 vert-num) 2)) (aref inds 0))
     (log:debug "Ellipse vertices: ~A" verts)
     (log:debug "Ellipse indices: ~A" inds)
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
@@ -67,15 +67,15 @@
               (aref verts (1+ base-vert)) (m:make-float4 (* in-r (cos angle)) (* in-r (sin angle)) 0.0f0 1.0f0)
 
               (aref inds base-ind) base-vert
-              (aref inds (+ base-ind 1)) (+ base-vert 1)
-              (aref inds (+ base-ind 2)) (+ base-vert 3)
-              (aref inds (+ base-ind 3)) (+ base-vert 2)
-              (aref inds (+ base-ind 4)) base-vert
+              (aref inds (+ base-ind 1)) (+ base-vert 3)
+              (aref inds (+ base-ind 2)) (+ base-vert 1)
+              (aref inds (+ base-ind 3)) base-vert
+              (aref inds (+ base-ind 4)) (+ base-vert 2)
               (aref inds (+ base-ind 5)) (+ base-vert 3)
               base-ind (+ 6 base-ind))))
     (let ((last-index (1- (* 6 vert-num))))
       (setf (aref inds last-index) 1)
-      (setf (aref inds (- last-index 2)) 0)
-      (setf (aref inds (- last-index 3)) 1))
+      (setf (aref inds (- last-index 1)) 0)
+      (setf (aref inds (- last-index 4)) 1))
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
                         transform)))
