@@ -448,25 +448,25 @@
 
 (defun make-look-at (position target up)
   (let* ((dir (normalize (sub target position)))
-         (norm-up (normalize up))
-         (right (normalize (cross dir norm-up))))
+         (right (normalize (cross dir up)))
+         (norm-up (normalize (cross right dir))))
     (make-float4x4
-     (float4-x dir)
-     (float4-x norm-up)
      (float4-x right)
-     0.0
-
-     (float4-y dir)
-     (float4-y norm-up)
      (float4-y right)
-     0.0
-
-     (float4-z dir)
-     (float4-z norm-up)
      (float4-z right)
-     0.0
-
-     (dot dir (negv position))
-     (dot norm-up (negv position))
      (dot right (negv position))
+
+     (float4-x norm-up)
+     (float4-y norm-up)
+     (float4-z norm-up)
+     (dot norm-up (negv position))
+
+     (float4-x dir)
+     (float4-y dir)
+     (float4-z dir)
+     (dot dir (negv position))
+
+     0.0
+     0.0
+     0.0
      1.0)))
