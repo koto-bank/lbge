@@ -28,4 +28,5 @@
    :get-main-window
 
    ;; Renderer
+   :engine-renderer
    :install-renderer))
