@@ -19,7 +19,8 @@
    (main-window
     :documentation "Engine main window")
    (renderer :documentation "Current renderer"
-             :initform nil))
+             :initform nil
+             :accessor engine-renderer))
   (:documentation "The engine"))
 
 (defstruct engine-options
@@ -86,9 +87,9 @@ Asserts that it have been created earlier."
 ;;; Renderer
 (defun install-renderer (renderer)
   (unless (null renderer)
-    (assert (null (slot-value *engine* 'renderer))
+    (assert (null (engine-renderer *engine*))
             nil "Renderer already installed"))
-  (setf (slot-value *engine* 'renderer) renderer))
+  (setf (engine-renderer *engine*) renderer))
 
 (defun engine-loop ()
   (let ((options (slot-value *engine* 'options))
