@@ -1,11 +1,3 @@
-(defpackage :lbge.engine.events
-  (:use :cl :lbge.asset :lbge.hash)
-  (:local-nicknames (:ax :alexandria))
-  (:export
-   :process-events
-   :add-event-handler
-   :add-event-handlers))
-
 (defpackage :lbge.engine
   (:use :cl :lbge.asset :lbge.hash)
   (:local-nicknames (:beacon :lbge.beacon))
@@ -30,3 +22,14 @@
    ;; Renderer
    :engine-renderer
    :install-renderer))
+
+(defpackage :lbge.engine.events
+  (:use :cl :lbge.asset :lbge.hash)
+  (:local-nicknames (:ax :alexandria)
+                    (:r :lbge.render)
+                    (:e :lbge.engine))
+  (:export
+   :process-events
+   :add-event-handler
+   :add-event-handlers
+   :event-data))
