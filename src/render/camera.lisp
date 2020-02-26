@@ -8,15 +8,34 @@
               :initform nil
               :accessor camera-view-matrix)))
 
+(defclass ortho-camera (camera)
+  ((left)
+   (right)
+   (top)
+   (bottom)
+   (near)
+   (far)))
+
 (defun make-ortho-camera (&key left right top bottom near far view)
-  (let ((cam (make-instance 'camera)))
-    (with-slots (matrix view-matrix) cam
-      (setf matrix (m:make-ortho-projection
+  (let ((cam (make-instance 'ortho-camera))
+        (proj-matrix (m:make-ortho-projection
                     :left left
                     :right right
                     :top top
                     :bottom bottom
                     :near near
-                    :far far)
-            view-matrix view))
+                    :far far)))
+    (with-slots (matrix view-matrix
+                 (c-left left) (c-right right)
+                 (c-top top) (c-bottom bottom)
+                 (c-near near) (c-far far))
+        cam
+      (setf matrix proj-matrix
+            view-matrix view
+            c-left left
+            c-right right
+            c-top top
+            c-bottom bottom
+            c-near near
+            c-far far))
     cam))
