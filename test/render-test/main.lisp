@@ -58,7 +58,7 @@
                   (m:make-transform :pos (m:make-float4 0.3f0 -0.3f0 0.0f0 1.0f0))))
     (le:link :before-start
              (lambda ()
-               (b:init (r:get-backend r)
+               (b:init (r:renderer-backend r)
                        (le:get-main-window)
                        '((:gl-version (4 . 1))))
                (format t "OpenGL version string: ~a~%" (gl:gl-version))
@@ -68,7 +68,7 @@
                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
                      (vert-shader-asset
                        (a:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-                     (shader (b:make-shader (r:get-backend r) "simple-shader")))
+                     (shader (b:make-shader (r:renderer-backend r) "simple-shader")))
                  (log:info "Fragment shader:")
                  (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
                    (log:info lines))
@@ -88,11 +88,11 @@
                  (let ((log (s:get-compile-log shader)))
                    (when (> (length log) 0)
                      (log:info "Compilation log: ~A" log)))
-                 (b:use-shader (r:get-backend r) shader)
+                 (b:use-shader (r:renderer-backend r) shader)
                  (gl:polygon-mode :front-and-back :fill)))) ; change to line to view wireframe
     (le:link :on-loop
              (lambda ()
-               (let ((backend (r:get-backend r)))
+               (let ((backend (r:renderer-backend r)))
                  (b:clear backend)
                  (b:render backend r)
                  (b:present backend)))))
