@@ -8,6 +8,7 @@
    :render
    :present
    :deinit
+   :resize-viewport
    ;; Shader handling
    :shader-list
    :make-shader
@@ -37,6 +38,7 @@
 
    ;; Render functions
    :render
+   :resize-viewport
    :renderer-backend
 
    ;; Render objects

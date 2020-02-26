@@ -45,6 +45,9 @@
 (defun render (renderer)
   (b:render (renderer-backend renderer) renderer))
 
+(defun resize-viewport (renderer width height)
+  (b:resize-viewport (renderer-backend renderer) renderer width height))
+
 (defmacro gl-check-error (gl-call)
   (let ((code (gensym))
         (fun-name (car gl-call)))

@@ -101,6 +101,12 @@ cons pair of maj . min context version"
     (setf (slot-value backend 'active-shader) shader)
     (set-default-uniforms shader)))
 
+(defmethod b:resize-viewport ((backend gl-backend) renderer width height)
+  (gl:viewport 0 0 width height)
+  (r:adjust-camera-new-aspect (r:renderer-current-camera renderer)
+                              (/ width height)
+                              :y))
+
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)
     (sdl2:gl-swap-window (slot-value backend 'window))))
