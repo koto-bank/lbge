@@ -75,11 +75,23 @@
       (assert (cdr handler) nil "Event handler cannot be empty")
       (funcall (cdr handler) sdl-event))))
 
+(defun dispatch-window-event (sdl-event engine)
+  (let ((event-type
+          (autowrap:enum-key 'sdl2-ffi:sdl-window-event-id
+                             (expand-accessor :event :windowevent sdl-event))))
+    (cond ((eq event-type :resized)
+           (r:resize-viewport (e:engine-renderer engine)
+                              (expand-accessor :data1 :windowevent sdl-event)
+                              (expand-accessor :data2 :windowevent sdl-event))))))
+
 (defun process-events (engine sdl-event)
   (loop :as rc = (sb-int:with-float-traps-masked (:invalid :overflow)
                    (sdl2:next-event sdl-event :poll))
         :until (= 0 rc)
         :do (let ((event-type (sdl2:get-event-type sdl-event)))
-              (if (eq event-type :quit)
-                  (setf (slot-value engine 'lbge.engine::state) :stopping)
-                  (process-event event-type sdl-event)))))
+              (cond ((eq event-type :quit)
+                     (setf (slot-value engine 'lbge.engine::state) :stopping))
+                    ((eq event-type :windowevent)
+                     (dispatch-window-event sdl-event engine))
+                    (t
+                     (process-event event-type sdl-event))))))
