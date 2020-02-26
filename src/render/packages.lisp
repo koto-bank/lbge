@@ -56,6 +56,7 @@
    :camera-projection-matrix
    :camera-view-matrix
    :current-camera
+   :adjust-camera-new-aspect
    :renderer-current-camera
    :add-camera
    :set-current-camera
