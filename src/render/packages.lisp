@@ -37,7 +37,7 @@
 
    ;; Render functions
    :render
-   :get-backend
+   :renderer-backend
 
    ;; Render objects
    :add-object
@@ -56,6 +56,7 @@
    :camera-projection-matrix
    :camera-view-matrix
    :current-camera
+   :renderer-current-camera
    :add-camera
    :set-current-camera
    :get-current-camera

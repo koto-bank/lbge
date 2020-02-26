@@ -3,10 +3,12 @@
 (defclass renderer ()
   ((backend-type :documentation "Keyword denoting backend:
 :gl :vk :mtl :dx12" :initarg :backend)
-   (backend :documentation "Rendering backend, providing actual drawing interface")
+   (backend :documentation "Rendering backend, providing actual drawing interface"
+            :accessor renderer-backend)
    (cameras :documentation "Available cameras" :initform (list))
    (current-camera :documentation "Current rendering camera"
-                   :initform nil)
+                   :initform nil
+                   :accessor renderer-current-camera)
    (render-objects :documentation "A list of all render objects"
                    :initform (list)))
   (:documentation "Renderer instance"))
@@ -14,7 +16,7 @@
 (defun make-renderer (backend)
   (let ((renderer (make-instance 'renderer :backend backend)))
     (cond ((eq backend :gl)
-           (setf (slot-value renderer 'backend)
+           (setf (renderer-backend renderer)
                  (make-instance 'lbge.render.gl:gl-backend)))
           (t (assert nil nil "Backend ~S not supported" backend)))
     renderer))
@@ -40,11 +42,8 @@
               (push obj render-objects))
             objects)))
 
-(defun get-backend (renderer)
-  (slot-value renderer 'backend))
-
 (defun render (renderer)
-  (b:render (slot-value renderer 'backend) renderer))
+  (b:render (renderer-backend renderer) renderer))
 
 (defmacro gl-check-error (gl-call)
   (let ((code (gensym))
