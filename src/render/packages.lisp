@@ -53,6 +53,16 @@
    :add-batch
    :transform
 
+   ;; buffer semantics
+   :semantics
+   :semantics=
+   :make-semantics
+   :stride
+   :attributes-num
+   :attribute-types
+   :attribute-sizes
+   :attribute-offsets
+
    ;; Camera
    :camera
    :camera-projection-matrix
