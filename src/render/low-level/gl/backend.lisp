@@ -1,20 +1,27 @@
 (in-package :lbge.render.gl)
 
-(defclass gl-backend (b:backend)
-  ((context :documentation "GL context" :initform nil)
-   (shader-map :documentation "Map of all shaders. Key is shader name"
-               :initform (h:make-hash))
-   (active-shader :documentation "Current active shader")
-   (window :documentation "SDL window" :initform nil)
-
-   ;; TODO: move to separate structure, supprot multiple layouts
-   (vao :documentation "VAO" :initform nil)
+(defclass buffer-storage ()
+  ((vao :documentation "VAO" :initform nil)
+   (semantics :documentation "Specifies semantics of stored vertex buffer"
+              :initform (assert nil nil "Must provide semantics on buffer storage creation")
+              :initarg :semantics
+              :accessor buffer-storage-semantics)
    (vertex-bo :documentation "VBO" :initform 0)
    (last-vertex-index :initform 0 :documentation "Index of last vertex in VBO")
    (last-index-index :initform 0 :documentation "Index of last index in IBO")
    (index-bo :documentation "IBO" :initform 0)
    (total-vertex-size :initform 0 :documentation "Total number of bytes in VBO")
    (total-index-size :initform 0 :documentation "Total number of bytes in IBO")))
+
+(defclass gl-backend (b:backend)
+  ((context :documentation "GL context" :initform nil)
+   ;; TODO way to check if shader is comatible with buffer-storage?
+   (shader-map :documentation "Map of all shaders. Key is shader name"
+               :initform (h:make-hash))
+   (buffer-storages :documentation "List of buffer storages each containing its objects"
+                    :initform (list))
+   (active-shader :documentation "Current active shader")
+   (window :documentation "SDL window" :initform nil)))
 
 (defmethod b:init ((backend gl-backend) window &optional info)
   "Init GL backend.
