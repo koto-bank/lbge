@@ -1,7 +1,8 @@
 (in-package :lbge.render.gl)
 
 (defclass gl-render-object-data ()
-  ((base-vertex :documentation "Index of the first vertex in vertex buffer")
+  ((vao :documentation "VAO which stores this render object data")
+   (base-vertex :documentation "Index of the first vertex in vertex buffer")
    (index-size :documentation "Byte size of indices")
    (index-offset :documentation "Index of the first index in index buffer")
    (num-instances :documentation "Number of instances"))
