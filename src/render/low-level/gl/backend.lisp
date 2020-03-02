@@ -40,14 +40,10 @@ cons pair of maj . min context version"
       (setf context (sdl2:gl-create-context window)))
     (setf win window)
     (gl:enable :depth-test)
-    (gl:enable :cull-face)
-    (ensure-vao backend)))
+    (gl:enable :cull-face)))
 
-(defun ensure-vao (backend)
-  ;; Temporary implementaion! We should support VAO creation
-  ;; for any new buffer semantics and other state options.
-  ;; For now create only one vao if its not present
-  (with-slots (vao vertex-bo index-bo) backend
+(defun init-buffer-storage (new-buffer-storage)
+  (with-slots (vao vertex-bo index-bo semantics) new-buffer-storage
     (let ((new-vao (gl:gen-vertex-array))
           (vertex-buf (gl:gen-buffer))
           (index-buf (gl:gen-buffer)))
@@ -56,11 +52,21 @@ cons pair of maj . min context version"
             vertex-bo vertex-buf
             index-bo index-buf)
       (gl:bind-vertex-array new-vao)
-      (gl:enable-vertex-attrib-array 0) ; vertices
-
-      ;; Create vertex buffer
       (gl:bind-buffer :array-buffer vertex-buf)
-      (gl:vertex-attrib-pointer 0 4 :float nil 0 0)
+
+      (with-slots (r:stride r:attributes-num
+                   r:attribute-types r:attribute-sizes r:attribute-offsets)
+          semantics
+
+        (dotimes (i r:attributes-num)
+          (let ((size (nth i r:attribute-sizes))
+                (offset (nth i r:attribute-offsets))
+                (type (nth i r:attribute-types)))
+            (log:debug "Providing vertex attrib pointer ~S type ~S size ~S offset ~S stride ~S" i type size offset r:stride)
+            (gl:enable-vertex-attrib-array i)
+            (gl:vertex-attrib-pointer i size type nil r:stride (cffi:inc-pointer
+                                                                (cffi:null-pointer) offset)))))
+      ;; Fill vertex buffer
       (gl:with-gl-array (a :float :count #xFFFF) ; max 65535 vertices
         (gl:buffer-data :array-buffer :static-draw a))
 
@@ -71,7 +77,25 @@ cons pair of maj . min context version"
 
       (gl:bind-buffer :array-buffer 0)
       (gl:bind-buffer :element-array-buffer 0)
-      (gl:bind-vertex-array 0))))
+      (gl:bind-vertex-array 0)))
+  new-buffer-storage)
+
+(defun ensure-buffer-storage (backend render-object)
+  "Returns buffer storage for render object, otherwise creates it"
+  (with-slots (buffer-storages) backend
+    (with-slots (r:semantics) render-object
+      (let ((maybe-storage
+              (find r:semantics buffer-storages
+                    :test (lambda (r-sem buffer-storage)
+                            (r:semantics= r-sem
+                                          (buffer-storage-semantics
+                                           buffer-storage))))))
+        (when maybe-storage
+          (log:debug "Found buffer storage for semantics ~S" r:semantics)
+          (return-from ensure-buffer-storage maybe-storage)))
+      (car (push (init-buffer-storage
+                  (make-instance 'buffer-storage :semantics r:semantics))
+                 buffer-storages)))))
 
 (defmethod b:clear ((backend gl-backend))
   (gl:clear :color-buffer-bit :depth-buffer-bit))
@@ -80,13 +104,13 @@ cons pair of maj . min context version"
   (with-slots ((objs r:render-objects)
                (camera r:current-camera))
       renderer
-    (with-slots (vao active-shader) backend
-      (gl:bind-vertex-array vao)
+    (with-slots (active-shader) backend
       (gl:use-program (slot-value active-shader 'handle))
-      (mapcar (ax:curry #'ensure-buffer-data backend) objs)
-      (mapcar (ax:curry #'draw-object camera backend) objs)
-      (gl:use-program 0)
-      (gl:bind-vertex-array 0))))
+      (dolist (obj objs)
+        (ensure-buffer-data backend obj))
+      (dolist (obj objs)
+        (draw-object camera backend obj))
+      (gl:use-program 0))))
 
 (defun add-shader (backend name shader)
   (with-slots (shader-map) backend
