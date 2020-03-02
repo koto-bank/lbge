@@ -14,7 +14,9 @@
                              (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
                              (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))
             indices (vector 0 2 1 0 3 2)))
-    (make-render-object (list b) transform)))
+    (make-render-object (list b)
+                        (make-semantics ((:vertex :float 4)))
+                        transform)))
 
 (defun make-triangle (&key size (transform (m:make-transform)))
   (assert (> size 0.0f0) nil "Triangle size must be positive, current value: ~S" size)
@@ -25,10 +27,15 @@
          (-r-insc (- (/ r-circ 2))))
     (with-slots (vertices indices) b
       (setf vertices (vector (m:make-float4 -size/2 -r-insc 0.0f0 1.0f0)
+                             (m:make-float3 1.0 0.0 0.0)
                              (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
-                             (m:make-float4 size/2 -r-insc 0.0f0 1.0f0))
+                             (m:make-float3 0.0 1.0 0.0)
+                             (m:make-float4 size/2 -r-insc 0.0f0 1.0f0)
+                             (m:make-float3 0.0 0.0 1.0))
             indices (vector 0 2 1)))
-    (make-render-object (list b) transform)))
+    (make-render-object (list b)
+                        (make-semantics ((:vertex :float 4) (:color :float 3)))
+                        transform)))
 
 (defun make-circle (&key radius (vert-num 32) (transform (m:make-transform)))
   (make-ellipse :r-x radius :r-y radius :vert-num vert-num :transform transform))
@@ -52,6 +59,7 @@
     (log:debug "Ellipse vertices: ~A" verts)
     (log:debug "Ellipse indices: ~A" inds)
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
+                        (make-semantics ((:vertex :float 4)))
                         transform)))
 
 (defun make-ring (&key in-r out-r (vert-num 32) (transform (m:make-transform)))
@@ -78,4 +86,5 @@
       (setf (aref inds (- last-index 1)) 0)
       (setf (aref inds (- last-index 4)) 1))
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
+                        (make-semantics ((:vertex :float 4)))
                         transform)))
