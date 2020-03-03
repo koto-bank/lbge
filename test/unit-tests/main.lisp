@@ -1,5 +1,6 @@
 (defpackage :lbge-unit-tests
   (:use :cl :rove)
+  (:local-nicknames (:ax :alexandria))
   (:export :run :collect-test-packages :run-on-travis-agent))
 
 (in-package :lbge-unit-tests)
@@ -19,10 +20,11 @@
 (defun load-test-files ()
   (let* ((root-dir (asdf:system-source-directory :lbge))
          (files (collect-test-files root-dir)))
-    (mapcar #'load
-            (remove-if (lambda (path)
-                         (not (string= (pathname-type path) "lisp")))
-                       files))))
+    (let ((*package* (find-package :lbge-unit-tests)))
+      (mapcar #'load
+              (remove-if (lambda (path)
+                           (not (string= (pathname-type path) "lisp")))
+                         files)))))
 
 (defun test-package-p (package)
   "Test if provided package has `lbge.test.' prefix.
@@ -49,11 +51,21 @@ If it does, then it is a test package."
 (defun filter-disabled-packages (package-list)
   (delete-if #'test-package-disabled-p package-list))
 
-(defun run-selected-test-suite (packages selected-test-suite)
-  (let ((suite (find-package selected-test-suite)))
+(defun make-test-package-name (test-name)
+  (ax:make-keyword
+   (concatenate 'string "LBGE.TEST."
+                (string-upcase (symbol-name test-name)))))
+
+(defun run-selected-tests (selected-tests)
+  (let ((processed-names
+          (mapcar #'make-test-package-name selected-tests)))
+    (mapcar #'run-selected-test processed-names)))
+
+(defun run-selected-test (selected-test)
+  (let ((suite (find-package selected-test)))
     (if suite
       (rove:run-suite suite)
-      (format t "Could not run test suite: package ~A not found~%" selected-test-suite))))
+      (format t "Could not run test suite: package ~A not found~%" selected-test))))
 
 (defun report-results ()
   (let ((failed (rove/core/stats:stats-failed rove:*stats*))
@@ -80,19 +92,19 @@ If it does, then it is a test package."
   (princ "`---------------------------------------'") (terpri)
   (terpri))
 
-(defun run (&key (reporter :spec) selected-test-suite)
+(defun run (&rest selected-tests)
   "Run unit tests and report the result.
 `reporter`: rove reporter. Default is :spec
 `selected-test-suite`: if present, only test suite with this name will run.
 Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
   (delete-test-packages)
   (load-test-files)
-  (rove:use-reporter reporter)
+  (rove:use-reporter :spec)
   (let* ((all-packages (collect-active-tests))
          (filtered-packages (filter-disabled-packages all-packages)))
-    (when selected-test-suite
-        (run-selected-test-suite filtered-packages selected-test-suite)
-        (return-from run (report-results)))
+    (when selected-tests
+      (run-selected-tests selected-tests)
+      (return-from run (report-results)))
     (print-start-message)
     (mapcar #'rove:run-suite filtered-packages)
     (report-results)))
