@@ -2,11 +2,11 @@
 
 (defun println (object &optional stream)
   (print object stream)
-  (terpri))
+  (terpri stream))
 
 (defun princln (object &optional stream)
   (princ object stream)
-  (terpri))
+  (terpri stream))
 
 (defun trim-newlines (string)
   (string-trim (list #\Newline #\Return) string))
