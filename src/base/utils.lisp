@@ -1,10 +1,10 @@
 (in-package :lbge.utils)
 
-(defun println (object &optional stream)
+(defun println (object &optional (stream *standard-output*))
   (print object stream)
   (terpri stream))
 
-(defun princln (object &optional stream)
+(defun princln (object &optional (stream *standard-output*))
   (princ object stream)
   (terpri stream))
 
