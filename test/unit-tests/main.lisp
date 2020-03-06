@@ -1,5 +1,5 @@
 (defpackage :lbge-unit-tests
-  (:use :cl :rove)
+  (:use :cl :rove :lbge.utils)
   (:local-nicknames (:ax :alexandria))
   (:export :run :collect-test-packages :run-on-travis-agent))
 
