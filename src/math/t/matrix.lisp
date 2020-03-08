@@ -1,9 +1,5 @@
-(defpackage :lbge.test.matrix
-  (:use :cl :lbge.math :rove))
-
-(in-package :lbge.test.matrix)
-
-(deftest add-test
+(define-test add-test
+    (:lbge.math)
   (testing "2x2 matrix addition"
     (ok (eqm (add (make-float2x2 1 2
                                  3 4)
@@ -36,7 +32,8 @@
                             26 28 30 32
                             34 36 38 40
                             42 44 46 48)))))
-(deftest sub-test
+(define-test sub-test
+    (:lbge.math)
   (testing "2x2 matrix subtraction"
     (ok (eqm (sub (make-float2x2 1 2
                                  3 4)
@@ -71,7 +68,8 @@
                             -16 -16 -16 -16)))))
 
 
-(deftest mul-test
+(define-test mul-test
+    (:lbge.math)
   (testing "2x2 matrix multiplication"
     (ok (eqm (mul (make-float2x2 1 2
                                  3 4)
@@ -106,7 +104,7 @@
                                  8 9))
              (make-float2x2 79 112
                             73 96))))
-  
+
   (testing "3x3 by 3x3 matrix multiplication"
     (ok (eqm (mul (make-float3x3 10 20 10
                                  4 5 6
@@ -117,7 +115,7 @@
              (make-float3x3 130 120 240
                             51 47 73
                             35 33 45))))
-  
+
   (testing "4x4 by 4x4 matrix multiplication"
     (ok (eqm (mul (make-float4x4 5 7 9 10
                                  2 3 3 8
@@ -154,7 +152,8 @@
              (make-float4 10 52 126 232)))))
 
 
-(deftest div-test
+(define-test div-test
+    (:lbge.math)
   (testing "2x2 matrix division"
     (ok (eqm (div (make-float2x2 2 4
                                  6 8)
@@ -183,7 +182,8 @@
                             13 14 15 16)))))
 
 
-(deftest absm-test
+(define-test absm-test
+    (:lbge.math)
   (testing "2x2 matrix abs"
     (ok (eqm (absm (make-float2x2 -1 -2
                                   -3 -4))
@@ -209,7 +209,8 @@
                             13 14 15 16)))))
 
 
-(deftest negm-test
+(define-test negm-test
+    (:lbge.math)
   (testing "2x2 matrix negation"
     (ok (eqm (negm (make-float2x2 1 2
                                   3 4))
@@ -235,7 +236,8 @@
                             -13 -14 -15 -16)))))
 
 
-(deftest transpose-test
+(define-test transpose-test
+    (:lbge.math)
   (testing "2x2 matrix transposition"
     (ok (eqm (transpose (make-float2x2 1 2
                                        3 4))
@@ -260,7 +262,8 @@
                             3 7 11 15
                             4 8 12 16)))))
 
-(deftest det-test
+(define-test det-test
+    (:lbge.math)
   (testing "2x2 matrix determinant"
     (ok (= (det (make-float2x2 1 2
                                2 1))
