@@ -5,23 +5,93 @@
 
 (in-package :lbge-unit-tests)
 
+(defmacro define-test (name use-packages &body body)
+  (let ((actual-name (make-test-package-name (symbol-name name))))
+    `(deftest ,actual-name ,@body)))
+
+(defun load-test-file (file-spec)
+  (let ((saved-package *package*))
+    (with-open-file (source file-spec)
+      (uiop:with-temporary-file (:stream temp-file
+                                 :pathname temp-path)
+        (prepare-temp-file source temp-file)
+        (finish-output temp-file)
+        (file-position temp-file :start)
+        (loop
+          :for form := (read temp-file nil nil) :while form
+          :do (eval form))))
+    (setf *package* saved-package)))
+
+(defun prepare-uses (form)
+  (loop :for n :in form :if (keywordp n) :collect n))
+
+(defun prepare-nicknames (form)
+  (ax:when-let (nicks (loop :for n :in form :if (listp n) :collect n))
+    (list (cons :local-nicknames nicks))))
+
+(defun get-form (source temp-packages &aux (pos (file-position source)))
+  (restart-case
+      (handler-bind
+          ((sb-int:simple-reader-package-error
+             (lambda (c &aux (l (slot-value c 'sb-kernel::format-arguments)))
+               (if (= 2 (length l))
+                 (let ((pkg (find-package (second l)))
+                       (sym-name (first l)))
+                   (export (intern sym-name pkg)
+                           pkg))
+                 (push
+                  (make-package
+                   (let ()
+                     (if (= 2 (length l))
+                       (second l)
+                       (first l))))
+                  temp-packages))
+               (invoke-restart 'try-again)))
+           (type-error
+             (lambda (c)
+               (declare (ignore c))
+               (invoke-restart 'try-again))))
+        (read source nil nil))
+    (try-again ()
+      (file-position source pos)
+      (get-form source temp-packages))))
+
+(defun prepare-temp-file (source temp-file)
+  (let ((temp-packages (list)))
+    (loop
+      :for form := (get-form source temp-packages) :while form
+      :do (progn
+            (if (string= "DEFINE-TEST" (symbol-name (first form)))
+              (let ((package-name (make-test-package-name (second form)))
+                    (use-form (prepare-uses (third form)))
+                    (nicknames-form (prepare-nicknames (third form))))
+                (println (append (list 'defpackage package-name)
+                                 (list (append '(:use :cl :rove :lbge-unit-tests)
+                                               use-form))
+                                 nicknames-form)
+                         temp-file)
+                (println (list 'in-package package-name) temp-file)
+                (println (macroexpand (rplaca form 'define-test)) temp-file))
+              (println form temp-file))))
+    (mapcar #'delete-package temp-packages)))
+
 (defun collect-test-files (root)
   (let (files)
     (uiop:collect-sub*directories
      root t t
      (lambda (dir)
        (if (uiop:string-suffix-p (directory-namestring dir) "/t/")
-           (uiop:collect-sub*directories
-            dir t t
-            (lambda (dir)
-              (setf files (nconc files (uiop:directory-files dir))))))))
+         (uiop:collect-sub*directories
+          dir t t
+          (lambda (dir)
+            (setf files (nconc files (uiop:directory-files dir))))))))
     files))
 
 (defun load-test-files ()
   (let* ((root-dir (asdf:system-source-directory :lbge))
          (files (collect-test-files root-dir)))
     (let ((*package* (find-package :lbge-unit-tests)))
-      (mapcar #'load
+      (mapcar #'load-test-file
               (remove-if (lambda (path)
                            (not (string= (pathname-type path) "lisp")))
                          files)))))
@@ -31,8 +101,8 @@
 If it does, then it is a test package."
   (let ((name (package-name package)))
     (if (< (length name) 10)
-        nil
-        (string= "LBGE.TEST." (subseq name 0 10)))))
+      nil
+      (string= "LBGE.TEST." (subseq name 0 10)))))
 
 (defun collect-all-packages ()
   (delete-if-not #'test-package-p (list-all-packages)))
@@ -54,7 +124,7 @@ If it does, then it is a test package."
 (defun make-test-package-name (test-name)
   (ax:make-keyword
    (concatenate 'string "LBGE.TEST."
-                (string-upcase (symbol-name test-name)))))
+                (string-upcase test-name))))
 
 (defun run-selected-tests (selected-tests)
   (let ((processed-names
