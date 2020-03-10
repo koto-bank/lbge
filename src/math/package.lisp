@@ -79,6 +79,8 @@
    :quaternion-y
    :quaternion-z
    :quaternion-w
+   :from-euler
+   :to-euler
 
    ;; transform
    :make-transform
