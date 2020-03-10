@@ -5,6 +5,9 @@
    ; exports from common.lisp
    :eqfp
    :neqfp
+   :round-to-eps
+   :clamp
+
    ; exports from vector.lisp
    :float2
    :float3

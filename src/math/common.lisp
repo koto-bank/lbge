@@ -21,3 +21,11 @@
 
 (defun neqfp (x y &optional (eps +epsilon+))
   (not (eqfp x y eps)))
+
+(defun round-to-eps (float &optional (eps +epsilon+))
+  (* eps (floor float eps)))
+
+(defun clamp (val min max)
+  (cond ((> val max) max)
+        ((< val min) min)
+        (t val)))
