@@ -1,15 +1,13 @@
 (in-package :lbge.math)
 
-
 (defvar +single-float-min-normal+ 1.175494351e-38)
 (defvar +single-float-max-value+ 3.402823466e+38)
-
+(defvar +epsilon+ 0.00001)
 
 (defun hand (x y)
   (and x y))
 
-
-(defun eqfp (x y &optional (eps 0.00001))
+(defun eqfp (x y &optional (eps +epsilon+))
   (let ((abs-x (abs x))
         (abs-y (abs y))
         (diff (abs (- x y))))
@@ -21,6 +19,5 @@
         (< diff (* eps +single-float-min-normal+))
         (< (/ diff (min (+ abs-x abs-y) +single-float-max-value+)) eps))))
 
-
-(defun neqfp (x y &optional (eps 0.00001))
+(defun neqfp (x y &optional (eps +epsilon+))
   (not (eqfp x y eps)))
