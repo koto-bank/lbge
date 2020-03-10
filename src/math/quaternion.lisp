@@ -6,8 +6,8 @@
    (z :accessor quaternion-z :initarg :z)
    (w :accessor quaternion-w :initarg :w)))
 
-(defun make-quaternion ()
-  (make-instance 'quaternion :x 0.0f0 :y 0.0f0 :z 0.0f0 :w 1.0f0))
+(defun make-quaternion (&key (x 0.0f0) (y 0.0f0) (z 0.0f0) (w 1.0f0))
+  (make-instance 'quaternion :x x :y y :z z :w w))
 
 (defmethod mul ((q1 quaternion) (q2 quaternion))
   (let ((a (* (+ (quaternion-w q1) (quaternion-x q1))
