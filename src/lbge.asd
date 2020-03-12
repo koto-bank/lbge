@@ -11,7 +11,8 @@
     ((:file "packages")
      (:file "hash-map")
      (:file "utils")
-     (:file "beacon")))
+     (:file "beacon")
+     (:file "timer")))
    (:module application
     :components
     ((:file "package")

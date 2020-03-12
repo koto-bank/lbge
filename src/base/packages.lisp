@@ -27,3 +27,18 @@
    :merge-lines
    :princln
    :bind))
+
+(defpackage :lbge.timer
+  (:use :cl)
+  (:shadow :restart)
+  (:local-nicknames (:beacon :lbge.beacon))
+  (:export
+   :timer
+   :make
+   :start
+   :link
+   :unlink
+   :unlink-all
+   :stop
+   :update
+   :restart))
