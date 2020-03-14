@@ -42,3 +42,14 @@
    :stop
    :update
    :restart))
+
+(defpackage :lbge.sparse-set
+  (:use :cl)
+  (:shadow :remove :get)
+  (:export
+   :make
+   :existsp
+   :get
+   :insert
+   :remove
+   :clear))
