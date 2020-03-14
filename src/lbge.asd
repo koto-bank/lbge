@@ -12,7 +12,8 @@
      (:file "hash-map")
      (:file "utils")
      (:file "beacon")
-     (:file "timer")))
+     (:file "timer")
+     (:file "sparse-set")))
    (:module application
     :components
     ((:file "package")
