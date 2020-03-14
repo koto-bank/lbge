@@ -30,6 +30,8 @@
     (list (cons :local-nicknames nicks))))
 
 (defun get-form (source temp-packages &aux (pos (file-position source)))
+  "One huge hack to read form robustly, i.e. create non-existing packages,
+intern symbols not yet present in them, and reread the form"
   (restart-case
       (handler-bind
           ((sb-int:simple-reader-package-error
