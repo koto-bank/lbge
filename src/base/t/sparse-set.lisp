@@ -50,4 +50,28 @@
       (ok (equalp data #("ez" "oh")))
       (ok (string= (sp-s:get 3 sparse packed data) "ez"))
       (ok (string= (sp-s:get 1 sparse packed data) "oh"))
-      (ok (null (sp-s:get 4 sparse packed data))))))
+      (ok (null (sp-s:get 4 sparse packed data))))
+
+    (testing "Set vectors expansion"
+      (adjust-array sparse '(0))
+      (adjust-array packed '(0) :fill-pointer 0)
+      (ok (= 0 (array-total-size sparse)))
+      (ok (= 0 (array-total-size packed)))
+
+      (sp-s:insert 1 sparse packed)
+      (ok (= 2 (array-total-size sparse)))
+      (ok (= 8 (array-total-size packed)))
+
+      (sp-s:insert 2 sparse packed)
+      (sp-s:insert 3 sparse packed)
+      (sp-s:insert 4 sparse packed)
+      (sp-s:insert 5 sparse packed)
+      (sp-s:insert 6 sparse packed)
+      (sp-s:insert 7 sparse packed)
+      (sp-s:insert 8 sparse packed)
+      (ok (= 9 (array-total-size sparse)))
+      (ok (= 8 (array-total-size packed)))
+
+      (sp-s:insert 666 sparse packed)
+      (ok (= 667 (array-total-size sparse)))
+      (ok (= 16 (array-total-size packed))))))
