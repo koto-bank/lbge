@@ -27,8 +27,7 @@
       (ok (equalp packed #(1 6 4))))
 
     (testing "Data addition"
-      (adjust-array sparse '(0))
-      (adjust-array packed '(0) :fill-pointer 0)
+      (sp-s:clear sparse packed)
       (ok (equalp sparse #()))
       (ok (equalp packed #()))
 
@@ -53,10 +52,10 @@
       (ok (null (sp-s:get 4 sparse packed data))))
 
     (testing "Set vectors expansion"
-      (adjust-array sparse '(0))
-      (adjust-array packed '(0) :fill-pointer 0)
+      (sp-s:clear sparse packed data)
       (ok (= 0 (array-total-size sparse)))
       (ok (= 0 (array-total-size packed)))
+      (ok (= 0 (array-total-size data)))
 
       (sp-s:insert 1 sparse packed)
       (ok (= 2 (array-total-size sparse)))

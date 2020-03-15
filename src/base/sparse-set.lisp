@@ -69,3 +69,9 @@ Otherwise return nil"
       (remove-swap-last packed-data packed-index))
     (setf (aref sparse (id swapped))
           packed-index)))
+
+(defun clear (sparse packed &optional data)
+  (adjust-array sparse '(0))
+  (adjust-array packed '(0) :fill-pointer 0)
+  (when data
+    (adjust-array data '(0) :fill-pointer 0)))
