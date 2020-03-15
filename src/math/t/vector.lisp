@@ -202,3 +202,22 @@
     (ok (eqv (project (make-float4 1 2 3 4)
                       (make-float4 5 6 7 8))
              (make-float4 (float 175/87) (float 70/29) (float 245/87) (float 280/87))))))
+
+
+(define-test normalize-test
+    (:lbge-math)
+  (testing "0 vector normalization"
+    (ok (eqv (normalize (float2-zero))
+             (float2-zero))))
+
+  (testing "2d vector normalization"
+    (ok (eqv (normalize (make-float2 3 4))
+             (make-float2 3/5 4/5))))
+
+  (testing "3d vector normalization"
+    (ok (eqv (normalize (make-float3 2 3 6))
+             (make-float3 2/7 3/7 6/7))))
+
+  (testing "4d vector normalization"
+    (ok (eqv (normalize (make-float4 1 1 1 1))
+             (make-float4 1/4 1/4 1/4 1/4)))))
