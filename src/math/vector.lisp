@@ -66,10 +66,8 @@
 (defgeneric absv (vector)
   (:documentation "Make all elemets of a vector absolute values"))
 
-; doesn't work yet
-(defgeneric swizzle (vector values &optional signs)
-  (:documentation "Perform swizzling on a given vector with optional sign flips"))
-
+(defgeneric normalize (vector)
+  (:documentation "Return the normalized vector of input vector"))
 
 (defun x (vec)
   (aref (in-vec vec) 0))
@@ -88,12 +86,18 @@
   (cond ((null a1)
          (make-instance
           'float2
-          :in-vec #(0.0f0 0.0f0)))
+          :in-vec #(0.0f0 0.0f0))(defun float2-zero () (make-float2 0 0))
+(defun float3-zero () (make-float3 0 0 0))
+(defun float4-zero () (make-float4 0 0 0 0))
+
+(defun float2-one () (make-float2 1 1))
+(defun float3-one () (make-float3 1 1 1))
+(defun float4-one () (make-float4 1 1 1 1))
         ((and a1 a2)
          (make-instance
           'float2
           :in-vec (vector a1 a2)))
-        (a1 (make-instance 'float2 :in-vec (vector a1 a1)))))
+        (a1 (make-instance 'float2 :in-vec (vector a1 a1)))
 
 (defun make-float3 (&optional a1 a2 a3)
   (cond
@@ -120,6 +124,14 @@
                    (map 'vector (ax:rcurry #'coerce 'single-float)
                         in-vec))))
 
+(defun float2-zero () (make-float2 0 0))
+(defun float3-zero () (make-float3 0 0 0))
+(defun float4-zero () (make-float4 0 0 0 0))
+
+(defun float2-one () (make-float2 1 1))
+(defun float3-one () (make-float3 1 1 1))
+(defun float4-one () (make-float4 1 1 1 1)))
+
 (defmethod print-object ((vec float4) out)
   (format out "~S" (in-vec vec)))
 
@@ -135,8 +147,8 @@
 (defmethod get-size ((vec float4))
   4)
 
-(defmacro define-vec-op (name result-type map-op)
-  `(defmethod ,name ((vector1 ,result-type) vector2)
+(defmacro define-vec-op (name result-type map-op docstring)
+  `(defmethod ,name ((vector1 ,result-type) (vector2 ,result-type))
      (make-instance ',result-type :in-vec
                     (map 'vector ,map-op
                          (in-vec vector1)
@@ -179,12 +191,16 @@
                (in-vec vector1)
                (in-vec vector2))))
 
+(defun norm2 (vector)
+  "The squared Euclidian norm of a vector"
+  (reduce #'+
+          (map 'vector
+               (ax:rcurry #'expt 2)
+               (in-vec vector))))
+
 (defun norm (vector)
   "The Euclidian norm of a vector"
-  (sqrt (reduce #'+
-                (map 'vector
-                     (ax:rcurry #'expt 2)
-                     (in-vec vector)))))
+  (sqrt (norm2 vector)))
 
 (defmacro define-vec-unary-op (name vec-type map-fun)
   `(defmethod ,name ((vector ,vec-type))
@@ -221,10 +237,20 @@
                (- (* (x vector1) (y vector2))
                   (* (y vector1) (x vector2)))))
 
+(defmethod normalize ((vector float2))
+  (if (eqv (vector) (float2-zero))
+    (float2-zero)
+    (div (vector) (norm vector))))
 
-(defun normalize (vector)
-  "Return a normalized vector"
-  (div vector (norm vector)))
+(defmethod normalize ((vector float3))
+  (if (eqv (vector) (float3-zero))
+    (float3-zero)
+    (div (vector) (norm vector))))
+
+(defmethod normalize ((vector float4))
+  (if (eqv (vector) (float4-zero))
+    (float4-zero)
+    (div (vector) (norm vector))))
 
 (defun angle (vector1 vector2)
   "Angle between two vectors in radians"
@@ -235,25 +261,3 @@
 (defun project (vector1 vector2)
   "Return the projection of vector1 onto vector2"
   (mul (normalize vector2) (dot vector1 (normalize vector2))))
-
-; doesnt work yet
-(defmethod swizzle ((vector float2) values &optional signs)
-    (with-slots (x y) vector
-    (map nil
-     (lambda (c s)
-       (ecase c
-         (#\X (funcall (intern (string s)) x))
-         (#\Y (funcall (intern (string s)) y))))
-     (symbol-name values)
-     (if (null signs)
-         "++"
-         (symbol-name signs)))))
-
-
-(defun float2-zero () (make-float2 0 0))
-(defun float3-zero () (make-float3 0 0 0))
-(defun float4-zero () (make-float4 0 0 0 0))
-
-(defun float2-one () (make-float2 1 1))
-(defun float3-one () (make-float3 1 1 1))
-(defun float4-one () (make-float4 1 1 1 1))
