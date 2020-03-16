@@ -81,8 +81,8 @@ Asserts that it have been created earlier."
 (defun get-beacon (name)
   (find name (slot-value *engine* 'beacons) :key #'beacon:name))
 
-(defun blink (name)
-  (beacon:blink (get-beacon name)))
+(defun blink (name &optional arg-list)
+  (apply #'beacon:blink (cons (get-beacon name) arg-list)))
 
 ;;; Renderer
 (defun install-renderer (renderer)
@@ -103,16 +103,22 @@ Asserts that it have been created earlier."
            (let* ((title (engine-options-window-title options))
                   (h (engine-options-window-h options))
                   (w (engine-options-window-w options))
-                  (win (make-window title w h)))
+                  (win (make-window title w h))
+                  (ticks 0))
              (set-main-window win)
              (unwind-protect
                   (progn
                     (blink :before-start)
                     (sdl2:with-sdl-event (sdl-event)
+                      (setf ticks (sdl2:get-ticks))
                       (loop :while (eq (slot-value *engine* 'state) :running)
                             ;; process-events is defined in events.lisp
-                            :do (progn (lbge.engine.events:process-events *engine* sdl-event)
-                                       (blink :on-loop))))
+                            :do (progn
+                                  (let* ((current-ticks (sdl2:get-ticks))
+                                         (delta (- current-ticks ticks)))
+                                    (setf ticks current-ticks)
+                                    (lbge.engine.events:process-events *engine* sdl-event)
+                                    (blink :on-loop (list delta))))))
                     (sb-int:with-float-traps-masked (:invalid)
                       (sdl2:destroy-window win))))))
       (sdl2:sdl-quit))))
