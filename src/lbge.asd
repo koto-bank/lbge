@@ -14,6 +14,10 @@
      (:file "beacon")
      (:file "timer")
      (:file "sparse-set")))
+   (:module animation
+    :components
+    ((:file "packages")
+     (:file "animation")))
    (:module application
     :components
     ((:file "package")
