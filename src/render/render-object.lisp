@@ -79,7 +79,8 @@ position, color, texture coordinates, etc."
    (semantics :documentation "Vertex array semantics descriptor"
               :initarg :semantics)
    (transform :documentation "Transform matrix"
-              :initarg :transform)
+              :initarg :transform
+              :accessor transform)
    (backend-data :documentation "Backend-dependent data. Opaque"))
   (:documentation "Render object. The thing that contains backend-independent info for rendering"))
 
