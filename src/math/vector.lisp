@@ -45,6 +45,14 @@
 (defmacro float4-w (vec)
   `(aref (in-vec ,vec) 3))
 
+(defun float2-zero () (make-float2 0 0))
+(defun float3-zero () (make-float3 0 0 0))
+(defun float4-zero () (make-float4 0 0 0 0))
+
+(defun float2-one () (make-float2 1 1))
+(defun float3-one () (make-float3 1 1 1))
+(defun float4-one () (make-float4 1 1 1 1))
+
 (defgeneric get-size (vector)
   (:documentation "Return number of vector components"))
 
@@ -66,9 +74,6 @@
 (defgeneric absv (vector)
   (:documentation "Make all elemets of a vector absolute values"))
 
-(defgeneric normalize (vector)
-  (:documentation "Return the normalized vector of input vector"))
-
 (defun x (vec)
   (aref (in-vec vec) 0))
 
@@ -81,23 +86,16 @@
 (defun w (vec)
   (aref (in-vec vec) 3))
 
-
 (defun make-float2 (&optional a1 a2)
   (cond ((null a1)
          (make-instance
           'float2
-          :in-vec #(0.0f0 0.0f0))(defun float2-zero () (make-float2 0 0))
-(defun float3-zero () (make-float3 0 0 0))
-(defun float4-zero () (make-float4 0 0 0 0))
-
-(defun float2-one () (make-float2 1 1))
-(defun float3-one () (make-float3 1 1 1))
-(defun float4-one () (make-float4 1 1 1 1))
+          :in-vec #(0.0f0 0.0f0)))
         ((and a1 a2)
          (make-instance
           'float2
           :in-vec (vector a1 a2)))
-        (a1 (make-instance 'float2 :in-vec (vector a1 a1)))
+        (a1 (make-instance 'float2 :in-vec (vector a1 a1)))))
 
 (defun make-float3 (&optional a1 a2 a3)
   (cond
@@ -124,14 +122,6 @@
                    (map 'vector (ax:rcurry #'coerce 'single-float)
                         in-vec))))
 
-(defun float2-zero () (make-float2 0 0))
-(defun float3-zero () (make-float3 0 0 0))
-(defun float4-zero () (make-float4 0 0 0 0))
-
-(defun float2-one () (make-float2 1 1))
-(defun float3-one () (make-float3 1 1 1))
-(defun float4-one () (make-float4 1 1 1 1)))
-
 (defmethod print-object ((vec float4) out)
   (format out "~S" (in-vec vec)))
 
@@ -147,8 +137,8 @@
 (defmethod get-size ((vec float4))
   4)
 
-(defmacro define-vec-op (name result-type map-op docstring)
-  `(defmethod ,name ((vector1 ,result-type) (vector2 ,result-type))
+(defmacro define-vec-op (name result-type map-op)
+  `(defmethod ,name ((vector1 ,result-type) vector2)
      (make-instance ',result-type :in-vec
                     (map 'vector ,map-op
                          (in-vec vector1)
@@ -190,6 +180,7 @@
           (map 'vector #'*
                (in-vec vector1)
                (in-vec vector2))))
+
 
 (defun norm2 (vector)
   "The squared Euclidian norm of a vector"
@@ -237,20 +228,18 @@
                (- (* (x vector1) (y vector2))
                   (* (y vector1) (x vector2)))))
 
-(defmethod normalize ((vector float2))
-  (if (eqv (vector) (float2-zero))
-    (float2-zero)
-    (div (vector) (norm vector))))
+(defun zero-vector-p (vector)
+  "Test if vector is zero"
+  (reduce #'hand
+          (map 'vector #'eqfp
+               (in-vec vector)
+               #(0 0 0 0))))
 
-(defmethod normalize ((vector float3))
-  (if (eqv (vector) (float3-zero))
-    (float3-zero)
-    (div (vector) (norm vector))))
-
-(defmethod normalize ((vector float4))
-  (if (eqv (vector) (float4-zero))
-    (float4-zero)
-    (div (vector) (norm vector))))
+(defun normalize (vector)
+  "Return the normalized vector of input vector"
+  (if (zero-vector-p vector)
+      vector
+      (div vector (norm vector))))
 
 (defun angle (vector1 vector2)
   "Angle between two vectors in radians"
