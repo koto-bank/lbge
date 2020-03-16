@@ -9,16 +9,16 @@
 (defun make-quaternion (&key (x 0.0f0) (y 0.0f0) (z 0.0f0) (w 1.0f0))
   (make-instance 'quaternion :x x :y y :z z :w w))
 
-(defun quaternion-zero () (make-quaternion 0 0 0 0))
-(defun quaternion-one () (make-quaternion 1 1 1 1))
+(defun quaternion-zero () (make-quaternion :x 0 :y 0 :z 0 :w 0))
+(defun quaternion-one () (make-quaternion :x 1 :y 1 :z 1 :w 1))
 
 (defmacro quaternion-v (q)
-  `(make-instance 'float3 :in-vec #((quaternion-y ,q)
-                                    (quaternion-z ,q)
-                                    (quaternion-w ,q))))
+  `(make-instance 'float3 :in-vec #((quaternion-x ,q)
+                                    (quaternion-y ,q)
+                                    (quaternion-z ,q))))
 
 (defmacro quaternion-a (q)
-  `(quaternion-x ,q))
+  `(quaternion-w ,q))
 
 (defgeneric norm2 (q)
   (:documentation "Get the squared euclidean norm of a quaternion"))
@@ -50,10 +50,10 @@
      (:documentation ,docstring))
     (defmethod ,name ((q1 quaternion) (q2 quaternion))
      (make-quaternion
-       (op (quaternion-x q1) (quaternion-x q2))
-       (op (quaternion-y q1) (quaternion-y q2))
-       (op (quaternion-z q1) (quaternion-z q2))
-       (op (quaternion-w q1) (quaternion-w q2))))))
+       :x (op (quaternion-x q1) (quaternion-x q2))
+       :y (op (quaternion-y q1) (quaternion-y q2))
+       :z (op (quaternion-z q1) (quaternion-z q2))
+       :w (op (quaternion-w q1) (quaternion-w q2))))))
 
 (defmacro define-quaternion-num-op (name op docstring)
   `(progn
@@ -61,10 +61,10 @@
      (:documentation ,docstring))
     (defmethod ,name ((q quaternion) (num real))
      (make-quaternion
-       (op (quaternion-x q) num)
-       (op (quaternion-y q) num)
-       (op (quaternion-z q) num)
-       (op (quaternion-w q) num)))))
+       :x (op (quaternion-x q) num)
+       :y (op (quaternion-y q) num)
+       :z (op (quaternion-z q) num)
+       :w (op (quaternion-w q) num)))))
 
 (defmacro define-quaternion-num-op-revord (name op docstring)
   `(progn
@@ -72,10 +72,10 @@
      (:documentation ,docstring))
     (defmethod ,name ((num real) (q quaternion))
      (make-quaternion
-       (op num (quaternion-x q))
-       (op num (quaternion-y q))
-       (op num (quaternion-z q))
-       (op num (quaternion-w q))))))
+       :x (op num (quaternion-x q))
+       :y (op num (quaternion-y q))
+       :z (op num (quaternion-z q))
+       :w (op num (quaternion-w q))))))
 
 (defmacro define-quaternion-unary-op (name op)
   `(progn
@@ -149,14 +149,14 @@
 (defmethod versor ((q quaternion))
   (if (eqq q (quaternion-zero))
     (quaternion-zero)
-    (div q (norm q))
-    (defmethod conj ((q quaternion))))
+    (div q (norm q))))
 
+(defmethod conj ((q quaternion))
   (make-quaternion
-    (quaternion-x q)
+    (- (quaternion-x q))
     (- (quaternion-y q))
     (- (quaternion-z q))
-    (- (quaternion-w q))))
+    (quaternion-w q)))
 
 (defmethod inv ((q quaternion))
   (div (conj q) (norm2 q)))
