@@ -34,7 +34,8 @@
      (:file "common")
      (:file "vector")
      (:file "matrix")
-     (:file "transform")))
+     (:file "transform")
+     (:file "interpolations")))
    (:module assets
     :pathname "base/asset"
     :components
