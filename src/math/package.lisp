@@ -87,4 +87,7 @@
    :translation
    :rotation
    :scale
-   :transform-matrix))
+   :transform-matrix
+
+   ;; interpolations
+   :lerp))
