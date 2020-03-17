@@ -38,6 +38,7 @@
    :div
    :dot
    :norm
+   :norm2
    :cross
    :normalize
    :angle
@@ -46,6 +47,7 @@
    :project
    :eqv
    :neqv
+
    ; exports from matrix.lisp
    :det
    :transpose
@@ -73,16 +75,36 @@
    :make-ortho-projection
    :make-look-at
 
-   ;; quaternions
+   ; exports from quaternion.lisp
    :make-quaternion
    :quaternion-x
    :quaternion-y
    :quaternion-z
    :quaternion-w
+   :quaternion-v
+   :quaternion-a
+   :quaternion-zero
+   :quaternion-one
+   :add
+   :sub
+   :mul
+   :div
+   :negq
+   :absq
+   :norm2
+   :norm
+   :versor
+   :inv
+   :conj
+   :logq
+   :expq
+   :exptq
+   :eqq
+   :neqq
    :from-euler
    :to-euler
 
-   ;; transform
+   ;exports from transform.lisp
    :make-transform
    :translation
    :rotation
