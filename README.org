@@ -1,4 +1,33 @@
 * LBGE - lisp butts game engine
 [[file:https://travis-ci.com/koto-bank/lbge.svg?branch=master]]
 
-ECS Lisp game engine for creating Lisp-powered games.
+Lisp game engine for creating Lisp-powered games.
+
+** The name
+The name "lbge" is case-insensitive, as it is customary in Common
+Lisp, so you can write it any way you like.
+
+** Some info
+Lbge aims to be a very modular engine, with as less coupling as
+possible. The only current really hard dependency is SDL2. The second
+one (much less hard) is SBCL.
+
+The ideal state would be a number of separate systems (in ASDF sense),
+which will depend one on another, and can be used
+separately. Considering this, lbge also can be though of as a platform
+for engine development.
+
+However, that ideal state is yet to be achieved, so currently there
+are a number of systems that have shared files, e.g. ~lbge-render~ and
+~lbge~ itself include a lot of files from ~math~ dir, and ~math~
+itself doesn't have a system (yet).
+
+** Repo structure
+ * ~a/~ stands for "applications" and contain various systems that use
+   lbge, such as test beds, tools, test runners etc.
+ * ~src/~ contains source code
+ * ~doc/~ currently doesn't contain documentation, but it certainly
+   should (at some point). The only thing currently stored there is
+   /💞s e c r e t✨/
+ * ~/src/*/t~ contains tests, which are collected and executed by
+   unit-tests application. More details [[./a/unit-tests/README.org][here]]
