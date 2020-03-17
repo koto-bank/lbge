@@ -1,13 +1,18 @@
 (in-package :lbge.math)
 
-(defclass float2x2 ()
+(defclass floatnxn ()
+  ((vector
+    :initarg :in-vec
+    :accessor in-vec)))
+
+(defclass float2x2 (floatnxn)
   ((vector
     :initarg :in-vec
     :accessor in-vec
     :initform #(0 0
                 0 0))))
 
-(defclass float3x3 ()
+(defclass float3x3 (floatnxn)
   ((vector
     :initarg :in-vec
     :accessor in-vec
@@ -15,7 +20,7 @@
                 0 0 0
                 0 0 0))))
 
-(defclass float4x4 ()
+(defclass float4x4 (floatnxn)
   ((vector
     :initarg :in-vec
     :accessor in-vec
@@ -29,37 +34,6 @@
     :for (a b c d) :on (coerce (in-vec mat) 'list)
     :by #'cddddr
     :do (format stream "~A ~A ~A ~A~%" a b c d)))
-
-(defgeneric add (matrix1 matrix2)
-  (:documentation "Add two matrices"))
-
-(defgeneric sub (matrix1 matrix2)
-  (:documentation "Subtract two matrices"))
-
-(defgeneric mul (matrix value)
-  (:documentation "Multiply matrix by a scalar, vector or other matrix"))
-
-(defgeneric div (matrix scalar)
-  (:documentation "Divide matrix by a scalar"))
-
-(defgeneric det (matrix)
-  (:documentation "Determinant of a matrix"))
-
-(defgeneric transpose (matrix)
-  (:documentation "Transpose a matrix"))
-
-(defgeneric absm (matrix)
-  (:documentation "Matrix with absolute values of each element"))
-
-(defgeneric negm (matrix)
-  (:documentation "Matrix with each element inverted"))
-
-(defgeneric eqm (matrix1 matrix2)
-  (:documentation "Test two matrices for equality"))
-
-(defgeneric neqm (matrix1 matrix2)
-  (:documentation "Test two matrices for inequality"))
-
 
 (defun make-float2x2 (a00 &optional a01 a10 a11)
   (if a11
@@ -424,15 +398,15 @@
                        (get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
 
 
-(defmethod eqm (matrix1 matrix2)
+(defun eqm (matrix1 matrix2)
   (reduce #'hand
           (map 'vector #'eqfp
                (in-vec matrix1)
                (in-vec matrix2))))
 
-
-(defmethod neqm (matrix1 matrix2)
+(defun neqm (matrix1 matrix2)
   (not (eqm matrix1 matrix2)))
+
 
 (defun make-ortho-projection (&key left right top bottom near far)
   (let ((l left)
