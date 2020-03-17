@@ -1,6 +1,11 @@
 (in-package :lbge.math)
 
-(defclass float2 ()
+(defclass floatn ()
+  ((in-vec
+    :initarg :in-vec
+    :accessor in-vec)))
+
+(defclass float2 (floatn)
   ((in-vec
     :initarg :in-vec
     :accessor in-vec))
@@ -12,7 +17,7 @@
 (defmacro float2-y (vec)
   `(aref (in-vec ,vec) 1))
 
-(defclass float3 ()
+(defclass float3 (floatn)
   ((in-vec
     :initarg :in-vec
     :accessor in-vec))
@@ -27,7 +32,7 @@
 (defmacro float3-z (vec)
   `(aref (in-vec ,vec) 2))
 
-(defclass float4 ()
+(defclass float4 (floatn)
   ((in-vec
     :initarg :in-vec
     :accessor in-vec))
@@ -52,27 +57,6 @@
 (defun float2-one () (make-float2 1 1))
 (defun float3-one () (make-float3 1 1 1))
 (defun float4-one () (make-float4 1 1 1 1))
-
-(defgeneric get-size (vector)
-  (:documentation "Return number of vector components"))
-
-(defgeneric add (vector1 vector2)
-  (:documentation "Add two vector2 to vector1"))
-
-(defgeneric sub (vector1 vector2)
-  (:documentation "Subtract vector2 from vector1"))
-
-(defgeneric mul (vector value)
-  (:documentation "Multiply vector by a scalar or each respective element"))
-
-(defgeneric div (vector value)
-  (:documentation "Divide vector by a scalar or each respective element"))
-
-(defgeneric negv (vector)
-  (:documentation "Negate a vector"))
-
-(defgeneric absv (vector)
-  (:documentation "Make all elemets of a vector absolute values"))
 
 (defun x (vec)
   (aref (in-vec vec) 0))
@@ -138,13 +122,13 @@
   4)
 
 (defmacro define-vec-op (name result-type map-op)
-  `(defmethod ,name ((vector1 ,result-type) vector2)
+  `(defmethod ,name ((vector1 ,result-type) (vector2 ,result-type))
      (make-instance ',result-type :in-vec
                     (map 'vector ,map-op
                          (in-vec vector1)
                          (in-vec vector2)))))
 
-(define-vec-op add float2 #'+)
+(define-vec-op add floatn #'+)
 (define-vec-op add float3 #'+)
 (define-vec-op add float4 #'+)
 
@@ -181,16 +165,13 @@
                (in-vec vector1)
                (in-vec vector2))))
 
-
-(defun norm2 (vector)
-  "The squared Euclidian norm of a vector"
+(defmethod norm2 ((vector floatn))
   (reduce #'+
           (map 'vector
                (ax:rcurry #'expt 2)
                (in-vec vector))))
 
-(defun norm (vector)
-  "The Euclidian norm of a vector"
+(defmethod norm ((vector floatn))
   (sqrt (norm2 vector)))
 
 (defmacro define-vec-unary-op (name vec-type map-fun)
@@ -235,7 +216,7 @@
                (in-vec vector)
                #(0 0 0 0))))
 
-(defun normalize (vector)
+(defmethod normalize (vector)
   "Return the normalized vector of input vector"
   (if (zero-vector-p vector)
       vector

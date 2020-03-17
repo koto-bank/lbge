@@ -20,94 +20,60 @@
 (defmacro quaternion-a (q)
   `(quaternion-w ,q))
 
-(defgeneric norm2 (q)
-  (:documentation "Get the squared euclidean norm of a quaternion"))
+(defmacro define-quaternion-op (name op)
+  `(defmethod ,name ((q1 quaternion) (q2 quaternion))
+    (make-quaternion
+      :x (funcall ,op (quaternion-x q1) (quaternion-x q2))
+      :y (funcall ,op (quaternion-y q1) (quaternion-y q2))
+      :z (funcall ,op (quaternion-z q1) (quaternion-z q2))
+      :w (funcall ,op (quaternion-w q1) (quaternion-w q2)))))
 
-(defgeneric norm (q)
-  (:documentation "Get the euclidean norm of a quaternion"))
+(defmacro define-quaternion-num-op (name op)
+  `(defmethod ,name ((q quaternion) (num real))
+    (make-quaternion
+      :x (funcall ,op (quaternion-x q) num)
+      :y (funcall ,op (quaternion-y q) num)
+      :z (funcall ,op (quaternion-z q) num)
+      :w (funcall ,op (quaternion-w q) num))))
 
-(defgeneric conj (q)
-  (:documentation "Get the conjugate quaternion of q"))
-
-(defgeneric inv (q)
-  (:documentation "Get the inverse quaternion of q"))
-
-(defgeneric versor (q)
-  (:documentation "Return the versor (unit quaterion) of q"))
-
-(defgeneric expq (q)
-  (:documentation "Raise e to the power of q"))
-
-(defgeneric logq (q)
-  (:documentation "Get the natural logarithm of q"))
-
-(defgeneric exptq (q1 q2)
-  (:documentation "Raise q1 to the power of q2"))
-
-(defmacro define-quaternion-op (name op docstring)
-  `(progn
-    (defgeneric ,name (q1 q2)
-     (:documentation ,docstring))
-    (defmethod ,name ((q1 quaternion) (q2 quaternion))
-     (make-quaternion
-       :x (op (quaternion-x q1) (quaternion-x q2))
-       :y (op (quaternion-y q1) (quaternion-y q2))
-       :z (op (quaternion-z q1) (quaternion-z q2))
-       :w (op (quaternion-w q1) (quaternion-w q2))))))
-
-(defmacro define-quaternion-num-op (name op docstring)
-  `(progn
-    (defgeneric ,name (q num)
-     (:documentation ,docstring))
-    (defmethod ,name ((q quaternion) (num real))
-     (make-quaternion
-       :x (op (quaternion-x q) num)
-       :y (op (quaternion-y q) num)
-       :z (op (quaternion-z q) num)
-       :w (op (quaternion-w q) num)))))
-
-(defmacro define-quaternion-num-op-revord (name op docstring)
-  `(progn
-    (defgeneric ,name (q num)
-     (:documentation ,docstring))
-    (defmethod ,name ((num real) (q quaternion))
-     (make-quaternion
-       :x (op num (quaternion-x q))
-       :y (op num (quaternion-y q))
-       :z (op num (quaternion-z q))
-       :w (op num (quaternion-w q))))))
+(defmacro define-quaternion-num-op-revord (name op)
+  `(defmethod ,name ((num real) (q quaternion))
+    (make-quaternion
+     :x (funcall ,op num (quaternion-x q))
+     :y (funcall ,op num (quaternion-y q))
+     :z (funcall ,op num (quaternion-z q))
+     :w (funcall ,op num (quaternion-w q)))))
 
 (defmacro define-quaternion-unary-op (name op)
-  `(progn
-    (defgeneric ,name (q)
-     (:documentation ,docstring))
-    (defmethod ,name ((q quaternion))
-     (make-quaternion
-       (op (quaternion-x q))
-       (op (quaternion-y q))
-       (op (quaternion-z q))
-       (op (quaternion-w q))))))
+  `(defmethod ,name ((q quaternion))
+    (make-quaternion
+     :x (funcall ,op (quaternion-x q))
+     :y (funcall ,op (quaternion-y q))
+     :z (funcall ,op (quaternion-z q))
+     :w (funcall ,op (quaternion-w q)))))
 
-(define-quaternion-op add #'+ "Add quaternion q1 to q2")
-(define-quaternion-op sub #'- "Subtract quaternion q2 from q1")
+(define-quaternion-op add #'+)
+(define-quaternion-op sub #'-)
 
-(define-quaternion-num-op mul #'* "Multiply each element of q by num if num is real, perform quaternion multiplication if num is a quaternion")
-(define-quaternion-num-op div #'/ "Divide each element of q by num if num is real, multiply q1 by inverse of num if num is a quaternion")
+(define-quaternion-num-op mul #'*)
+(define-quaternion-num-op div #'/)
 
-(define-quaternion-num-op-revord mul #'* "Multiply each element of q by num if num is real, perform quaternion multiplication if num is a quaternion")
-(define-quaternion-num-op-revord div #'/ "Divide num by each element of q if num is real, multiply num by inverse of q1 if num is a quaternion")
+(define-quaternion-num-op-revord mul #'*)
+(define-quaternion-num-op-revord div #'/)
 
-(define-quaternion-unary-op absq #'abs "Get the absolute value f each element of the quaternion")
-(define-quaternion-unary-op negq #'- "Flip the sign of each element of the quaternion")
+(define-quaternion-unary-op absq #'abs)
+(define-quaternion-unary-op negq #'-)
 
 (defun eqq (q1 q2)
+  "Test two quaternions for equality"
   (and
     (eqfp (quaternion-x q1) (quaternion-x q2))
     (eqfp (quaternion-y q1) (quaternion-y q2))
     (eqfp (quaternion-z q1) (quaternion-z q2))
     (eqfp (quaternion-w q1) (quaternion-w q2))))
 
-(demacro neqq (q1 q2)
+(defun neqq (q1 q2)
+  "Test two quaternions for equality"
   (not (eqq q1 q2)))
 
 (defmethod mul ((q1 quaternion) (q2 quaternion))
