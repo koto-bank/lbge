@@ -205,7 +205,7 @@
 
 
 (define-test normalize-test
-    (:lbge-math)
+    (:lbge.math)
   (testing "0 vector normalization"
     (ok (eqv (normalize (float2-zero))
              (float2-zero))))
@@ -220,4 +220,4 @@
 
   (testing "4d vector normalization"
     (ok (eqv (normalize (make-float4 1 1 1 1))
-             (make-float4 1/4 1/4 1/4 1/4)))))
+             (make-float4 1/2 1/2 1/2 1/2)))))

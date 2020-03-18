@@ -29,3 +29,8 @@
   (cond ((> val max) max)
         ((< val min) min)
         (t val)))
+
+(defmacro get-sign (n)
+  `(if (< ,n 0)
+       "-"
+       "+"))

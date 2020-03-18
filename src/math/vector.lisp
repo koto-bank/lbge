@@ -50,14 +50,6 @@
 (defmacro float4-w (vec)
   `(aref (in-vec ,vec) 3))
 
-(defun float2-zero () (make-float2 0 0))
-(defun float3-zero () (make-float3 0 0 0))
-(defun float4-zero () (make-float4 0 0 0 0))
-
-(defun float2-one () (make-float2 1 1))
-(defun float3-one () (make-float3 1 1 1))
-(defun float4-one () (make-float4 1 1 1 1))
-
 (defun x (vec)
   (aref (in-vec vec) 0))
 
@@ -106,6 +98,14 @@
                    (map 'vector (ax:rcurry #'coerce 'single-float)
                         in-vec))))
 
+(defun float2-zero () (make-float2 0 0))
+(defun float3-zero () (make-float3 0 0 0))
+(defun float4-zero () (make-float4 0 0 0 0))
+
+(defun float2-one () (make-float2 1 1))
+(defun float3-one () (make-float3 1 1 1))
+(defun float4-one () (make-float4 1 1 1 1))
+
 (defmethod print-object ((vec float4) out)
   (format out "~S" (in-vec vec)))
 
@@ -150,13 +150,27 @@
                     (map 'vector (ax:rcurry ,map-fun value)
                          (in-vec vector)))))
 
+(defmacro define-vec-num-op-revord (name vec-type map-fun)
+  `(defmethod ,name ((value real) (vector ,vec-type))
+     (make-instance ',vec-type :in-vec
+                    (map 'vector (ax:curry ,map-fun value)
+                         (in-vec vector)))))
+
 (define-vec-num-op mul float2 #'*)
 (define-vec-num-op mul float3 #'*)
 (define-vec-num-op mul float4 #'*)
 
+(define-vec-num-op-revord mul float2 #'*)
+(define-vec-num-op-revord mul float3 #'*)
+(define-vec-num-op-revord mul float4 #'*)
+
 (define-vec-num-op div float2 #'/)
 (define-vec-num-op div float3 #'/)
 (define-vec-num-op div float4 #'/)
+
+(define-vec-num-op-revord div float2 #'/)
+(define-vec-num-op-revord div float3 #'/)
+(define-vec-num-op-revord div float4 #'/)
 
 (defun dot (vector1 vector2)
   "Dot product of vector1 and vector2"
@@ -216,7 +230,7 @@
                (in-vec vector)
                #(0 0 0 0))))
 
-(defmethod normalize (vector)
+(defmethod normalize ((vector floatn))
   "Return the normalized vector of input vector"
   (if (zero-vector-p vector)
       vector

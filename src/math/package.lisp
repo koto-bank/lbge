@@ -8,6 +8,7 @@
     :neqfp
     :round-to-eps
     :clamp
+    :get-sign
 
    ; exports from definitions.lisp:
     :get-size
@@ -55,16 +56,14 @@
     :make-float2
     :make-float3
     :make-float4
-    :define-vec-op
-    :define-vec-num-op
     :dot
-    :define-vec-unary-op
     :eqv
     :neqv
     :cross
     :zero-vector-p
     :angle
     :project
+    :normalize
 
    ; exports from matrix.lisp:
     :make-float2x2
@@ -94,14 +93,12 @@
 
    ; exports from quaternion.lisp:
     :make-quaternion
+    :make-quaternion-f2
+    :make-quaternion-f3
     :quaternion-zero
     :quaternion-one
     :quaternion-v
     :quaternion-a
-    :define-quaternion-op
-    :define-quaternion-num-op
-    :define-quaternion-num-op-revord
-    :define-quaternion-unary-op
     :eqq
     :neqq
     :from-euler

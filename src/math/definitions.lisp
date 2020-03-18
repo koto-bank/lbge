@@ -18,8 +18,8 @@
 (defgeneric norm2 (value)
   (:documentation "Get the squared euclidean norm of the value"))
 
-(defgeneric norm (valie)
-  (:documentation "Get the euclidean norm of the value")))
+(defgeneric norm (value)
+  (:documentation "Get the euclidean norm of the value"))
 
 (defgeneric negv (vector)
   (:documentation "Perform element-wise negation on a vector"))
@@ -39,22 +39,22 @@
 (defgeneric negm (matrix)
   (:documentation "Perform element-wise negation on a matrix"))
 
-(defgeneric conj (q)
+(defgeneric conj (quat)
   (:documentation "Get the conjugate quaternion of q"))
 
-(defgeneric inv (q)
+(defgeneric inv (quat)
   (:documentation "Get the inverse quaternion of q"))
 
-(defgeneric versor (q)
+(defgeneric versor (quat)
   (:documentation "Return the versor (unit quaterion) of q"))
 
-(defgeneric expq (q)
+(defgeneric expq (quat)
   (:documentation "Raise e to the power of q"))
 
-(defgeneric logq (q)
+(defgeneric logq (quat)
   (:documentation "Get the natural logarithm of q"))
 
-(defgeneric exptq (q1 q2)
+(defgeneric exptq (quat1 quat2)
   (:documentation "Raise q1 to the power of q2"))
 
 (defgeneric absq (quat)

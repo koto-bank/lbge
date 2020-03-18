@@ -44,37 +44,43 @@
 
 (define-test versor-test
     (:lbge.math)
-  (testing "Zero quaternion norm"
+  (testing "Zero quaternion versor"
     (ok (eqq (versor (quaternion-zero))
              (quaternion-zero))))
 
-  (testing "Quaternion norm"
+  (testing "Quaternion versor"
     (ok (eqq (versor (quaternion-one))
-             (make-quaternion :x 1/4 :y 1/4 :z 1/4 :w 1/4)))))
+             (make-quaternion :x 1/2 :y 1/2 :z 1/2 :w 1/2)))))
 
 (define-test conj-test
     (:lbge.math)
   (testing "Conjugate of a quaternion"
     (ok (eqq (conj (make-quaternion :w 1 :x 2 :y 3 :z 4))
-             (make-quaternion-nord :w 1 :x -2 :y -3 :z -4)))))
+             (make-quaternion :w 1 :x -2 :y -3 :z -4)))))
 
 (define-test inv-test
     (:lbge.math)
   (testing "Inverse of a quaternion"
     (ok (eqq (inv (make-quaternion :w 1 :x 2 :y 3 :z 4))
-             (make-quaternion :w 1/30 :x 2/30 :y 3/30 :z 4/30)))))
+             (make-quaternion :w 1/30 :x -2/30 :y -3/30 :z -4/30)))))
 
 (define-test expq-test
     (:lbge.math)
   (testing "Exponential of a quaternion"
     (ok (eqq (expq (make-quaternion :w 1 :x 2 :y 3 :z 4))
-             (make-quaternion :w -4.026 :x -5.369 :y -1.342 :z 2.786)))))
+             (make-quaternion :w 1.6939225
+                              :x -0.7895596
+                              :y -1.1843395
+                              :z -1.5791192))))) ; values computed with GNU Octave
 
 (define-test logq-test
     (:lbge.math)
   (testing "Logarithm of a quaternion"
     (ok (eqq (logq (make-quaternion :w 1 :x 2 :y 3 :z 4))
-             (make-quaternion :w 0.7043 :x 0.939 :y 0.2348 :z 1.701)))))
+             (make-quaternion :w 1.7005987
+                              :x 0.5151903
+                              :y 0.77278554
+                              :z 1.0303806))))) ; values computed with GNU Octave
 
 (define-test exptq-test
     (:lbge.math)
@@ -82,9 +88,13 @@
     (ok (eqq (exptq (make-quaternion :w 1 :x 2 :y 3 :z 4)
                     2)
              (make-quaternion :w -28 :x 4 :y 6 :z 8))))
+
   (testing "Quaternion to the quaternion power"
     (ok (eqq (exptq (make-quaternion :w 1 :x 2 :y 3 :z 4)
                     (make-quaternion :w 5 :x 6 :y 7 :z 8))
-             (make-quaternion :w -0.0002284 :x 5.577e-05 :y 8.463e-05 :z 8.414e-05)))))
+             (make-quaternion :w -2.2844537e-04
+                              :x 5.5768814e-05
+                              :y 8.462691e-05
+                              :z 8.4140054e-05)))))  ; values computed with GNU Octave
 
 ; TODO: to-euler and from-euler tests

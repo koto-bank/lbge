@@ -18,4 +18,5 @@ fi
 sbcl --noinform <<LISP
 (ql:quickload "lbge-unit-tests")
 (lbge-unit-tests:run)
+(exit)
 LISP
