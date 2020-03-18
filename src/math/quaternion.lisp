@@ -9,16 +9,32 @@
 (defun make-quaternion (&key (x 0.0f0) (y 0.0f0) (z 0.0f0) (w 1.0f0))
   (make-instance 'quaternion :x x :y y :z z :w w))
 
+(defmacro make-quaternion-f2 (f2)
+  `(make-quaternion :w 0 :x (float2-x ,f2) :y (float2-y ,f2) :z 0))
+
+(defmacro make-quaternion-f3 (f3)
+  `(make-quaternion :w 0 :x (float3-x ,f3) :y (float3-y ,f3) :z (float3-z ,f3)))
+
 (defun quaternion-zero () (make-quaternion :x 0 :y 0 :z 0 :w 0))
 (defun quaternion-one () (make-quaternion :x 1 :y 1 :z 1 :w 1))
 
 (defmacro quaternion-v (q)
-  `(make-instance 'float3 :in-vec #((quaternion-x ,q)
-                                    (quaternion-y ,q)
-                                    (quaternion-z ,q))))
+  `(make-float3 (quaternion-x ,q)
+                (quaternion-y ,q)
+                (quaternion-z ,q)))
 
 (defmacro quaternion-a (q)
   `(quaternion-w ,q))
+
+(defmethod print-object ((q quaternion) out)
+  (let* ((w (quaternion-w q))
+         (x (quaternion-x q))
+         (y (quaternion-y q))
+         (z (quaternion-z q))
+         (xsgn (get-sign x))
+         (ysgn (get-sign y))
+         (zsgn (get-sign z)))
+      (format out "~a ~a ~ai ~a ~aj ~a ~ak" w xsgn (abs x) ysgn (abs y) zsgn (abs z))))
 
 (defmacro define-quaternion-op (name op)
   `(defmethod ,name ((q1 quaternion) (q2 quaternion))
@@ -64,6 +80,20 @@
 (define-quaternion-unary-op absq #'abs)
 (define-quaternion-unary-op negq #'-)
 
+(defmethod add ((value real) (q quaternion))
+  (make-quaternion
+    :w (+ (quaternion-w q) value)
+    :x (quaternion-x q)
+    :y (quaternion-y q)
+    :z (quaternion-z q)))
+
+(defmethod add ((q quaternion) (value real))
+  (make-quaternion
+    :w (+ (quaternion-w q) value)
+    :x (quaternion-x q)
+    :y (quaternion-y q)
+    :z (quaternion-z q)))
+
 (defun eqq (q1 q2)
   "Test two quaternions for equality"
   (and
@@ -104,10 +134,10 @@
     (add v (add (mul c (quaternion-w q)) (cross q-v c)))))
 
 (defmethod norm2 ((q quaternion))
-  (expt (+ (quaternion-x q)) 2)
-  (expt (+ (quaternion-y q)) 2)
-  (expt (+ (quaternion-z q)) 2)
-  (expt (+ (quaternion-w q)) 2))
+  (+ (expt (quaternion-x q) 2)
+     (expt (quaternion-y q) 2)
+     (expt (quaternion-z q) 2)
+     (expt (quaternion-w q) 2)))
 
 (defmethod norm ((q quaternion))
   (sqrt (norm2 q)))
@@ -119,41 +149,43 @@
 
 (defmethod conj ((q quaternion))
   (make-quaternion
-    (- (quaternion-x q))
-    (- (quaternion-y q))
-    (- (quaternion-z q))
-    (quaternion-w q)))
+    :x (- (quaternion-x q))
+    :y (- (quaternion-y q))
+    :z (- (quaternion-z q))
+    :w (quaternion-w q)))
 
 (defmethod inv ((q quaternion))
   (div (conj q) (norm2 q)))
 
-(defmethod div (q quaternion) (num quaternion)
+(defmethod div ((q quaternion) (num quaternion))
   (mul q (inv num)))
 
 (defmethod expq ((q quaternion))
   (let ((a (quaternion-a q))
         (v (quaternion-v q)))
-      (* (exp a)
-         (+ (cos (norm v))
-            (* (normalize v)
-               (sin (norm v)))))))
+      (mul (exp a)
+           (add (cos (norm v))
+               (make-quaternion-f3
+                 (mul (normalize v)
+                      (sin (norm v))))))))
 
 (defmethod logq ((q quaternion))
   (let ((a (quaternion-a q))
-        (v (quaternion-v v)))
-      (+ (log (norm q))
-         (* (normalize v)
-            (acos (/ a (norm q)))))))
+        (v (quaternion-v q)))
+      (add (log (norm q))
+           (make-quaternion-f3
+             (mul (normalize v)
+                  (acos (/ a (norm q))))))))
 
 (defmethod exptq ((q1 quaternion) (q2 quaternion))
   (expq
-    (mul q2
-         (logq q1))))
+    (mul (logq q1)
+         q2)))
 
 (defmethod exptq ((q1 quaternion) (q2 real))
   (expq
-    (mul q2
-         (logq q1))))
+    (mul (logq q1)
+         q2)))
 
 (defun from-euler (angle)
   (let* ((cz (round-to-eps (cos (* 0.5 (float3-z angle)))))
