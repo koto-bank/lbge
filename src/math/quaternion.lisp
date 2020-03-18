@@ -39,60 +39,59 @@
 (defmacro define-quaternion-op (name op)
   `(defmethod ,name ((q1 quaternion) (q2 quaternion))
     (make-quaternion
-      :x (funcall ,op (quaternion-x q1) (quaternion-x q2))
-      :y (funcall ,op (quaternion-y q1) (quaternion-y q2))
-      :z (funcall ,op (quaternion-z q1) (quaternion-z q2))
-      :w (funcall ,op (quaternion-w q1) (quaternion-w q2)))))
+      :x (,op (quaternion-x q1) (quaternion-x q2))
+      :y (,op (quaternion-y q1) (quaternion-y q2))
+      :z (,op (quaternion-z q1) (quaternion-z q2))
+      :w (,op (quaternion-w q1) (quaternion-w q2)))))
 
 (defmacro define-quaternion-num-op (name op)
   `(defmethod ,name ((q quaternion) (num real))
     (make-quaternion
-      :x (funcall ,op (quaternion-x q) num)
-      :y (funcall ,op (quaternion-y q) num)
-      :z (funcall ,op (quaternion-z q) num)
-      :w (funcall ,op (quaternion-w q) num))))
+      :x (,op (quaternion-x q) num)
+      :y (,op (quaternion-y q) num)
+      :z (,op (quaternion-z q) num)
+      :w (,op (quaternion-w q) num))))
 
 (defmacro define-quaternion-num-op-revord (name op)
   `(defmethod ,name ((num real) (q quaternion))
     (make-quaternion
-     :x (funcall ,op num (quaternion-x q))
-     :y (funcall ,op num (quaternion-y q))
-     :z (funcall ,op num (quaternion-z q))
-     :w (funcall ,op num (quaternion-w q)))))
+     :x (,op num (quaternion-x q))
+     :y (,op num (quaternion-y q))
+     :z (,op num (quaternion-z q))
+     :w (,op num (quaternion-w q)))))
 
 (defmacro define-quaternion-unary-op (name op)
   `(defmethod ,name ((q quaternion))
     (make-quaternion
-     :x (funcall ,op (quaternion-x q))
-     :y (funcall ,op (quaternion-y q))
-     :z (funcall ,op (quaternion-z q))
-     :w (funcall ,op (quaternion-w q)))))
+     :x (,op (quaternion-x q))
+     :y (,op (quaternion-y q))
+     :z (,op (quaternion-z q))
+     :w (,op (quaternion-w q)))))
 
-(define-quaternion-op add #'+)
-(define-quaternion-op sub #'-)
+(define-quaternion-op add +)
+(define-quaternion-op sub -)
 
-(define-quaternion-num-op mul #'*)
-(define-quaternion-num-op div #'/)
+(define-quaternion-num-op mul *)
+(define-quaternion-num-op div /)
 
-(define-quaternion-num-op-revord mul #'*)
-(define-quaternion-num-op-revord div #'/)
+(define-quaternion-num-op-revord mul *)
+(define-quaternion-num-op-revord div /)
 
-(define-quaternion-unary-op absq #'abs)
-(define-quaternion-unary-op negq #'-)
+(define-quaternion-unary-op absq abs)
+(define-quaternion-unary-op negq -)
+
+(defmacro quat-add-real (q value)
+  `(make-quaternion
+     :w (+ (quaternion-w ,q) ,value)
+     :x (quaternion-x ,q)
+     :y (quaternion-y ,q)
+     :z (quaternion-z ,q)))
 
 (defmethod add ((value real) (q quaternion))
-  (make-quaternion
-    :w (+ (quaternion-w q) value)
-    :x (quaternion-x q)
-    :y (quaternion-y q)
-    :z (quaternion-z q)))
+  (quat-add-real q value))
 
 (defmethod add ((q quaternion) (value real))
-  (make-quaternion
-    :w (+ (quaternion-w q) value)
-    :x (quaternion-x q)
-    :y (quaternion-y q)
-    :z (quaternion-z q)))
+  (quat-add-real q value))
 
 (defun eqq (q1 q2)
   "Test two quaternions for equality"

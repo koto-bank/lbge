@@ -1,4 +1,4 @@
-(define-test add-test
+(define-test vector-add-test
     (:lbge.math)
   (testing "2d vector addition"
     (ok (eqv (add (make-float2 1 2)
@@ -16,7 +16,7 @@
              (make-float4 6 8 10 12)))))
 
 
-(define-test sub-test
+(define-test vector-sub-test
     (:lbge.math)
   (testing "2d vector subtraction"
     (ok (eqv (sub (make-float2 1 2)
@@ -34,7 +34,7 @@
              (make-float4 -4 -4 -4 -4)))))
 
 
-(define-test mul-test
+(define-test vector-mul-test
     (:lbge.math)
   (testing "2d vector multiplication"
     (ok (eqv (mul (make-float2 1 2) 2)
@@ -64,7 +64,7 @@
              (make-float4 5 12 21 32)))))
 
 
-(define-test div-test
+(define-test vector-div-test
     (:lbge.math)
   (testing "2d vector division"
     (ok (eqv (div (make-float2 2 4)
@@ -123,7 +123,7 @@
              (make-float3 -3 6 -3)))))
 
 
-(define-test norm-test
+(define-test vector-norm-test
     (:lbge.math)
   (testing "2d vector norm"
     (ok (eqfp (norm (make-float2 1 2))
@@ -186,7 +186,7 @@
              (make-float4 1 2 3 4)))))
 
 
-(define-test project-test
+(define-test vector-project-test
     (:lbge.math)
   (testing "2d vector projection"
     (ok (eqv (project (make-float2 1 2)
@@ -204,7 +204,7 @@
              (make-float4 (float 175/87) (float 70/29) (float 245/87) (float 280/87))))))
 
 
-(define-test normalize-test
+(define-test vector-normalize-test
     (:lbge.math)
   (testing "0 vector normalization"
     (ok (eqv (normalize (float2-zero))
