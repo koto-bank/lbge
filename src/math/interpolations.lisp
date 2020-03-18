@@ -1,7 +1,5 @@
 (in-package :lbge.math)
 
-(defgeneric lerp (x t1 t2 val1 val2))
-
 (defmethod lerp (x t1 t2 (val1 real) (val2 real))
   (lerp-num x t1 t2 val1 val2))
 

@@ -62,3 +62,5 @@
 
 (defgeneric negq (quat)
   (:documentation "Perform element-wise negation on a quaternion"))
+
+(defgeneric lerp (x t1 t2 val1 val2))
