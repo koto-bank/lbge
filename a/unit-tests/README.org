@@ -2,7 +2,8 @@
 This is the application for running LBGE unit tests.
 
 To run unit tests, import ~lbge-unit-tests~ system via quicklisp, and
-call ~(lbge-unit-tests:run)~.
+call ~(lbge-unit-tests:run)~. Alternatively, use the ~tester.sh~
+script.
 
 * Writing unit tests
 This app collects all .lisp files from ~t~ subdirectories among the

@@ -128,7 +128,7 @@
                          (in-vec vector1)
                          (in-vec vector2)))))
 
-(define-vec-op add floatn #'+)
+(define-vec-op add float2 #'+)
 (define-vec-op add float3 #'+)
 (define-vec-op add float4 #'+)
 

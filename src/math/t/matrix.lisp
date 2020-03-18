@@ -1,4 +1,4 @@
-(define-test add-test
+(define-test matrix-add-test
     (:lbge.math)
   (testing "2x2 matrix addition"
     (ok (eqm (add (make-float2x2 1 2
@@ -32,7 +32,7 @@
                             26 28 30 32
                             34 36 38 40
                             42 44 46 48)))))
-(define-test sub-test
+(define-test matrix-sub-test
     (:lbge.math)
   (testing "2x2 matrix subtraction"
     (ok (eqm (sub (make-float2x2 1 2
@@ -68,7 +68,7 @@
                             -16 -16 -16 -16)))))
 
 
-(define-test mul-test
+(define-test matrix-mul-test
     (:lbge.math)
   (testing "2x2 matrix multiplication"
     (ok (eqm (mul (make-float2x2 1 2
@@ -152,7 +152,7 @@
              (make-float4 10 52 126 232)))))
 
 
-(define-test div-test
+(define-test matrix-div-test
     (:lbge.math)
   (testing "2x2 matrix division"
     (ok (eqm (div (make-float2x2 2 4
