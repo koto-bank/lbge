@@ -52,7 +52,7 @@
       :z (,op (quaternion-z q) num)
       :w (,op (quaternion-w q) num))))
 
-(defmacro define-quaternion-num-op-revord (name op)
+(defmacro define-quaternion-num-revord-op (name op)
   `(defmethod ,name ((num real) (q quaternion))
     (make-quaternion
      :x (,op num (quaternion-x q))
@@ -74,8 +74,8 @@
 (define-quaternion-num-op mul *)
 (define-quaternion-num-op div /)
 
-(define-quaternion-num-op-revord mul *)
-(define-quaternion-num-op-revord div /)
+(define-quaternion-num-revord-op mul *)
+(define-quaternion-num-revord-op div /)
 
 (define-quaternion-unary-op absq abs)
 (define-quaternion-unary-op negq -)

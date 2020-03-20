@@ -109,80 +109,57 @@
          ,v))
 
 
-(defmethod add ((matrix1 float2x2) (matrix2 float2x2))
-  (make-float2x2
-   (map 'vector #'+
-        (in-vec matrix1)
-        (in-vec matrix2))))
+(defmacro define-matrix-op (name result-type map-op)
+  `(defmethod ,name ((matrix1 ,result-type) (matrix2 ,result-type))
+     (make-instance ',result-type :in-vec
+                    (map 'vector ,map-op
+                         (in-vec matrix1)
+                         (in-vec matrix2)))))
 
-(defmethod add ((matrix1 float3x3) (matrix2 float3x3))
-  (make-float3x3
-   (map 'vector #'+
-        (in-vec matrix1)
-        (in-vec matrix2))))
+(defmacro define-matrix-num-op (name matrix-type map-fun)
+  `(defmethod ,name ((matrix ,matrix-type) (value real))
+     (make-instance ',matrix-type :in-vec
+                    (map 'vector (ax:rcurry ,map-fun value)
+                         (in-vec matrix)))))
 
-(defmethod add ((matrix1 float4x4) (matrix2 float4x4))
-  (make-float4x4
-   (map 'vector #'+
-        (in-vec matrix1)
-        (in-vec matrix2))))
+(defmacro define-matrix-num-revord-op (name matrix-type map-fun)
+  `(defmethod ,name ((value real) (matrix ,matrix-type))
+     (make-instance ',matrix-type :in-vec
+                    (map 'vector (ax:curry ,map-fun value)
+                         (in-vec matrix)))))
 
-
-(defmethod sub ((matrix1 float2x2) (matrix2 float2x2))
-  (make-float2x2
-   (map 'vector #'-
-        (in-vec matrix1)
-        (in-vec matrix2))))
-
-(defmethod sub ((matrix1 float3x3) (matrix2 float3x3))
-  (make-float3x3
-   (map 'vector #'-
-        (in-vec matrix1)
-        (in-vec matrix2))))
-
-(defmethod sub ((matrix1 float4x4) (matrix2 float4x4))
-  (make-float4x4
-   (map 'vector #'-
-        (in-vec matrix1)
-        (in-vec matrix2))))
+(defmacro define-matrix-unary-op (name matrix-type map-fun)
+  `(defmethod ,name ((matrix ,matrix-type))
+     (make-instance ',matrix-type :in-vec
+                    (map 'vector ,map-fun
+                         (in-vec matrix)))))
 
 
-(defmethod mul ((matrix float2x2) (value real))
-  (make-float2x2
-   (map 'vector
-        (ax:curry #'* value)
-        (in-vec matrix))))
+(define-matrix-op add float2x2 #'+)
+(define-matrix-op add float3x3 #'+)
+(define-matrix-op add float4x4 #'+)
 
-(defmethod mul ((matrix float3x3) (value real))
-  (make-float3x3
-   (map 'vector
-        (ax:curry #'* value)
-        (in-vec matrix))))
-
-(defmethod mul ((matrix float4x4) (value real))
-  (make-float4x4
-   (map 'vector
-        (ax:curry #'* value)
-        (in-vec matrix))))
+(define-matrix-op sub float2x2 #'-)
+(define-matrix-op sub float3x3 #'-)
+(define-matrix-op sub float4x4 #'-)
 
 
-(defmethod div ((matrix float2x2) scalar)
-  (make-float2x2
-   (map 'vector
-        (ax:rcurry #'/ scalar)
-        (in-vec matrix))))
+(define-matrix-num-op mul float2x2 #'*)
+(define-matrix-num-op mul float3x3 #'*)
+(define-matrix-num-op mul float4x4 #'*)
 
-(defmethod div ((matrix float3x3) scalar)
-  (make-float3x3
-   (map 'vector
-        (ax:rcurry #'/ scalar)
-        (in-vec matrix))))
+(define-matrix-num-op div float2x2 #'/)
+(define-matrix-num-op div float3x3 #'/)
+(define-matrix-num-op div float4x4 #'/)
 
-(defmethod div ((matrix float4x4) scalar)
-  (make-float4x4
-   (map 'vector
-        (ax:rcurry #'/ scalar)
-        (in-vec matrix))))
+
+(define-matrix-num-revord-op mul float2x2 #'*)
+(define-matrix-num-revord-op mul float3x3 #'*)
+(define-matrix-num-revord-op mul float4x4 #'*)
+
+(define-matrix-num-revord-op div float2x2 #'/)
+(define-matrix-num-revord-op div float3x3 #'/)
+(define-matrix-num-revord-op div float4x4 #'/)
 
 
 (defmacro get-row (matrix j)
@@ -344,36 +321,13 @@
           (get-at matrix 3 3)))
 
 
-(defmethod absm ((matrix float2x2))
-  (make-float2x2
-   (map 'vector #'abs
-        (in-vec matrix))))
+(define-matrix-unary-op absm float2x2 #'abs)
+(define-matrix-unary-op absm float3x3 #'abs)
+(define-matrix-unary-op absm float4x4 #'abs)
 
-(defmethod absm ((matrix float3x3))
-  (make-float3x3
-   (map 'vector #'abs
-        (in-vec matrix))))
-
-(defmethod absm ((matrix float4x4))
-  (make-float4x4
-   (map 'vector #'abs
-        (in-vec matrix))))
-
-
-(defmethod negm ((matrix float2x2))
-  (make-float2x2
-   (map 'vector #'-
-        (in-vec matrix))))
-
-(defmethod negm ((matrix float3x3))
-  (make-float3x3
-   (map 'vector #'-
-        (in-vec matrix))))
-
-(defmethod negm ((matrix float4x4))
-  (make-float4x4
-   (map 'vector #'-
-        (in-vec matrix))))
+(define-matrix-unary-op negm float2x2 #'-)
+(define-matrix-unary-op negm float3x3 #'-)
+(define-matrix-unary-op negm float4x4 #'-)
 
 
 (defmethod transpose ((matrix float2x2))

@@ -150,7 +150,7 @@
                     (map 'vector (ax:rcurry ,map-fun value)
                          (in-vec vector)))))
 
-(defmacro define-vec-num-op-revord (name vec-type map-fun)
+(defmacro define-vec-num-revord-op (name vec-type map-fun)
   `(defmethod ,name ((value real) (vector ,vec-type))
      (make-instance ',vec-type :in-vec
                     (map 'vector (ax:curry ,map-fun value)
@@ -160,17 +160,17 @@
 (define-vec-num-op mul float3 #'*)
 (define-vec-num-op mul float4 #'*)
 
-(define-vec-num-op-revord mul float2 #'*)
-(define-vec-num-op-revord mul float3 #'*)
-(define-vec-num-op-revord mul float4 #'*)
+(define-vec-num-revord-op mul float2 #'*)
+(define-vec-num-revord-op mul float3 #'*)
+(define-vec-num-revord-op mul float4 #'*)
 
 (define-vec-num-op div float2 #'/)
 (define-vec-num-op div float3 #'/)
 (define-vec-num-op div float4 #'/)
 
-(define-vec-num-op-revord div float2 #'/)
-(define-vec-num-op-revord div float3 #'/)
-(define-vec-num-op-revord div float4 #'/)
+(define-vec-num-revord-op div float2 #'/)
+(define-vec-num-revord-op div float3 #'/)
+(define-vec-num-revord-op div float4 #'/)
 
 (defun dot (vector1 vector2)
   "Dot product of vector1 and vector2"
