@@ -64,3 +64,9 @@
   (:documentation "Perform element-wise negation on a quaternion"))
 
 (defgeneric lerp (x t1 t2 val1 val2))
+
+(defgeneric absp (poly)
+  (:documentation "Perform element-wise absolute value on a polynomial"))
+
+(defgeneric negp (poly)
+  (:documentation "Perform element-wise negation on a polynomial"))
