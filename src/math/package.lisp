@@ -112,5 +112,14 @@
     :scale
     :transform-matrix
 
-  ; exports from interpolations.lisp
-   :lerp))
+   ; exports from polynomial.lisp
+    :make-polynomial
+    :raise-degree
+    :pad-poly
+    :call-at
+    :eqp
+    :neqp
+
+   ; exports from interpolations.lisp
+    :lerp
+    :slerp))

@@ -1,5 +1,16 @@
 (in-package :lbge.math)
 
+(defun lerp-num (x x1 x2 y1 y2)
+  "Get y for x between points (x1, y1) and (x2, y2)"
+  (assert (and (>= x x1)
+               (<= x x2))
+          nil
+          "Can't interpolate ~A between ~A and ~A"
+          x x1 x2)
+  (+ y1 (* (- y2 y1)
+           (/ (- x x1)
+              (- x2 x1)))))
+
 (defmethod lerp (x t1 t2 (val1 real) (val2 real))
   (lerp-num x t1 t2 val1 val2))
 
@@ -13,13 +24,13 @@
   (make-float2 (lerp-num x t1 t2 (float2-x val1) (float2-x val2))
                (lerp-num x t1 t2 (float2-y val1) (float2-y val2))))
 
-(defun lerp-num (x x1 x2 y1 y2)
-  "Get y for x between points (x1, y1) and (x2, y2)"
-  (assert (and (>= x x1)
-               (<= x x2))
-          nil
-          "Can't interpolate ~A between ~A and ~A"
-          x x1 x2)
-  (+ y1 (* (- y2 y1)
-           (/ (- x x1)
-              (- x2 x1)))))
+(defun slerp (q0 q1 ti)
+  (mul q0
+       (exptq (mul (inv q0)
+                   q1)
+              ti)))
+
+(defmacro polyprod (coefs1 coefs2) ; coefficients go from the lowest to the highest degree
+  `(loop for c1 in ,coefs1
+         collect (loop for c2 in ,coefs2
+                       collect (* c1 c2))))
