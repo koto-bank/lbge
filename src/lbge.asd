@@ -1,6 +1,7 @@
 (asdf:defsystem :lbge
   :license "BSD-2-Clause"
   :depends-on (:alexandria :sdl2
+               :rove
                :cffi :cl-autowrap
                :lbge-render
                :log4cl
@@ -60,4 +61,7 @@
      (:file "component")
      (:file "entity")
      (:file "system")
-     (:file "world")))))
+     (:file "world")))
+   (:module misc
+    :components
+    ((:file "rove-utils")))))
