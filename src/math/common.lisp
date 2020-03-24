@@ -34,3 +34,6 @@
   `(if (< ,n 0)
        "-"
        "+"))
+
+(defmacro append-to (l v)
+  `(setf ,l (append ,l (list ,v))))

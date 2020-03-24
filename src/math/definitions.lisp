@@ -70,3 +70,12 @@
 
 (defgeneric negp (poly)
   (:documentation "Perform element-wise negation on a polynomial"))
+
+(defgeneric degree (poly)
+  (:documentation "Get the degree of a polynomial"))
+
+(defgeneric call (poly x)
+  (:documentation "Evaluate polynomial at point x"))
+
+(defgeneric add-point (interp x y)
+  (:documentation "Add a point into a Newton interpolation polynomial"))

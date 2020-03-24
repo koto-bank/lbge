@@ -9,6 +9,7 @@
     :round-to-eps
     :clamp
     :get-sign
+    :append-to
 
    ; exports from definitions.lisp:
     :get-size
@@ -116,10 +117,15 @@
     :make-polynomial
     :raise-degree
     :pad-poly
-    :call-at
+    :call
     :eqp
     :neqp
 
    ; exports from interpolations.lisp
     :lerp
-    :slerp))
+    :slerp
+
+   ; exports from newton.lisp
+    :make-newton
+    :add-point
+    :call))
