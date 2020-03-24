@@ -1,12 +1,10 @@
 (in-package :lbge.sparse-set)
 
-(defun id (elem)
-  (declare ((unsigned-byte 64) elem))
-  (ldb (byte 48 0) elem))
+(defmacro id (elem)
+  `(ldb (byte 48 0) ,elem))
 
-(defun gen (elem)
-  (declare ((unsigned-byte 64) elem))
-  (ldb (byte 16 48) elem))
+(defmacro gen (elem)
+  `(ldb (byte 16 48) ,elem))
 
 (defun existsp (elem sparse packed)
   "Check if the element exists in the set"
