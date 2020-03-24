@@ -29,8 +29,3 @@
        (exptq (mul (inv q0)
                    q1)
               ti)))
-
-(defmacro polyprod (coefs1 coefs2) ; coefficients go from the lowest to the highest degree
-  `(loop for c1 in ,coefs1
-         collect (loop for c2 in ,coefs2
-                       collect (* c1 c2))))

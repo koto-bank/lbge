@@ -116,7 +116,7 @@
                          (in-vec matrix1)
                          (in-vec matrix2)))))
 
-(defmacro define-matrix-num-op (name matrix-type map-fun)
+(defmacro define-matrix-num-strord-op (name matrix-type map-fun)
   `(defmethod ,name ((matrix ,matrix-type) (value real))
      (make-instance ',matrix-type :in-vec
                     (map 'vector (ax:rcurry ,map-fun value)
@@ -127,6 +127,11 @@
      (make-instance ',matrix-type :in-vec
                     (map 'vector (ax:curry ,map-fun value)
                          (in-vec matrix)))))
+
+(defmacro define-matrix-num-op (name matrix-type map-fun)
+  `(progn
+    (define-matrix-num-strord-op ,name ,matrix-type ,map-fun)
+    (define-matrix-num-revord-op ,name ,matrix-type ,map-fun)))
 
 (defmacro define-matrix-unary-op (name matrix-type map-fun)
   `(defmethod ,name ((matrix ,matrix-type))
@@ -151,15 +156,6 @@
 (define-matrix-num-op div float2x2 #'/)
 (define-matrix-num-op div float3x3 #'/)
 (define-matrix-num-op div float4x4 #'/)
-
-
-(define-matrix-num-revord-op mul float2x2 #'*)
-(define-matrix-num-revord-op mul float3x3 #'*)
-(define-matrix-num-revord-op mul float4x4 #'*)
-
-(define-matrix-num-revord-op div float2x2 #'/)
-(define-matrix-num-revord-op div float3x3 #'/)
-(define-matrix-num-revord-op div float4x4 #'/)
 
 
 (defmacro get-row (matrix j)
