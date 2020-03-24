@@ -48,6 +48,8 @@
   (:shadow :remove :get)
   (:export
    :make
+   :id
+   :gen
    :existsp
    :get
    :insert
