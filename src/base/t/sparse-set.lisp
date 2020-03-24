@@ -4,7 +4,7 @@
   (let* ((sparse (make-array '(0) :adjustable t :element-type '(unsigned-byte 64)))
          (packed (make-array '(0) :adjustable t :fill-pointer 0 :element-type '(unsigned-byte 64)))
          (data (make-array '(0) :adjustable t :fill-pointer 0 :element-type 'simple-string)))
-    (testing "Add, remove, preserce of elements"
+    (testing "Add, remove, presence of elements"
       (ok (null (sp-s:existsp 1 sparse packed)))
       (sp-s:insert 1 sparse packed)
       (ok (sp-s:existsp 1 sparse packed))
