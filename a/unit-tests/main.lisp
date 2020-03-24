@@ -1,5 +1,7 @@
 (defpackage :lbge-unit-tests
-  (:use :cl :rove :lbge.utils)
+  (:use
+   :cl :rove :lbge.utils
+   :lbge.rove-utils)
   (:local-nicknames (:ax :alexandria))
   (:export :run :collect-test-packages :run-on-travis-agent))
 
@@ -139,22 +141,6 @@ If it does, then it is a test package."
       (rove:run-suite suite)
       (format t "Could not run test suite: package ~A not found~%" selected-test))))
 
-(defun report-results ()
-  (let ((failed (rove/core/stats:stats-failed rove:*stats*))
-        (passed (rove/core/stats:stats-passed rove:*stats*)))
-
-    (when (> (length passed) 0)
-      (format t "~%-------------~%Passed tests:~%")
-      (loop :for test :across (rove/core/stats:stats-passed rove:*stats*) :do
-        (format t "* ~A~%" (rove/core/result:test-name test))))
-    (when (> (length failed) 0)
-      (format t "~%-------------~%Failed tests:~%")
-      (loop :for test :across failed :do
-        (format t "* ~A~%" (rove/core/result:test-name test))))
-    (when (= (length failed) 0)
-      (format t "~%All tests passed successfully!~%"))
-    (= 0 (length failed))))
-
 (defun print-start-message ()
   (terpri)
   (terpri)
@@ -166,9 +152,8 @@ If it does, then it is a test package."
 
 (defun run (&rest selected-tests)
   "Run unit tests and report the result.
-`reporter`: rove reporter. Default is :spec
-`selected-test-suite`: if present, only test suite with this name will run.
-Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
+`selected-tests`: if provided, only selected tests will run
+Name must be string designator of the test name, e.g. `:engine'"
   (delete-test-packages)
   (load-test-files)
   (rove:use-reporter :spec)
@@ -183,4 +168,4 @@ Name must be string designator of the full suite name, e.g. `:lbge.test.engine'"
 
 (defun run-on-travis-agent ()
   (unless (run)
-    (sb-ext::quit :unix-status 1)))
+    (sb-ext:quit :unix-status 1)))
