@@ -95,17 +95,17 @@
 (defmethod add ((q quaternion) (value real))
   (quat-add-real q value))
 
-(defun eqq (q1 q2)
+(defun eqq (q1 q2 &optional (eps +epsilon+))
   "Test two quaternions for equality"
   (and
-    (eqfp (quaternion-x q1) (quaternion-x q2))
-    (eqfp (quaternion-y q1) (quaternion-y q2))
-    (eqfp (quaternion-z q1) (quaternion-z q2))
-    (eqfp (quaternion-w q1) (quaternion-w q2))))
+    (eqfp (quaternion-x q1) (quaternion-x q2) eps)
+    (eqfp (quaternion-y q1) (quaternion-y q2) eps)
+    (eqfp (quaternion-z q1) (quaternion-z q2) eps)
+    (eqfp (quaternion-w q1) (quaternion-w q2) eps)))
 
-(defun neqq (q1 q2)
+(defun neqq (q1 q2 &optional (eps +epsilon+))
   "Test two quaternions for equality"
-  (not (eqq q1 q2)))
+  (not (eqq q1 q2 eps)))
 
 (defmethod mul ((q1 quaternion) (q2 quaternion))
   (let ((a (* (+ (quaternion-w q1) (quaternion-x q1))

@@ -77,5 +77,8 @@
 (defgeneric call (poly x)
   (:documentation "Evaluate polynomial at point x"))
 
+(defgeneric add-point-ip (interp x y)
+  (:documentation "Add a point into an existing Newton interpolation polynomial"))
+
 (defgeneric add-point (interp x y)
-  (:documentation "Add a point into a Newton interpolation polynomial"))
+  (:documentation "Add a point into a Newton interpolation polynomial and return the new copy"))

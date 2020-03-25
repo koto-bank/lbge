@@ -36,11 +36,17 @@
    (:module math
     :components
     ((:file "package")
+     (:file "definitions")
      (:file "common")
      (:file "vector")
      (:file "matrix")
+     (:file "quaternion")
+     (:file "polynomial")
      (:file "transform")
-     (:file "interpolations")))
+     (:module "interpolations"
+      :components
+       ((:file "newton")
+        (:file "linear")))))
    (:module assets
     :pathname "base/asset"
     :components

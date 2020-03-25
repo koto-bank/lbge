@@ -2,7 +2,7 @@
   (:use :cl)
   (:local-nicknames (:ax :alexandria))
   (:export
-   ; exports from common.lisp:
+    ; exports from common.lisp:
     :hand
     :eqfp
     :neqfp
@@ -11,7 +11,7 @@
     :get-sign
     :append-to
 
-   ; exports from definitions.lisp:
+    ; exports from definitions.lisp:
     :get-size
     :add
     :sub
@@ -34,7 +34,7 @@
     :absq
     :negq
 
-   ; exports from vector.lisp:
+    ; exports from vector.lisp:
     :float2-x
     :float2-y
     :float3-x
@@ -67,7 +67,7 @@
     :project
     :normalize
 
-   ; exports from matrix.lisp:
+    ; exports from matrix.lisp:
     :make-float2x2
     :make-float3x3
     :make-float4x4
@@ -93,7 +93,7 @@
     :make-ortho-projection
     :make-look-at
 
-   ; exports from quaternion.lisp:
+    ; exports from quaternion.lisp:
     :make-quaternion
     :make-quaternion-f2
     :make-quaternion-f3
@@ -106,14 +106,14 @@
     :from-euler
     :to-euler
 
-   ; exports from transform.lisp:
+    ; exports from transform.lisp:
     :make-transform
     :translation
     :rotation
     :scale
     :transform-matrix
 
-   ; exports from polynomial.lisp
+    ; exports from polynomial.lisp
     :make-polynomial
     :raise-degree
     :pad-poly
@@ -121,11 +121,13 @@
     :eqp
     :neqp
 
-   ; exports from interpolations.lisp
+    ; exports from lerp.lisp
     :lerp
     :slerp
 
-   ; exports from newton.lisp
+    ; exports from newton.lisp
     :make-newton
+    :copy-newton-interp
+    :add-point-ip
     :add-point
     :call))

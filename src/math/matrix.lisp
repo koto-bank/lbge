@@ -348,14 +348,14 @@
                        (get-at matrix 0 3) (get-at matrix 1 3) (get-at matrix 2 3) (get-at matrix 3 3)))))
 
 
-(defun eqm (matrix1 matrix2)
+(defun eqm (matrix1 matrix2 &optional (eps +epsilon+))
   (reduce #'hand
-          (map 'vector #'eqfp
+          (map 'vector (ax:rcurry #'eqfp eps)
                (in-vec matrix1)
                (in-vec matrix2))))
 
-(defun neqm (matrix1 matrix2)
-  (not (eqm matrix1 matrix2)))
+(defun neqm (matrix1 matrix2 &optional (eps +epsilon+))
+  (not (eqm matrix1 matrix2 eps)))
 
 
 (defun make-ortho-projection (&key left right top bottom near far)
