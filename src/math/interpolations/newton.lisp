@@ -3,7 +3,7 @@
 (defclass newton-interp ()
   ((divdiffs :initarg :divdiffs :accessor divdiffs)
    (xs :initarg :xs :accessor xs)
-   (polynomial :accessor poly)))
+   (poly :initarg :poly :accessor poly)))
 
 (defmethod degree ((interp newton-interp))
   (length (xs interp)))
@@ -56,7 +56,14 @@
       (setf (poly newt) (calc-newton-polynomial newt))
       newt))
 
-(defmethod add-point ((interp newton-interp) (x real) (y real))
+(defun copy-newton-interp (interp)
+  (with-slots (xs divdiffs poly) interp
+   (make-instance 'newton-interp
+    :xs (copy-list xs)
+    :divdiffs (copy-list divdiffs)
+    :poly (make-polynomial (ax:copy-array (coeffs poly))))))
+
+(defmethod add-point-ip ((interp newton-interp) (x real) (y real))
   (append-to (xs interp) x)
   (append-to (first (divdiffs interp)) y)
   (append-to (divdiffs interp) '())
@@ -66,9 +73,13 @@
                                 (nth (1- o) (divdiffs interp))
                                 (- (degree interp) o 1)
                                 o)))
-  (setf (poly interp) (add (poly interp) (mul (calc-basis-poly interp (1- (degree interp)))
+  (setf (poly interp) (add (poly interp) (mul (calc-basis-polynomial interp
+                                                                     (1- (degree interp)))
                                               (caar (last (divdiffs interp))))))
   interp)
+
+(defmethod add-point ((interp newton-interp) (x real) (y real))
+  (add-point-ip (copy-newton-interp interp) x y))
 
 (defmethod call ((interp newton-interp) (x real))
   (call (poly interp) x))

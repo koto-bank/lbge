@@ -13,9 +13,8 @@
 (defmethod degree ((poly polynomial))
   (1- (length (coeffs poly))))
 
-;(defmethod print-object ((poly polynomial) out)
-;  (format out "~S" (coeffs poly)))
-
+(defmethod print-object ((poly polynomial) out)
+  (format out "~S" (coeffs poly)))
 
 (defun raise-degree (poly degrees &optional (value 0.0f0))
   (if (<= degrees 0)
@@ -91,15 +90,15 @@
           for n in (alexandria:iota (length (coeffs poly)))
           collect (* c (expt x n)))))
 
-(defun eqp (poly1 poly2)
+(defun eqp (poly1 poly2 &optional (eps +epsilon+))
   "Test two polynomial for equality"
   (if (/= (length (coeffs poly1))
           (length (coeffs poly2)))
       nil
       (reduce #'hand
-             (map 'vector #'eqfp
+             (map 'vector (ax:rcurry #'eqfp eps)
                   (coeffs poly1)
                   (coeffs poly2)))))
 
-(defun neqp (poly1 poly2)
-  (not (eqp poly1 poly2)))
+(defun neqp (poly1 poly2 &optional (eps +epsilon+))
+  (not (eqp poly1 poly2 eps)))

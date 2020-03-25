@@ -45,9 +45,9 @@
                            2)
              (make-polynomial 0 0 1 2 3 4)))))
 
-(define-test polynomial-call-at-test
+(define-test polynomial-call-test
     (:lbge.math)
   (testing "Polynomial evaluation at a point"
-    (ok (= (call-at (make-polynomial 1 2 3 4)
-                    1)
+    (ok (= (call (make-polynomial 1 2 3 4)
+                 1)
            10))))

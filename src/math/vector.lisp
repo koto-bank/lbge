@@ -199,17 +199,17 @@
 (define-vec-unary-op absv float3 #'abs)
 (define-vec-unary-op absv float4 #'abs)
 
-(defun eqv (vector1 vector2)
+(defun eqv (vector1 vector2 &optional (eps +epsilon+))
   "Test two vectors for equality"
   (reduce #'hand
-          (map 'vector #'eqfp
+          (map 'vector (ax:rcurry #'eqfp eps)
                (in-vec vector1)
                (in-vec vector2))))
 
 
-(defun neqv (vector1 vector2)
+(defun neqv (vector1 vector2 &optional (eps +epsilon+))
   "Test two vectors for inequality"
-  (not (eqv vector1 vector2)))
+  (not (eqv vector1 vector2 eps)))
 
 
 (defun cross (vector1 vector2)
