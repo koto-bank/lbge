@@ -45,19 +45,17 @@
       :w (,op (quaternion-w q1) (quaternion-w q2)))))
 
 (defmacro define-quaternion-num-op (name op)
-  `(progn
-    (defmethod ,name ((num real) (q quaternion))
-      (make-quaternion
-       :x (,op num (quaternion-x q))
-       :y (,op num (quaternion-y q))
-       :z (,op num (quaternion-z q))
-       :w (,op num (quaternion-w q))))
-    (defmethod ,name ((q quaternion) (num real))
-      (make-quaternion
-       :x (,op (quaternion-x q) num)
-       :y (,op (quaternion-y q) num)
-       :z (,op (quaternion-z q) num)
-       :w (,op (quaternion-w q) num)))))
+  (flet ((body (func &key (r nil))
+              `(make-quaternion
+                 :x (funcall ,func (quaternion-x q))
+                 :y (funcall ,func (quaternion-y q))
+                 :z (funcall ,func (quaternion-z q))
+                 :w (funcall ,func (quaternion-w q)))))
+   `(progn
+     (defmethod ,name ((num real) (q quaternion))
+       ,(body `(macro-curry ,op num)))
+     (defmethod ,name ((q quaternion) (num real))
+       ,(body `(macro-curry ,op num :right t))))))
 
 (defmacro define-quaternion-unary-op (name op)
   `(defmethod ,name ((q quaternion))
