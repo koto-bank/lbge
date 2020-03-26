@@ -29,6 +29,18 @@
                 0 0 0 0
                 0 0 0 0))))
 
+(defmethod print-object ((mat float2x2) stream)
+  (loop
+    :for (a b) :on (coerce (in-vec mat) 'list)
+    :by #'cddr
+    :do (format stream "~A ~A~%" a b)))
+
+(defmethod print-object ((mat float3x3) stream)
+  (loop
+    :for (a b c) :on (coerce (in-vec mat) 'list)
+    :by #'cdddr
+    :do (format stream "~A ~A ~A~%" a b c)))
+
 (defmethod print-object ((mat float4x4) stream)
   (loop
     :for (a b c d) :on (coerce (in-vec mat) 'list)
@@ -116,22 +128,16 @@
                          (in-vec matrix1)
                          (in-vec matrix2)))))
 
-(defmacro define-matrix-num-strord-op (name matrix-type map-fun)
-  `(defmethod ,name ((matrix ,matrix-type) (value real))
-     (make-instance ',matrix-type :in-vec
-                    (map 'vector (ax:rcurry ,map-fun value)
-                         (in-vec matrix)))))
-
-(defmacro define-matrix-num-revord-op (name matrix-type map-fun)
-  `(defmethod ,name ((value real) (matrix ,matrix-type))
-     (make-instance ',matrix-type :in-vec
-                    (map 'vector (ax:curry ,map-fun value)
-                         (in-vec matrix)))))
-
 (defmacro define-matrix-num-op (name matrix-type map-fun)
-  `(progn
-    (define-matrix-num-strord-op ,name ,matrix-type ,map-fun)
-    (define-matrix-num-revord-op ,name ,matrix-type ,map-fun)))
+  (flet ((body (func type)
+              `(make-instance ',type :in-vec
+                              (map 'vector ,func
+                                           (in-vec matrix)))))
+     `(progn
+       (defmethod ,name ((value real) (matrix ,matrix-type))
+         ,(body `(ax:curry ,map-fun value) matrix-type))
+       (defmethod ,name ((matrix ,matrix-type) (value real))
+         ,(body `(ax:rcurry ,map-fun value) matrix-type)))))
 
 (defmacro define-matrix-unary-op (name matrix-type map-fun)
   `(defmethod ,name ((matrix ,matrix-type))
@@ -159,12 +165,14 @@
 
 
 (defmacro get-row (matrix j)
-  `(loop for i from 0 below (mat-size ,matrix) collect
-        (get-at ,matrix i ,j)))
+  (let ((varname (gensym)))
+      `(loop for ,varname from 0 below (mat-size ,matrix)
+             collect (get-at ,matrix ,varname ,j))))
 
 (defmacro get-col (matrix i)
-  `(loop for j from 0 below (mat-size ,matrix) collect
-        (get-at ,matrix ,i j)))
+  (let ((varname (gensym)))
+      `(loop for ,varname from 0 below (mat-size ,matrix)
+             collect (get-at ,matrix ,i ,varname))))
 
 
 (defmethod mul ((matrix float2x2) (value float2x2))

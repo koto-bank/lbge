@@ -6,6 +6,8 @@
     :accessor coeffs)))
 
 (defun make-polynomial (a &rest as)
+  "The coefficients are specified from the lowest to the highest degree.
+  For example, polynomial `2x^2 + 6x - 1` would be `(make-polynomial -1 6 2)`."
   (if (vectorp a)
       (make-instance 'polynomial :coeffs a)
       (make-instance 'polynomial :coeffs (concatenate 'vector (list a) as))))
@@ -32,7 +34,6 @@
                                     (make-array (list pad-by)
                                                 :initial-element value)))))
 
-
 (defmacro define-poly-op (name op)
   `(defmethod ,name ((poly1 polynomial) (poly2 polynomial))
      (let* ((deg1 (length (coeffs poly1)))
@@ -44,23 +45,16 @@
                              (coeffs np1)
                              (coeffs np2))))))
 
-(defmacro define-poly-num-strord-op (name map-fun)
-  `(defmethod ,name ((poly polynomial) (value real))
-     (make-instance 'polynomial :coeffs
-                    (map 'vector (ax:rcurry ,map-fun value)
-                         (coeffs poly)))))
-
-(defmacro define-poly-num-revord-op (name map-fun)
-  `(defmethod ,name ((value real) (poly polynomial))
-     (make-instance 'polynomial :coeffs
-                    (map 'vector (ax:curry ,map-fun value)
-                         (coeffs poly)))))
-
-
 (defmacro define-poly-num-op (name map-fun)
-  `(progn
-    (define-poly-num-strord-op ,name ,map-fun)
-    (define-poly-num-revord-op ,name ,map-fun)))
+  (flet ((body (func)
+              `(make-instance 'polynomial :coeffs
+                              (map 'vector ,func
+                                           (coeffs poly)))))
+     `(progn
+       (defmethod ,name ((value real) (poly polynomial))
+         ,(body `(ax:curry ,map-fun value)))
+       (defmethod ,name ((poly polynomial) (value real))
+         ,(body `(ax:rcurry ,map-fun value))))))
 
 (defmacro define-poly-unary-op (name map-fun)
   `(defmethod ,name ((poly polynomial))
@@ -92,8 +86,8 @@
 
 (defun eqp (poly1 poly2 &optional (eps +epsilon+))
   "Test two polynomial for equality"
-  (if (/= (length (coeffs poly1))
-          (length (coeffs poly2)))
+  (if (/= (degree poly1)
+          (degree poly2))
       nil
       (reduce #'hand
              (map 'vector (ax:rcurry #'eqfp eps)

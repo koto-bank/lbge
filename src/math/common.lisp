@@ -35,5 +35,5 @@
        "-"
        "+"))
 
-(defmacro append-to (l v)
-  `(setf ,l (append ,l (list ,v))))
+(defmacro append-to (l &rest v)
+  `(setf ,l (append ,l (list ,@v))))

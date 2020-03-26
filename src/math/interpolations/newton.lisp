@@ -43,8 +43,8 @@
   (assert (>= (length coords) 3)
           nil
           "There must be at least 3 points to interpolate")
-  (let ((xs '())
-        (ys '()))
+  (let ((xs (list))
+        (ys (list)))
       (loop for c across coords
             do (progn
                 (append-to xs (float2-x c))
