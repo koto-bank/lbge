@@ -37,3 +37,6 @@
 
 (defmacro append-to (l &rest v)
   `(setf ,l (append ,l (list ,@v))))
+
+(defmacro macro-curry (func val &key (right nil))
+  `(lambda (x) ,(if right `(,func x ,val) `(,func ,val x))))
