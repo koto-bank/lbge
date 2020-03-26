@@ -48,8 +48,7 @@ Only one allowed per application.")
   (slot-value *engine* 'main-window))
 
 (defun make-engine (&rest options)
-  (assert (null *engine*) nil
-          "Engine already created")
+  (delete-engine)
   (setf *engine* (make-instance 'engine))
   (unless options
     (setf options (make-engine-options)))
