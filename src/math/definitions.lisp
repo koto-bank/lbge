@@ -74,7 +74,7 @@
 (defgeneric degree (poly)
   (:documentation "Get the degree of a polynomial"))
 
-(defgeneric call (poly x)
+(defgeneric call-at (poly x)
   (:documentation "Evaluate polynomial at point x"))
 
 (defgeneric add-point-ip (interp x y)

@@ -112,6 +112,9 @@
 (defmethod print-object ((vec float3) out)
   (format out "~S" (in-vec vec)))
 
+(defmethod print-object ((vec float2) out)
+  (format out "~S" (in-vec vec)))
+
 (defmethod get-size ((vec float2))
   2)
 
@@ -144,22 +147,16 @@
 (define-vec-op div float3 #'/)
 (define-vec-op div float4 #'/)
 
-(defmacro define-vec-num-strord-op (name vec-type map-fun)
-  `(defmethod ,name ((vector ,vec-type) (value real))
-     (make-instance ',vec-type :in-vec
-                    (map 'vector (ax:rcurry ,map-fun value)
-                         (in-vec vector)))))
-
-(defmacro define-vec-num-revord-op (name vec-type map-fun)
-  `(defmethod ,name ((value real) (vector ,vec-type))
-     (make-instance ',vec-type :in-vec
-                    (map 'vector (ax:curry ,map-fun value)
-                         (in-vec vector)))))
-
 (defmacro define-vec-num-op (name vec-type map-fun)
-  `(progn
-    (define-vec-num-strord-op ,name ,vec-type ,map-fun)
-    (define-vec-num-revord-op ,name ,vec-type ,map-fun)))
+  (flet ((body (func type)
+              `(make-instance ',type :in-vec
+                              (map 'vector ,func
+                                           (in-vec vec)))))
+     `(progn
+       (defmethod ,name ((value real) (vec ,vec-type))
+         ,(body `(ax:curry ,map-fun value) vec-type))
+       (defmethod ,name ((vec ,vec-type) (value real))
+         ,(body `(ax:rcurry ,map-fun value) vec-type)))))
 
 (define-vec-num-op mul float2 #'*)
 (define-vec-num-op mul float3 #'*)
