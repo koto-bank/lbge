@@ -77,7 +77,7 @@ The recycle algorithm:
                available
                sparse packed)
       storage
-    (when (= 0 available)
+    (when (zerop available)
       ;; Create brand new entity, nothing to recycle
       (ss:insert create-next sparse packed)
       (let ((ret create-next))
