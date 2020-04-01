@@ -35,3 +35,18 @@ subsequent funcall, e.g:
           (push a new-arglist)))
     `(lambda (,@(nreverse lambda-arglist))
        (,fun ,@(nreverse new-arglist)))))
+
+(defun find-shortest (objects get-size)
+  (when (null objects)
+    (return-from find-shortest nil))
+  (loop
+    :with elem := nil
+    :with shortest := (funcall get-size (first objects))
+    :for obj :in (cdr objects)
+    :while obj
+    :for current-size := (funcall get-size obj)
+    :if (< current-size shortest)
+      :do
+         (setf shortest current-size
+               elem obj)
+    :finally (return elem)))
