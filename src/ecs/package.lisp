@@ -1,27 +1,27 @@
-(defpackage :lbge.ecs.entity-storage
+(defpackage :lbge.ecs
   (:use :cl)
   (:local-nicknames
-   (:ss :lbge.sparse-set))
-  (:export
-   :entity-storage
-   :delete-entity
-   :create-entity
-   :entity-existsp))
-
-(defpackage :lbge.ecs
-  (:use
-   :cl)
-  (:local-nicknames
-   (:ax :alexandria))
+   (:ax :alexandria)
+   (:ss :lbge.sparse-set)
+   (:u :lbge.utils)
+   (:h :lbge.hash))
   (:export
    :world
-   :entity
-   :component
+   :make-world
+
+   ;; System exports
    :system
+   :bind-components
+   :update
+   :add-systems
+   :get-system
 
-   :defsystem
-   :defcomponent
+   ;; Component exports
+   :component
+   :iterate-comp
+   :get-component
 
+   :entity
    :create-entity
    :delte-entity
    :existsp))
