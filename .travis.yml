@@ -31,6 +31,7 @@ os:
 
 script:
   - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
+  - ros -s lbge-ecs-test -e '(lbge-ecs-test:run-on-travis-agent)'
   - ros -s lbge-render-test -e '(quit)' # check that it compiles
 
 cache:

@@ -3,7 +3,8 @@
   (:local-nicknames
    (:ecs :lbge.ecs)
    (:u :lbge.utils))
-  (:export :run))
+  (:export :run
+           :run-on-travis-agent))
 
 (in-package :lbge-ecs-test)
 
@@ -65,11 +66,12 @@
   (log:config :debug)
   (rove:run-suite :lbge-ecs-test))
 
-(defun run-on-agent ()
+(defun run-on-travis-agent ()
   (run)
   (unless (lbge.rove-utils:report-results)
     (sb-ext:quit :unix-status 1)))
 
+;;; For debug&testing
 (defun run2 ()
   (log:config :debug)
   (let ((world (ecs:make-world))
