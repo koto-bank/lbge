@@ -1,12 +1,14 @@
 (in-package :lbge.ecs)
 
 (defclass system ()
-  ((component-storages
-    :documentation "List of component storages")
-   (world :documentation "World the system belongs to"
-          :reader get-world)
-   (owned-component-types
-    :documentation "List of component types, which the system owns (and thus stores)"))
+  ((world
+    :documentation "World the system belongs to"
+    :initarg :world
+    :reader get-world)
+   (component-storages
+    :accessor component-storages
+    :initform (list)
+    :documentation "List component storages for component types"))
   (:documentation "Base class for all systems"))
 
 (defgeneric update (system dt)
