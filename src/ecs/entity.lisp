@@ -1,5 +1,7 @@
 (in-package :lbge.ecs)
 
+(define-symbol-macro null-entity 0)
+
 (defclass entity-storage ()
   ((sparse
     :initform (make-array '(0)
@@ -19,19 +21,16 @@
     :initform 1
     :documentation "Next entity to be created")
    (recycle-next
-    :initform (null-entity)
+    :initform null-entity
     :documentation "Next entity to be recycled")))
 
-(defmacro null-entity ()
-  0)
-
 (defmacro is-null (entity)
-  (= entity (null-entity)))
+  (= entity null-entity))
 
 (defmethod initialize-instance :after ((storage entity-storage) &key)
   :documentation "Add default null entity"
   (with-slots (sparse packed) storage
-    (ss:insert (null-entity) sparse packed)))
+    (ss:insert null-entity sparse packed)))
 
 (defun storage-delete-entity (storage entity)
   "Delete the entity.
