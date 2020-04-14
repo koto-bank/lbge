@@ -8,6 +8,7 @@
   (:export
    :world
    :make-world
+   :update-world
 
    ;; System exports
    :system
