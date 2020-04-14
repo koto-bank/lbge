@@ -11,6 +11,12 @@
     :documentation "List component storages for component types"))
   (:documentation "Base class for all systems"))
 
+(defmacro bind-components (system-type &rest comp-types)
+  `(eval-when (:compile-toplevel)
+     (log:debug "Binding ~S to system ~S" (list ,@comp-types) ,system-type)
+     (setf (get ,system-type :components)
+           (list ,@comp-types))))
+
 (defgeneric update (system dt)
   (:documentation
    "Updates the system.
