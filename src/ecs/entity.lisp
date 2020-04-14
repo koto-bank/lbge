@@ -1,4 +1,4 @@
-(in-package :lbge.ecs.entity-storage)
+(in-package :lbge.ecs)
 
 (defclass entity-storage ()
   ((sparse
@@ -33,7 +33,7 @@
   (with-slots (sparse packed) storage
     (ss:insert (null-entity) sparse packed)))
 
-(defun delete-entity (storage entity)
+(defun storage-delete-entity (storage entity)
   "Delete the entity.
 
 The algorithm:
@@ -45,7 +45,7 @@ The algorithm:
       storage
     (unless (ss:existsp entity sparse packed)
       ;; Already deleted
-      (return-from delete-entity nil))
+      (return-from storage-delete-entity nil))
     (let ((new-recycle-next entity))
       (setf
        ;; Increase gen
@@ -65,7 +65,7 @@ The algorithm:
        available
        (1+ available)))))
 
-(defun create-entity (storage)
+(defun storage-create-entity (storage)
   "Create entity (or recycle one created earlier).
 
 The recycle algorithm:
@@ -82,7 +82,7 @@ The recycle algorithm:
       (ss:insert create-next sparse packed)
       (let ((ret create-next))
         (incf create-next)
-        (return-from create-entity ret)))
+        (return-from storage-create-entity ret)))
 
     (let ((ret recycle-next)
           (id-new (ss:id recycle-next)))
