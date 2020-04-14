@@ -92,7 +92,7 @@ By default all components in group considered obligatory"
     (with-slots (component-storage-map) world
       (setf storage
             (h:hash-get component-storage-map component-type)))
-    (assert storage nil "Failed to fing storage for ~S"
+    (assert storage nil "Failed to find storage for ~S"
             component-type)
     storage))
 
