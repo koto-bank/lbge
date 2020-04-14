@@ -29,7 +29,7 @@
     (add-component-types sys comp-types)))
 
 (defmacro bind-components (system-type &rest comp-types)
-  `(eval-when (:compile-toplevel)
+  `(eval-when (:compile-toplevel :load-toplevel)
      (log:debug "Binding ~S to system ~S" (list ,@comp-types) ,system-type)
      (setf (get ,system-type :components)
            (list ,@comp-types))))
