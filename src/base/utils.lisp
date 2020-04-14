@@ -39,6 +39,8 @@ subsequent funcall, e.g:
 (defun find-shortest (objects get-size)
   (when (null objects)
     (return-from find-shortest nil))
+  (when (= 1 (length objects))
+    (return-from find-shortest (car objects)))
   (loop
     :with elem := nil
     :with shortest := (funcall get-size (first objects))
