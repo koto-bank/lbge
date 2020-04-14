@@ -11,6 +11,23 @@
     :documentation "List component storages for component types"))
   (:documentation "Base class for all systems"))
 
+(defun add-component-types (system component-types)
+  (with-slots (component-storages) system
+    (loop
+      :for type :in component-types
+      :do (progn
+            (assert (null (find type component-storages
+                                :key #'storage-component-type))
+                    nil "Component ~A already stored in ~A" type system)
+            (push (make-instance 'component-storage :type type) component-storages)))))
+
+(defmethod initialize-instance :after ((sys system) &key)
+  (let ((comp-types (get (type-of sys) :components)))
+    (log:debug "Adding component storages for ~S to system ~S"
+               comp-types
+               (type-of sys))
+    (add-component-types sys comp-types)))
+
 (defmacro bind-components (system-type &rest comp-types)
   `(eval-when (:compile-toplevel)
      (log:debug "Binding ~S to system ~S" (list ,@comp-types) ,system-type)
