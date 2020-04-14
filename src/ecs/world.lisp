@@ -20,13 +20,15 @@
   "Add system to the world. Order of adding matters"
   (assert (null (find system-class (systems world) :key #'type-of))
           nil "System ~A already added to the world" (system-name system))
-  (let ((system (make-instance system-class)))
+  (log:debug "Adding system ~S" system-class)
+  (let ((system (make-instance system-class :world world)))
     (setf (systems world)
           (nconc (systems world) (list system)))
     (loop
       :for comp-storage :in (component-storages system)
+      :for comp-type := (storage-component-type comp-storage)
       :do (h:hash-set (component-storage-map world)
-                      (storage-component-type comp-storage)
+                      comp-type
                       comp-storage))))
 
 (defun add-systems (world &rest system-classes)
@@ -37,7 +39,7 @@
 
 (defun update-world (world dt)
   "Updates all systems present in the world"
-  (mapcar (ax:rcurry #'update-system dt)
+  (mapcar (ax:rcurry #'update dt)
           (systems world)))
 
 ;;; Entities
@@ -47,9 +49,12 @@
     (let ((e (storage-create-entity entity-storage)))
       (loop
         :for c :in components
-        :do (add-component (get-component-storage world c)
-                           e
-                           (make-instance c)))
+        :for storage := (get-component-storage world c)
+        :do (progn
+              (assert storage nil "Failed to find storage for component ~S" c)
+              (add-component storage
+                             e
+                             (make-instance c))))
       e)))
 
 ;;; Component interface
@@ -70,23 +75,26 @@ By default all components in group considered obligatory"
                    (t (push (second form) obligaroty-comp-types))))
     (values obligaroty-comp-types optional-comp-types)))
 
-(defun get-entities-with-all-comps (world storages)
+(defun get-entities-with-all-comps (storages)
   "Get vector of entities with all required components"
   (let* ((shortest (u:find-shortest storages #'storage-size))
          (entities (get-entities shortest)))
+    (log:debug "Shortest storage ~S, all entities: ~S" shortest entities)
     (loop
       :for e :across entities
       :if (every (lambda (storage)
-                   (get-component storage e))
+                   (storage-get-component storage e))
                  storages)
         :collect e)))
 
-(defun get-component-storage (world component)
-  (get-component-storage-by-type world (type-of component)))
-
-(defun get-component-storage-by-type (world component-type)
-  (with-slots (component-storage-map) world
-    (h:hash-get component-storage-map component-type)))
+(defun get-component-storage (world component-type)
+  (let (storage)
+    (with-slots (component-storage-map) world
+      (setf storage
+            (h:hash-get component-storage-map component-type)))
+    (assert storage nil "Failed to fing storage for ~S"
+            component-type)
+    storage))
 
 (defun get-var-type (form)
   "(! var type)/var type -> (var type)"
@@ -101,19 +109,23 @@ By default all components in group considered obligatory"
     :collect
     (let ((var-type (get-var-type form)))
       `(,(first var-type)
-        (get-component (get-component-storage ,world ,(second var-type))
-                       ,entity)))))
+        (get-component ,world ,entity ',(second var-type))))))
 
 (defmacro iterate-comp (world-form group &body body)
-  (multiple-value-bind (must-have may-have)
+  (multiple-value-bind (must-have)
       (get-comp-types group)
     (ax:with-gensyms (e entities storages)
       `(let* ((,storages (mapcar
-                          (ax:curry #'get-component-storage-by-type ,world-form)
+                          (ax:curry #'get-component-storage ,world-form)
                           ',must-have))
               (,entities (get-entities-with-all-comps
-                          ,world-form ,storages)))
+                          ,storages)))
          (loop
            :for ,e :in ,entities
            :do (let ,(group-to-let-bindings e world-form group)
                  ,@body))))))
+
+(defun get-component (world entity comp-type)
+  (storage-get-component
+   (get-component-storage world comp-type)
+   entity comp-type))
