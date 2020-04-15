@@ -1,15 +1,17 @@
 (in-package :cl)
 
-(defpackage :lbge.image-loader
+(defpackage :lbge.image
   (:use :cl)
-  (:export :load-image)
-  (:import-from :alexandria
-                :switch))
+  (:local-nicknames
+   (:ax :alexandria))
+  (:export
+   ;; Loader
+   :load-image
 
-(defpackage :lbge.image-loader.image
-  (:use :cl)
-  (:export :make-image :width :height :channels :data))
-
-(defpackage :lbge.image-loader.tga
-  (:use :cl :lbge.image-loader.image)
-  (:export :tga))
+   ;; Image
+   :image
+   :make-image
+   :width
+   :height
+   :channels
+   :data))

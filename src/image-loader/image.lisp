@@ -1,4 +1,4 @@
-(in-package :lbge.image-loader.image)
+(in-package :lbge.image)
 
 (defclass image ()
   ((width :reader width
