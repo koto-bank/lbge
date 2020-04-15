@@ -7,16 +7,20 @@
 
 (in-package :lbge-unit-tests)
 
+(defvar *current-file-path* "")
+
 (defmacro define-test (name use-packages &body body)
   (let ((actual-name (make-test-package-name (symbol-name name))))
-    `(deftest ,actual-name ,@body)))
+    `(deftest ,actual-name
+       (let ((*default-pathname-defaults* ,*current-file-path*))
+         ,@body))))
 
 (defun load-test-file (file-spec)
   (let ((saved-package *package*))
     (with-open-file (source file-spec)
       (uiop:with-temporary-file (:stream temp-file
                                  :pathname temp-path)
-        (prepare-temp-file source temp-file)
+        (prepare-temp-file source file-spec temp-file)
         (finish-output temp-file)
         (file-position temp-file :start)
         (loop
@@ -60,8 +64,9 @@ intern symbols not yet present in them, and reread the form"
       (file-position source pos)
       (get-form source temp-packages))))
 
-(defun prepare-temp-file (source temp-file)
-  (let ((temp-packages (list)))
+(defun prepare-temp-file (source source-path temp-file)
+  (let ((temp-packages (list))
+        (*current-file-path* source-path))
     (loop
       :for form := (get-form source temp-packages) :while form
       :do (progn
