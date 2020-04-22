@@ -32,7 +32,8 @@
     ((:file "packages")
      (:file "image")
      (:file "tga")
-     (:file "image-loader")))
+     (:file "image-loader")
+     (:file "image-asset")))
    (:module math
     :components
     ((:file "package")
