@@ -3,6 +3,7 @@
 (defpackage :lbge.image
   (:use :cl)
   (:local-nicknames
+   (:a :lbge.asset)
    (:ax :alexandria))
   (:export
    ;; Loader
@@ -14,4 +15,7 @@
    :width
    :height
    :channels
-   :data))
+   :data
+
+   ;; Asset
+   :image-asset-handler))
