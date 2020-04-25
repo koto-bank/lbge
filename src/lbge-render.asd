@@ -24,6 +24,12 @@
      (:file "matrix")
      (:file "quaternion")
      (:file "transform")))
+   (:module image-loader
+    :components
+    ((:file "packages")
+     (:file "image")
+     (:file "tga")
+     (:file "image-loader")))
    (:module render
     :components
     ((:file "packages")
@@ -32,10 +38,12 @@
      (:file "render")
      (:file "backend")
      (:file "shader")
+     (:file "texture")
      (:file "primitives")))
    (:module gl
     :pathname "render/low-level/gl"
     :components
     ((:file "shader")
+     (:file "texture")
      (:file "backend")
      (:file "render-object")))))
