@@ -3,7 +3,7 @@
 (defclass texture ()
   ((image :accessor texture-image
           :initarg :image
-          :documentation "An instance of lbge.image, raw data to be loaded")
+          :documentation "An instance of lbge.image - raw data to be loaded")
    (target :documentation "Texutre target (currently can be only :texture-2d)"
            :initarg :target)
    (format :accessor texture-format
@@ -23,6 +23,6 @@ have been loaded to the GPU"))
   (:documentation "Load texture to the GPU"))
 
 (defmethod texture-load :after ((tex texture))
-  (:documentation "Default method to automatically release image data")
+  "Default method to automatically release image data"
   (when (slot-value tex 'release-image)
     (setf (slot-value tex 'image) nil)))
