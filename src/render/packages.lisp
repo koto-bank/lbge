@@ -12,7 +12,10 @@
    ;; Shader handling
    :shader-list
    :make-shader
-   :use-shader))
+   :use-shader
+   ;; Textures
+   :make-texture
+   :use-texture))
 
 (defpackage :lbge.render.shader
   (:use :cl)
@@ -26,6 +29,20 @@
    :get-status
    :get-compile-log
    :delete-shader))
+
+(defpackage :lbge.render.texture
+  (:use :cl)
+  (:export
+   :texture
+   :target
+   :image
+   :format
+   :texture-image
+   :texture-format
+   :texture-initialize                  ; initialize texture and necessary parameters
+   :texture-load                        ; load texture to GPU
+   :texture-release
+   :texture-bind))
 
 (defpackage :lbge.render
   (:use :cl)
@@ -47,6 +64,8 @@
    :backend-data
    :vertices
    :indices
+   :textures
+   :add-texture
    :make-render-object
    :make-render-batch
    :batches
@@ -91,10 +110,12 @@
    :cl)
   (:local-nicknames (:b :lbge.render.backend)
                     (:m :lbge.math)
+                    (:i :lbge.image)
                     (:r :lbge.render)
                     (:h :lbge.hash)
                     (:ax :alexandria)
-                    (:s :lbge.render.shader))
+                    (:s :lbge.render.shader)
+                    (:t :lbge.render.texture))
   (:export
    :make-context
    :gl-backend
