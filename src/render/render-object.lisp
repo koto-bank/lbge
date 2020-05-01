@@ -29,7 +29,20 @@ position, color, texture coordinates, etc."
               attribute-sizes
               attribute-offsets)))
 
-(defmacro make-semantics (definition)
+(defun literal-semantics-definition-p (definition)
+  (let ((allowed-attributes '(:vertex :color :texcoord))
+        (allowed-types '(:float)))
+    (and
+     (loop
+       :for attr :in definition
+       :always (listp attr)
+       :always (= 3 (length attr)))
+     (loop
+       :for (attr type size) :in definition
+       :always (member attr allowed-attributes)
+       :always (member type allowed-types)))))
+
+(defun parse-semantics-def (definition)
   (let ((allowed-attributes '(:vertex :color :texcoord))
         (allowed-types '(:float))
         (type-byte-size '((:float 4))))
@@ -57,11 +70,30 @@ position, color, texture coordinates, etc."
                   (push component-length sizes)
                   (setf stride (+ stride (* component-length byte-size)))))
               definition)
-      `(make-instance 'semantics :attributes-num ,(length definition)
-                                 :stride ,stride
-                                 :attribute-types (list ,@(nreverse types))
-                                 :attribute-sizes (list ,@(nreverse sizes))
-                                 :attribute-offsets (list ,@(nreverse offsets))))))
+      (values stride
+              (nreverse types)
+              (nreverse sizes)
+              (nreverse offsets)))))
+
+(defun make-semantics-fn (definition)
+  (multiple-value-bind (stride types sizes offsets)
+      (parse-semantics-def definition)
+    (make-instance 'semantics :attributes-num (length definition)
+                              :stride stride
+                              :attribute-types types
+                              :attribute-sizes sizes
+                              :attribute-offsets offsets)))
+
+(defmacro make-semantics (definition)
+  (unless (literal-semantics-definition-p definition)
+    (return-from make-semantics `(make-semantics-fn ,definition)))
+  (multiple-value-bind (stride types sizes offsets)
+      (parse-semantics-def definition)
+    `(make-instance 'semantics :attributes-num ,(length definition)
+                               :stride ,stride
+                               :attribute-types ',types
+                               :attribute-sizes ',sizes
+                               :attribute-offsets ',offsets)))
 
 (defun semantics= (sem-1 sem-2)
   (and (= (slot-value sem-1 'attributes-num)
