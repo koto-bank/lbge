@@ -47,6 +47,7 @@
 (defpackage :lbge.render
   (:use :cl)
   (:local-nicknames (:b :lbge.render.backend)
+                    (:ax :alexandria)
                     (:m :lbge.math))
   (:export
    :renderer

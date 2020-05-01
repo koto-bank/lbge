@@ -1,46 +1,85 @@
 (in-package :lbge.render)
 
-(defun make-rect (&key w h (transform (m:make-transform)))
+(defun assemble-vertex-array (attributes)
+  (let ((attr-len (length (car attributes))))
+    (assert (loop
+              :for a :in attributes
+              :always (= (length a) attr-len))
+            nil "All attribute lists must have equal lenght")
+    (let ((result (make-array (* (length attributes)
+                                 attr-len)))
+          (i 0))
+      (apply (ax:curry #'mapcar
+                       (lambda (&rest vals)
+                         (mapcar (lambda (value)
+                                   (setf (aref result i)
+                                         value)
+                                   (incf i))
+                                 vals)))
+             attributes)
+      result)))
+
+(defun unzip-attribute-list (attribute-list)
+  (loop
+    :for (a v) :on attribute-list :by #'cddr
+    :collect a :into attributes
+    :collect v :into values
+    :finally (return (values attributes values))))
+
+(defun assemble-render-object (batch vertices indices transform additional-attributes)
+  (multiple-value-bind (attributes values)
+      (unzip-attribute-list additional-attributes)
+    (with-slots ((verts vertices) (inds indices)) batch
+      (setf verts
+            (assemble-vertex-array
+             (nconc (list vertices) values))
+            inds indices))
+    (make-render-object (list batch)
+                        (make-semantics
+                         (nconc (list '(:vertex :float 4))
+                                attributes))
+                        transform)))
+
+(defun make-rect (&key w h (transform (m:make-transform))
+                    additional-attributes)
+  "Create a rectangle primitive.
+If additional-attributes list is provided, it should have the folloving form, e.g.:
+ ((:color :float 3) ((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0) (0.0 1.0 1.0))
+  (:texcoord :float 2) ((1.0 0.0) (0.0 0.0) (0.0 1.0) (1.0 1.0)))"
   (assert (> w 0.0f0) nil "Width must be greater than zero, current value: ~S" w)
   (assert (> h 0.0f0) nil "Height must be greater than zero, current value: ~S" h)
   (let* ((b (make-instance 'batch))
          (w/2 (/ w 2.0f0))
          (h/2 (/ h 2.0f0))
          (-w/2 (- w/2))
-         (-h/2 (- h/2)))
-    (with-slots (vertices indices) b
-      (setf vertices (vector (m:make-float4 -w/2 h/2 0.0f0 1.0f0)
-                             (m:make-float4 w/2 h/2 0.0f0 1.0f0)
-                             (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
-                             (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))
-            indices (vector 0 2 1 0 3 2)))
-    (make-render-object (list b)
-                        (make-semantics ((:vertex :float 4)))
-                        transform)))
+         (-h/2 (- h/2))
+         (verts (list (m:make-float4 -w/2 h/2 0.0f0 1.0f0)
+                      (m:make-float4 w/2 h/2 0.0f0 1.0f0)
+                      (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
+                      (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))))
+    (assemble-render-object b verts (vector 0 2 1 0 3 2) transform additional-attributes)))
 
-(defun make-triangle (&key size (transform (m:make-transform)))
+(defun make-triangle (&key size (transform (m:make-transform))
+                        additional-attributes)
   (assert (> size 0.0f0) nil "Triangle size must be positive, current value: ~S" size)
   (let* ((b (make-instance 'batch))
          (size/2 (/ size 2.0f0))
          (-size/2 (- size/2))
          (r-circ (/ size (sqrt 3.0f0)))
-         (-r-insc (- (/ r-circ 2))))
-    (with-slots (vertices indices) b
-      (setf vertices (vector (m:make-float4 -size/2 -r-insc 0.0f0 1.0f0)
-                             (m:make-float3 1.0 0.0 0.0)
-                             (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
-                             (m:make-float3 0.0 1.0 0.0)
-                             (m:make-float4 size/2 -r-insc 0.0f0 1.0f0)
-                             (m:make-float3 0.0 0.0 1.0))
-            indices (vector 0 2 1)))
-    (make-render-object (list b)
-                        (make-semantics ((:vertex :float 4) (:color :float 3)))
-                        transform)))
+         (-r-insc (- (/ r-circ 2)))
+         (verts (list (m:make-float4 -size/2 -r-insc 0.0f0 1.0f0)
+                      (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
+                      (m:make-float4 size/2 -r-insc 0.0f0 1.0f0))))
+    (assemble-render-object b verts (vector 0 2 1) transform additional-attributes)))
 
-(defun make-circle (&key radius (vert-num 32) (transform (m:make-transform)))
-  (make-ellipse :r-x radius :r-y radius :vert-num vert-num :transform transform))
+(defun make-circle (&key radius (vert-num 32) (transform (m:make-transform))
+                      additional-attributes)
+  (make-ellipse :r-x radius :r-y radius :vert-num vert-num
+                :transform transform
+                :additional-attributes additional-attributes))
 
-(defun make-ellipse (&key r-x r-y (vert-num 32) (transform (m:make-transform)))
+(defun make-ellipse (&key r-x r-y (vert-num 32) (transform (m:make-transform))
+                       additional-attributes)
   (assert (> vert-num 2) nil "Cant make an ellipse with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
         (inds (make-array  (list (* 3 vert-num))))
@@ -62,7 +101,8 @@
                         (make-semantics ((:vertex :float 4)))
                         transform)))
 
-(defun make-ring (&key in-r out-r (vert-num 32) (transform (m:make-transform)))
+(defun make-ring (&key in-r out-r (vert-num 32) (transform (m:make-transform))
+                    additional-attributes)
   (assert (> vert-num 2) nil "Cant make an ring with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
         (inds (make-array  (list (* 6 vert-num))))
