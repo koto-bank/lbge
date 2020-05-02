@@ -107,13 +107,13 @@
 (defun float4-one () (make-float4 1 1 1 1))
 
 (defmethod print-object ((vec float4) out)
-  (format out "~S" (in-vec vec)))
+  (format out "f4~S" (in-vec vec)))
 
 (defmethod print-object ((vec float3) out)
-  (format out "~S" (in-vec vec)))
+  (format out "f3~S" (in-vec vec)))
 
 (defmethod print-object ((vec float2) out)
-  (format out "~S" (in-vec vec)))
+  (format out "f2~S" (in-vec vec)))
 
 (defmethod get-size ((vec float2))
   2)
