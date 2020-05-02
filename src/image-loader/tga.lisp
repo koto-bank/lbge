@@ -19,19 +19,22 @@
 
 (defun tga-channels (header)
   (ax:switch ((image-type header))
-    (0 (error "Image contains no data"))
-    (1 (error "Color mapped images not supported"))
-    (2 (ax:switch ((pixel-depth header))
-         (16 :rg8)
-         (24 :rgb8)
-         (32 :rgba8)))
-    (3 :r8)
-    (9 (error "Color mapped images not supported"))
-    (10 (ax:switch ((pixel-depth header))
-          (16 :rg8)
-          (24 :rgb8)
-          (32 :rgba8)))
-    (11 :r8)))
+    (:no-data (error "Image contains no data"))
+    (:uncompressed-color-mapped
+     (error "Color mapped images not supported"))
+    (:uncompressed-true-color
+     (ax:switch ((pixel-depth header))
+       (16 :rg8)
+       (24 :rgb8)
+       (32 :rgba8)))
+    (:uncompressed-black-and-white :r8)
+    (:rle-color-mapped (error "Color mapped images not supported"))
+    (:rle-true-color
+     (ax:switch ((pixel-depth header))
+       (16 :rg8)
+       (24 :rgb8)
+       (32 :rgba8)))
+    (:rle-black-and-white :r8)))
 
 (defun load-tga (path)
   "Returns the `lbge.image-loader.image::image` object for `path` file."
