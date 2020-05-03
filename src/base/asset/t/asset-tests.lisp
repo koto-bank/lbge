@@ -1,5 +1,9 @@
 (defpackage :lbge.test.assets
-  (:use :cl :rove :lbge.asset :lbge.filesystem))
+  (:use
+   :cl
+   :rove
+   :lbge.asset
+   :lbge.filesystem))
 
 (in-package :lbge.test.assets)
 
