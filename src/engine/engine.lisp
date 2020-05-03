@@ -47,7 +47,7 @@ Only one allowed per application.")
 (defun get-main-window ()
   (slot-value *engine* 'main-window))
 
-(defun make-engine (&rest options)
+(defun make-engine (&optional options)
   (delete-engine)
   (setf *engine* (make-instance 'engine))
   (unless options
