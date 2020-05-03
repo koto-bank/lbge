@@ -75,7 +75,19 @@
           (chunk-header 0))
       (loop
         :while (< current-pixel pixel-count)
-        :do (progn
+        :do (flet ((write-data ()
+                     (setf (subseq data
+                                   current-byte
+                                   (+ bytes-per-pixel current-byte))
+                           buffer)
+                     (when (> bytes-per-pixel 2)
+                       ;; bgr -> rgb
+                       (let (temp)
+                         (setf temp (aref data current-byte)
+                               (aref data current-byte) (aref data (+ current-byte 2))
+                               (aref data (+ current-byte 2)) temp)))
+                     (incf current-pixel)
+                     (incf current-byte bytes-per-pixel)))
               (setf chunk-header (read-byte tga))
               (if (< chunk-header 128)
                 ;; Plain chunk
@@ -83,23 +95,13 @@
                   (incf chunk-header)
                   (dotimes (count chunk-header)
                     (read-sequence buffer tga)
-                    (setf (subseq data
-                                  current-byte
-                                  (+ bytes-per-pixel current-byte))
-                          buffer)
-                    (incf current-pixel)
-                    (incf current-byte bytes-per-pixel)))
+                    (write-data)))
                 ;; RLE chunk
                 (progn
                   (decf chunk-header 127)
                   (read-sequence buffer tga)
                   (dotimes (count chunk-header)
-                    (setf (subseq data
-                                  current-byte
-                                  (+ bytes-per-pixel current-byte))
-                          buffer)
-                    (incf current-pixel)
-                    (incf current-byte bytes-per-pixel)))))))
+                    (write-data)))))))
     data))
 
 (defun read-header (tga)
