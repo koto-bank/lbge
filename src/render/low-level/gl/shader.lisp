@@ -25,19 +25,19 @@
 (defun get-compile-errors (id)
   (gl:get-shader-info-log id))
 
-(defun set-uniform (shader name x &rest y z w)
-  (cond ((w (gl:uniformi (gl:get-uniform-location
-                          (slot-value shader 'handle) name)
-                         x y z w))
-         (z (gl:uniformi (gl:get-uniform-location
-                          (slot-value shader 'handle) name)
-                         x y z))
-         (y (gl:uniformi (gl:get-uniform-location
-                          (slot-value shader 'handle) name)
-                         x y))
-         (t (gl:uniformi (gl:get-uniform-location
-                          (slot-value shader 'handle) name)
-                         x)))))
+(defmethod s:set-uniform ((shader gl-shader) name x &optional y z w)
+  (cond (w (gl:uniformi (gl:get-uniform-location
+                         (slot-value shader 'handle) name)
+                        x y z w))
+        (z (gl:uniformi (gl:get-uniform-location
+                         (slot-value shader 'handle) name)
+                        x y z))
+        (y (gl:uniformi (gl:get-uniform-location
+                         (slot-value shader 'handle) name)
+                        x y))
+        (t (gl:uniformi (gl:get-uniform-location
+                         (slot-value shader 'handle) name)
+                        x))))
 
 (defun get-link-errors (handle)
   (gl:get-program-info-log handle))
