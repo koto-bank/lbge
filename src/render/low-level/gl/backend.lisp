@@ -20,7 +20,9 @@
                :initform (h:make-hash))
    (buffer-storages :documentation "List of buffer storages each containing its objects"
                     :initform (list))
+   ;; Todo: Move to material both textures and shaders
    (active-shader :documentation "Current active shader")
+   (active-texture :documentation "Current texture")
    (window :documentation "SDL window" :initform nil)))
 
 (defmethod b:init ((backend gl-backend) window &optional info)
@@ -104,8 +106,15 @@ cons pair of maj . min context version"
   (with-slots ((objs r:render-objects)
                (camera r:current-camera))
       renderer
-    (with-slots (active-shader) backend
+    (with-slots (active-shader active-texture) backend
       (gl:use-program (slot-value active-shader 'handle))
+
+      ;; Texture setting
+      ;; TODO: move to material handling
+      (gl:active-texture :texture0)
+      (gl:bind-texture :texture-2d (slot-value active-texture 'handle))
+      (s:set-uniform active-shader "sampler0" 0)
+
       (dolist (obj objs)
         (ensure-buffer-data backend obj))
       (dolist (obj objs)
@@ -137,6 +146,15 @@ cons pair of maj . min context version"
   (r:adjust-camera-new-aspect (r:renderer-current-camera renderer)
                               (/ width height)
                               :y))
+
+;;; Textures
+(defmethod b:make-texture ((backend gl-backend) &rest args)
+  (let ((texture (apply #'make-instance 'gl-texture args)))
+    (t:texture-initialize texture)
+    texture))
+
+(defmethod b:use-texture ((backend gl-backend) (shader gl-shader) (texture gl-texture))
+  (set-uniform shader "sampler0" (slot-value texture 'handle)))
 
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)
