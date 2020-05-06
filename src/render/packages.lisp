@@ -28,7 +28,8 @@
    :compile-shader
    :get-status
    :get-compile-log
-   :delete-shader))
+   :delete-shader
+   :set-uniform))
 
 (defpackage :lbge.render.texture
   (:use :cl)

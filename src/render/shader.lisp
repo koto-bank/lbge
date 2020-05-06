@@ -21,3 +21,5 @@
   (:documentation "Return shader compilation/link log"))
 
 (defgeneric delete-shader (shader))
+
+(defgeneric set-uniform (shader name x &optional y z w))
