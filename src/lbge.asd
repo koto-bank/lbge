@@ -27,13 +27,6 @@
     :components
     ((:file "package")
      (:file "misc")))
-   (:module image-loader
-    :components
-    ((:file "packages")
-     (:file "image")
-     (:file "tga")
-     (:file "image-loader")
-     (:file "image-asset")))
    (:module math
     :components
     ((:file "package")
@@ -57,6 +50,13 @@
      (:file "asset-manager")
      (:file "sexp-asset-handler")
      (:file "glsl-asset-handler")))
+   (:module image-loader
+    :components
+    ((:file "packages")
+     (:file "image")
+     (:file "tga")
+     (:file "image-loader")
+     (:file "image-asset")))
    (:module engine
     :components
     ((:file "package")
