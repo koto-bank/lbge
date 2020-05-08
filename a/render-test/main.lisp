@@ -4,11 +4,13 @@
                     (:le :lbge.engine)
                     (:e :lbge.engine.events)
                     (:f :lbge.filesystem)
+                    (:i :lbge.image)
                     (:a :lbge.asset)
                     (:an :lbge.animation)
                     (:r :lbge.render)
                     (:b :lbge.render.backend)
                     (:s :lbge.render.shader)
+                    (:t :lbge.render.texture)
                     (:u :lbge.utils))
   (:export :run))
 
@@ -17,7 +19,8 @@
 (defun run ()
   (log:config :debug)
   (le:delete-engine)
-  (le:make-engine)
+  (le:make-engine (le:make-engine-options
+                   :window-w 1440 :window-h 900))
   (e:add-event-handlers
     (:keyup
      (:keysym keysym)
@@ -33,12 +36,28 @@
                                         (m:make-float3 0.0 0.0 1.0)
                                         (m:make-float3 0.0 0.0 0.0)
                                         (m:make-float3 0.0 1.0 0.0))))
-         (rect (r:make-rect :w 0.3f0 :h 0.3f0
+         (rect (r:make-rect :w 0.45f0 :h 0.63f0
                             :transform
-                            (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0))))
+                            (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0))
+                            :additional-attributes
+                            (list '(:color :float 3)
+                                  (list (m:make-float3 1.0 0.0 1.0)
+                                        (m:make-float3 0.0 0.0 1.0)
+                                        (m:make-float3 0.0 1.0 0.0)
+                                        (m:make-float3 1.0 0.0 0.0))
+                                  '(:texcoord :float 2)
+                                  (list (m:make-float2 0.0 1.0)
+                                        (m:make-float2 1.0 1.0)
+                                        (m:make-float2 1.0 0.0)
+                                        (m:make-float2 0.0 0.0)))))
          (tri  (r:make-triangle :size 0.3f0
                                 :transform
-                                (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0))))
+                                (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0))
+                                :additional-attributes
+                                (list '(:color :float 3)
+                                      (list (m:make-float3 0.0 0.0 1.0)
+                                            (m:make-float3 0.0 1.0 0.0)
+                                            (m:make-float3 1.0 0.0 0.0)))))
          (ellipse (r:make-ellipse :r-x 0.15f0 :r-y 0.15f0
                                   :transform
                                   (m:make-transform :pos (m:make-float4 -0.3f0 -0.3f0 0.0f0 1.0f0))))
@@ -77,7 +96,8 @@
     (f:set-app-root-to-system 'lbge-render-test)
     ;; Setup asset manager
     (a:add-root a :root ".")
-    (a:add-handler a (make-instance 'lbge.asset:glsl-asset-handler))
+    (a:add-handler a (make-instance 'a:glsl-asset-handler))
+    (a:add-handler a (make-instance 'i:image-asset-handler))
     (le:add-manager a)
 
     ;; Install
@@ -92,22 +112,31 @@
      ring)
     (le:link :before-start
              (lambda ()
+               (b:resize-viewport (r:renderer-backend r)
+                                  r
+                                  1440 900)
                (b:init (r:renderer-backend r)
                        (le:get-main-window)
                        '((:gl-version (4 . 1))))
                (format t "OpenGL version string: ~a~%" (gl:gl-version))
                (format t "GLSL version string: ~a~%" (gl:glsl-version))
                (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
-               (let ((frag-shader-asset
-                       (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
-                     (vert-shader-asset
-                       (a:get-asset a (lbge.asset:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-                     (shader (b:make-shader (r:renderer-backend r) "simple-shader")))
+               (let* ((frag-shader-asset
+                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
+                      (vert-shader-asset
+                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/vert.glsl")))
+                      (shader (b:make-shader (r:renderer-backend r) "simple-shader"))
+                      (image (a:get-asset a (a:make-asset-key :image :disk ":root/umalico-0.tga")))
+                      (image-test (a:get-asset a (a:make-asset-key :image :disk ":root/test2.tga")))
+                      (texture (b:make-texture (r:renderer-backend r)
+                                               :image (a:asset-data image)
+                                               :target :texture-2d
+                                               :format :rgba8)))
                  (log:info "Fragment shader:")
-                 (let ((lines (u:merge-lines (lbge.asset:asset-data frag-shader-asset))))
+                 (let ((lines (u:merge-lines (a:asset-data frag-shader-asset))))
                    (log:info lines))
                  (log:info "Vertex shader:")
-                 (let ((lines (u:merge-lines (lbge.asset:asset-data vert-shader-asset))))
+                 (let ((lines (u:merge-lines (a:asset-data vert-shader-asset))))
                    (log:info lines))
                  (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
                                            :fragment (a:asset-data frag-shader-asset)))
@@ -123,7 +152,11 @@
                    (when (> (length log) 0)
                      (log:info "Compilation log: ~A" log)))
                  (b:use-shader (r:renderer-backend r) shader)
-                 (gl:polygon-mode :front-and-back :fill)))) ; change to line to view wireframe
+                 ;; Texture
+                 (t:texture-load texture)
+                 (setf (slot-value (r:renderer-backend r) 'lbge.render.gl::active-texture)
+                       texture)
+                 (gl:polygon-mode :front-and-back :fill)))) ; change to :line to view wireframe
     (le:link :on-loop
              (lambda (dt)
                (let ((backend (r:renderer-backend r)))
