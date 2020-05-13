@@ -15,7 +15,9 @@
    :use-shader
    ;; Textures
    :make-texture
-   :use-texture))
+   :use-texture
+   ;; Misc
+   :print-statistics))
 
 (defpackage :lbge.render.shader
   (:use :cl)
