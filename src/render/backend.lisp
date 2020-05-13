@@ -19,3 +19,6 @@ info is custom info, what can be placed there, depends on backend"))
 ;;; Textures
 (defgeneric make-texture (backend &rest args))
 (defgeneric use-texture (backend shader texture))
+
+;;; Misc
+(defgeneric print-statistics (backend &optional stream args))
