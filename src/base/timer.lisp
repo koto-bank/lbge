@@ -7,6 +7,10 @@
    (startedp :initform nil
              :accessor startedp
              :documentation "If the timer has started")
+   (one-shot :initarg :one-shot
+             :initform nil
+             :accessor one-shot
+             :documentation "If the timer should not repeat after timeout")
    (passed-time :accessor passed-time
                 :initform 0
                 :documentation "Time passed after timer has started")
@@ -17,8 +21,13 @@
   (:documentation "Class for firing events periodically or after some
   time. Requires manually updating timer"))
 
-(defun make (timeout)
-  (make-instance 'timer :timeout timeout))
+(defun make (timeout &key (started t) one-shot)
+  (let ((timer
+          (make-instance 'timer :timeout timeout
+                                :one-shot one-shot)))
+    (when started
+      (start timer))
+    timer))
 
 (defun start (timer &optional timeout)
   "Starts the timer if not already started"
@@ -55,4 +64,6 @@
     (when (>= passed timeout)
       (setf (passed-time timer)
             (- passed timeout))
-      (beacon:blink beacon))))
+      (beacon:blink beacon)
+      (when (one-shot timer)
+        (stop timer)))))
