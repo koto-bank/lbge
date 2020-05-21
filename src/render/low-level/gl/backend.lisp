@@ -162,3 +162,18 @@ cons pair of maj . min context version"
 
 (defmethod b:deinit ((backend gl-backend))
   (sdl2:gl-delete-context (slot-value backend 'context)))
+
+;;; Misc
+(defun print-buffer-storage (buffer-storage stream)
+  (with-slots (vao semantics last-vertex-index) buffer-storage
+    (format stream "~
+VAO:        ~A~%~
+Semantics:  ~A~%~
+Vertices:   ~A~%---------------~%"
+            vao semantics (1+ last-vertex-index))))
+
+(defmethod b:print-statistics ((backend gl-backend) &optional (stream t) args)
+  (with-slots (buffer-storages shader-map) backend
+    (loop
+      :for storage :in buffer-storages :do
+        (print-buffer-storage storage stream))))
