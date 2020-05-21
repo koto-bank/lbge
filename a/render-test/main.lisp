@@ -11,6 +11,7 @@
                     (:b :lbge.render.backend)
                     (:s :lbge.render.shader)
                     (:t :lbge.render.texture)
+                    (:timer :lbge.timer)
                     (:u :lbge.utils))
   (:export :run))
 
@@ -92,7 +93,8 @@
                                        (m:add init-ring (m:make-float4 (m:float2-y dp)
                                                                        (- (m:float2-x dp))
                                                                        0.0f0 1.0f0)))))
-                             #'an:linear-interpolation)))
+                             #'an:linear-interpolation))
+         (timer (timer:make 5000 :one-shot t)))
     (f:set-app-root-to-system 'lbge-render-test)
     ;; Setup asset manager
     (a:add-root a :root ".")
@@ -157,11 +159,14 @@
                  (setf (slot-value (r:renderer-backend r) 'lbge.render.gl::active-texture)
                        texture)
                  (gl:polygon-mode :front-and-back :fill)))) ; change to :line to view wireframe
+    (timer:link timer (lambda ()
+                        (b:print-statistics (r:renderer-backend r))))
     (le:link :on-loop
              (lambda (dt)
                (let ((backend (r:renderer-backend r)))
                  (an:update animation dt)
                  (b:clear backend)
                  (b:render backend r)
-                 (b:present backend)))))
+                 (b:present backend)
+                 (timer:update timer dt)))))
   (le:start))
