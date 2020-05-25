@@ -2,7 +2,7 @@
     ((:timer :lbge.timer)
      (:beacon :lbge.beacon))
   (let* ((data (list))                  ; place for pushing data
-         (ti (timer:make 1000)))
+         (ti (timer:make 1000 :started nil)))
     (flet ((push-10 ()
              (push 10 data))
            (push-20 ()
