@@ -20,7 +20,8 @@
 (defun run ()
   (log:config :debug)
   (le:delete-engine)
-  (le:make-engine (le:make-engine-options
+  (le:make-engine)
+  (le:init-engine (le:make-engine-options
                    :window-w 1440 :window-h 900))
   (e:add-event-handlers
     (:keyup

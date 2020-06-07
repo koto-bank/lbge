@@ -47,12 +47,9 @@ Only one allowed per application.")
 (defun get-main-window ()
   (slot-value *engine* 'main-window))
 
-(defun make-engine (&optional options)
+(defun make-engine ()
   (delete-engine)
-  (setf *engine* (make-instance 'engine))
-  (unless options
-    (setf options (make-engine-options)))
-  (setf (slot-value *engine* 'options) options))
+  (setf *engine* (make-instance 'engine)))
 
 (defun get-engine ()
   "Return engine isntance.
@@ -69,6 +66,41 @@ Asserts that it have been created earlier."
 (defun get-manager (manager-type)
   (let ((managers (slot-value *engine* 'managers)))
     (hash-get (managers manager-type))))
+
+(defun init-engine (&optional options)
+  (unless options
+    (setf options (make-engine-options)))
+  (setf (slot-value *engine* 'options) options)
+
+  (let ((init-flags (autowrap:mask-apply
+                     'sdl2::sdl-init-flags
+                     '(:audio :video :timer :joystick :gamecontroller :noparachute))))
+    (handler-case
+        (progn
+          (sb-int:with-float-traps-masked (:invalid :overflow)
+            (sdl2::check-rc (sdl2-ffi.functions:sdl-init init-flags)))
+          (let* ((title (engine-options-window-title options))
+                 (h (engine-options-window-h options))
+                 (w (engine-options-window-w options))
+                 (win (make-window title w h)))
+            (set-main-window win)))
+      (t ()
+        (stop-engine))))
+  (fs:set-app-root-to-system 'lbge-render-test)
+  ;; Setup managers
+  (let ((a (add-manager 'asset:asset-manager)))
+    (asset:add-root a :root ".")
+    (asset:add-handler a (make-instance 'asset:glsl-asset-handler))
+    (asset:add-handler a (make-instance 'image:image-asset-handler)))
+  (let* ((renderer (render:make-renderer :gl))
+         (backend (render:renderer-backend renderer)))
+    (render-back:init backend
+                      (get-main-window)
+                      '((:gl-version (4 . 1))))
+    (format t "OpenGL version string: ~a~%" (gl:gl-version))
+    (format t "GLSL version string: ~a~%" (gl:glsl-version))
+    (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
+    (install-renderer renderer)))
 
 ;;; Beacons
 (defun link (name callback)
@@ -90,37 +122,24 @@ Asserts that it have been created earlier."
             nil "Renderer already installed"))
   (setf (engine-renderer *engine*) renderer))
 
+(defun get-renderer ()
+  (engine-renderer *engine*))
+
 (defun engine-loop ()
-  (let ((options (slot-value *engine* 'options))
-        (init-flags (autowrap:mask-apply
-                     'sdl2::sdl-init-flags
-                     '(:audio :video :timer :joystick :gamecontroller :noparachute))))
+  (let ((ticks 0))
     (unwind-protect
-         (progn
-           (sb-int:with-float-traps-masked (:invalid :overflow)
-             (sdl2::check-rc (sdl2-ffi.functions:sdl-init init-flags)))
-           (let* ((title (engine-options-window-title options))
-                  (h (engine-options-window-h options))
-                  (w (engine-options-window-w options))
-                  (win (make-window title w h))
-                  (ticks 0))
-             (set-main-window win)
-             (unwind-protect
-                  (progn
-                    (blink :before-start)
-                    (sdl2:with-sdl-event (sdl-event)
-                      (setf ticks (sdl2:get-ticks))
-                      (loop :while (eq (slot-value *engine* 'state) :running)
-                            ;; process-events is defined in events.lisp
-                            :do (progn
-                                  (let* ((current-ticks (sdl2:get-ticks))
-                                         (delta (- current-ticks ticks)))
-                                    (setf ticks current-ticks)
-                                    (lbge.engine.events:process-events *engine* sdl-event)
-                                    (blink :on-loop (list delta))))))
-                    (sb-int:with-float-traps-masked (:invalid)
-                      (sdl2:destroy-window win))))))
-      (sdl2:sdl-quit))))
+                (sdl2:with-sdl-event (sdl-event)
+           (blink :before-start)
+           (setf ticks (sdl2:get-ticks))
+           (loop :while (eq (slot-value *engine* 'state) :running)
+                 ;; process-events is defined in events.lisp
+                 :do (progn
+                       (let* ((current-ticks (sdl2:get-ticks))
+                              (delta (- current-ticks ticks)))
+                         (setf ticks current-ticks)
+                         (lbge.engine.events:process-events *engine* sdl-event)
+                         (blink :on-loop (list delta))))))
+      (stop-engine))))
 
 (defun start ()
   (setf (slot-value *engine* 'state) :running)

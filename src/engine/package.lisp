@@ -9,6 +9,7 @@
    :add-manager
    :get-manager
    :make-engine-options
+   :init-engine
    :start
 
    ;; Engine beacons
