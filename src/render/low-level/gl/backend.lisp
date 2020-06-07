@@ -143,9 +143,10 @@ cons pair of maj . min context version"
 
 (defmethod b:resize-viewport ((backend gl-backend) renderer width height)
   (gl:viewport 0 0 width height)
-  (r:adjust-camera-new-aspect (r:renderer-current-camera renderer)
-                              (/ width height)
-                              :y))
+  (ax:when-let (cam (r:renderer-current-camera renderer))
+    (r:adjust-camera-new-aspect cam
+                                (/ width height)
+                                :y)))
 
 ;;; Textures
 (defmethod b:make-texture ((backend gl-backend) &rest args)
