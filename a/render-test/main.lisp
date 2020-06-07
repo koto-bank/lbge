@@ -29,8 +29,8 @@
      (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
        (sdl2:push-event :quit))
      (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
-  (let* ((r (r:make-renderer :gl))
-         (a (a:make-asset-manager))
+  (let* ((r (le:get-renderer))
+         (a (le:get-manager 'a:asset-manager))
          (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
                                  :top 0.75f0 :bottom -0.75f0
                                  :near -0.1f0 :far 3.0f0
@@ -38,6 +38,7 @@
                                         (m:make-float3 0.0 0.0 1.0)
                                         (m:make-float3 0.0 0.0 0.0)
                                         (m:make-float3 0.0 1.0 0.0))))
+         ;; primitives
          (rect (r:make-rect :w 0.45f0 :h 0.63f0
                             :transform
                             (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0))
@@ -95,16 +96,24 @@
                                                                        (- (m:float2-x dp))
                                                                        0.0f0 1.0f0)))))
                              #'an:linear-interpolation))
-         (timer (timer:make 5000 :one-shot t)))
-    (f:set-app-root-to-system 'lbge-render-test)
-    ;; Setup asset manager
-    (a:add-root a :root ".")
-    (a:add-handler a (make-instance 'a:glsl-asset-handler))
-    (a:add-handler a (make-instance 'i:image-asset-handler))
-    (le:add-manager a)
+         ;; timer
+         (timer (timer:make 5000 :one-shot t))
 
+         ;; shader
+         (frag-shader-asset
+           (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
+         (vert-shader-asset
+           (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/vert.glsl")))
+         (shader (b:make-shader (r:renderer-backend r) "simple-shader"))
+
+         ;; texture
+         (image (a:get-asset a (a:make-asset-key :image :disk ":root/umalico-0.tga")))
+         (image-test (a:get-asset a (a:make-asset-key :image :disk ":root/test2.tga")))
+         (texture (b:make-texture (r:renderer-backend r)
+                                  :image (a:asset-data image)
+                                  :target :texture-2d
+                                  :format :rgba8)))
     ;; Install
-    (le:install-renderer r)
     (r:add-camera r c)
     (r:set-current-camera r c)
     (r:add-objects
@@ -115,51 +124,31 @@
      ring)
     (le:link :before-start
              (lambda ()
-               (b:resize-viewport (r:renderer-backend r)
-                                  r
-                                  1440 900)
-               (b:init (r:renderer-backend r)
-                       (le:get-main-window)
-                       '((:gl-version (4 . 1))))
-               (format t "OpenGL version string: ~a~%" (gl:gl-version))
-               (format t "GLSL version string: ~a~%" (gl:glsl-version))
-               (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
-               (let* ((frag-shader-asset
-                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
-                      (vert-shader-asset
-                        (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-                      (shader (b:make-shader (r:renderer-backend r) "simple-shader"))
-                      (image (a:get-asset a (a:make-asset-key :image :disk ":root/umalico-0.tga")))
-                      (image-test (a:get-asset a (a:make-asset-key :image :disk ":root/test2.tga")))
-                      (texture (b:make-texture (r:renderer-backend r)
-                                               :image (a:asset-data image)
-                                               :target :texture-2d
-                                               :format :rgba8)))
-                 (log:info "Fragment shader:")
-                 (let ((lines (u:merge-lines (a:asset-data frag-shader-asset))))
-                   (log:info lines))
-                 (log:info "Vertex shader:")
-                 (let ((lines (u:merge-lines (a:asset-data vert-shader-asset))))
-                   (log:info lines))
-                 (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
-                                           :fragment (a:asset-data frag-shader-asset)))
-                 (s:compile-shader shader)
-                 (when (eq (s:get-status shader)
-                           :error)
-                   (log:info "Shader compilation failed")
-                   (log:info (s:get-compile-log shader)))
-                 (when (eq (s:get-status shader)
-                           :compiled)
-                   (log:info "Shader successfully compiled and linked!"))
-                 (let ((log (s:get-compile-log shader)))
-                   (when (> (length log) 0)
-                     (log:info "Compilation log: ~A" log)))
-                 (b:use-shader (r:renderer-backend r) shader)
-                 ;; Texture
-                 (t:texture-load texture)
-                 (setf (slot-value (r:renderer-backend r) 'lbge.render.gl::active-texture)
-                       texture)
-                 (gl:polygon-mode :front-and-back :fill)))) ; change to :line to view wireframe
+               (log:info "Fragment shader:")
+               (let ((lines (u:merge-lines (a:asset-data frag-shader-asset))))
+                 (log:info lines))
+               (log:info "Vertex shader:")
+               (let ((lines (u:merge-lines (a:asset-data vert-shader-asset))))
+                 (log:info lines))
+               (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
+                                         :fragment (a:asset-data frag-shader-asset)))
+               (s:compile-shader shader)
+               (when (eq (s:get-status shader)
+                         :error)
+                 (log:info "Shader compilation failed")
+                 (log:info (s:get-compile-log shader)))
+               (when (eq (s:get-status shader)
+                         :compiled)
+                 (log:info "Shader successfully compiled and linked!"))
+               (let ((log (s:get-compile-log shader)))
+                 (when (> (length log) 0)
+                   (log:info "Compilation log: ~A" log)))
+               (b:use-shader (r:renderer-backend r) shader)
+               ;; Texture
+               (t:texture-load texture)
+               (setf (slot-value (r:renderer-backend r) 'lbge.render.gl::active-texture)
+                     texture)
+               (gl:polygon-mode :front-and-back :fill))) ; change to :line to view wireframe
     (timer:link timer (lambda ()
                         (b:print-statistics (r:renderer-backend r))))
     (le:link :on-loop
