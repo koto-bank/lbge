@@ -1,6 +1,11 @@
 (defpackage :lbge.engine
   (:use :cl :lbge.asset :lbge.hash)
-  (:local-nicknames (:beacon :lbge.beacon))
+  (:local-nicknames (:beacon :lbge.beacon)
+                    (:image :lbge.image)
+                    (:asset :lbge.asset)
+                    (:render :lbge.render)
+                    (:render-back :lbge.render.backend)
+                    (:fs :lbge.filesystem))
   (:export
    :engine
    :delete-engine
@@ -21,7 +26,7 @@
    :get-main-window
 
    ;; Renderer
-   :engine-renderer
+   :get-renderer
    :install-renderer))
 
 (defpackage :lbge.engine.events
