@@ -33,7 +33,9 @@
 Only one allowed per application.")
 
 (defun delete-engine ()
-  (setf *engine* nil))
+  (when *engine*
+    (stop-engine)
+    (setf *engine* nil)))
 
 (defun set-main-window (window)
   (setf (slot-value *engine* 'main-window) window))
@@ -45,6 +47,7 @@ Only one allowed per application.")
                         :flags '(:shown :opengl))))
 
 (defun get-main-window ()
+  (assert *engine* nil "Engine doesn't exist, can't get main window")
   (slot-value *engine* 'main-window))
 
 (defun make-engine ()
@@ -101,6 +104,13 @@ Asserts that it have been created earlier."
     (format t "GLSL version string: ~a~%" (gl:glsl-version))
     (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
     (install-renderer renderer)))
+
+(defun stop-engine ()
+  (let ((win (get-main-window)))
+    (when win
+      (sb-int:with-float-traps-masked (:invalid)
+        (sdl2:destroy-window win)))
+    (sdl2:sdl-quit)))
 
 ;;; Beacons
 (defun link (name callback)
