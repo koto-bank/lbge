@@ -64,11 +64,14 @@ Asserts that it have been created earlier."
   "Add new manager to engine"
   (let ((managers (slot-value *engine* 'managers)))
     (assert (null (hash-get managers manager-type)) nil
-            "Manager ~S already registered" manager-type)))
+            "Manager ~S already registered" manager-type)
+    (let ((manager (make-instance manager-type)))
+      (hash-set managers manager-type manager)
+      manager)))
 
 (defun get-manager (manager-type)
   (let ((managers (slot-value *engine* 'managers)))
-    (hash-get (managers manager-type))))
+    (hash-get managers manager-type)))
 
 (defun init-engine (&optional options)
   (unless options
