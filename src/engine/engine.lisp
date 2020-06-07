@@ -110,10 +110,13 @@ Asserts that it have been created earlier."
     (render:resize-viewport renderer 1440 900)))
 
 (defun stop-engine ()
-  (let ((win (get-main-window)))
-    (when win
+  (log:info "Stopping engine...")
+  (with-slots (main-window) *engine*
+    (when main-window
+      (log:info "Found SDL2 window, deleting...")
       (sb-int:with-float-traps-masked (:invalid)
-        (sdl2:destroy-window win)))
+        (sdl2:destroy-window main-window))
+      (setf main-window nil))
     (sdl2:sdl-quit)))
 
 ;;; Beacons
