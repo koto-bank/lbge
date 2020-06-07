@@ -105,10 +105,9 @@ Asserts that it have been created earlier."
                       '((:gl-version (4 . 1))))
     (format t "OpenGL version string: ~a~%" (gl:gl-version))
     (format t "GLSL version string: ~a~%" (gl:glsl-version))
-    (gl:clear-color 0.02f0 0.05f0 0.05f0 1.0f0)
+    (gl:clear-color 0.2f0 0.5f0 0.5f0 1.0f0)
     (install-renderer renderer)
-    (backend:resize-viewport backend renderer
-                       1440 900)))
+    (render:resize-viewport renderer 1440 900)))
 
 (defun stop-engine ()
   (let ((win (get-main-window)))

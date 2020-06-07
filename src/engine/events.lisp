@@ -80,7 +80,7 @@
           (autowrap:enum-key 'sdl2-ffi:sdl-window-event-id
                              (expand-accessor :event :windowevent sdl-event))))
     (cond ((eq event-type :resized)
-           (r:resize-viewport (e:engine-renderer engine)
+           (r:resize-viewport (e:get-renderer)
                               (expand-accessor :data1 :windowevent sdl-event)
                               (expand-accessor :data2 :windowevent sdl-event))))))
 
