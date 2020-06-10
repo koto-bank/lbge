@@ -22,7 +22,7 @@
   (le:delete-engine)
   (le:make-engine)
   (le:init-engine (le:make-engine-options
-                   :window-w 1440 :window-h 900))
+                   :window-title "Render testbed"))
   (e:add-event-handlers
     (:keyup
      (:keysym keysym)
