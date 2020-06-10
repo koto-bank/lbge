@@ -3,6 +3,7 @@
   (:local-nicknames (:beacon :lbge.beacon)
                     (:image :lbge.image)
                     (:asset :lbge.asset)
+                    (:m :lbge.math)
                     (:render :lbge.render)
                     (:render-back :lbge.render.backend)
                     (:fs :lbge.filesystem))
