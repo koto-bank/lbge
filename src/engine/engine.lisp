@@ -25,8 +25,10 @@
 
 (defstruct engine-options
   (window-title "LBGE Window")
-  (window-w 800)
-  (window-h 600))
+  (window-w 1680)
+  (window-h 1050)
+  (clear-color (m:make-float4 0.68f0 0.7f0 0.76f0 1.0f0))
+  (opengl-version '(4 . 1)))
 
 (defvar *engine* nil
   "Running engine instance.
@@ -85,34 +87,35 @@ Asserts that it have been created earlier."
         (progn
           (sb-int:with-float-traps-masked (:invalid :overflow)
             (sdl2::check-rc (sdl2-ffi.functions:sdl-init init-flags)))
-          (let* ((title (engine-options-window-title options))
-                 (h (engine-options-window-h options))
-                 (w (engine-options-window-w options))
-                 (win (make-window title w h)))
-            (set-main-window win)))
+          (set-main-window (make-window (engine-options-window-title options)
+                                        (engine-options-window-w options)
+                                        (engine-options-window-h options))))
       (t ()
         (stop-engine))))
   (fs:set-app-root-to-system 'lbge-render-test)
   ;; Setup managers
   (let ((a (add-manager 'asset:asset-manager)))
-    (asset:add-root a :root ".")
+    (asset:add-root a :root ".")        ; default root
     (asset:add-handler a (make-instance 'asset:glsl-asset-handler))
     (asset:add-handler a (make-instance 'image:image-asset-handler)))
   (let* ((renderer (render:make-renderer :gl))
          (backend (render:renderer-backend renderer)))
     (render-back:init backend
                       (get-main-window)
-                      '((:gl-version (4 . 1))))
-    (format t "OpenGL version string: ~a~%" (gl:gl-version))
-    (format t "GLSL version string: ~a~%" (gl:glsl-version))
-    (gl:clear-color 0.2f0 0.5f0 0.5f0 1.0f0)
+                      `((:gl-version ,(engine-options-opengl-version options))))
+    (log:info "OpenGL version string: ~a~%" (gl:gl-version))
+    (log:info "GLSL version string: ~a~%" (gl:glsl-version))
+    (let ((cc (engine-options-clear-color options)))
+      (gl:clear-color (m:x cc) (m:y cc) (m:z cc) (m:w cc)))
     (install-renderer renderer)
-    (render:resize-viewport renderer 1440 900)))
+    (render:resize-viewport renderer
+                            (engine-options-window-w options)
+                            (engine-options-window-h options))))
 
 (defun stop-engine ()
   (log:info "Stopping engine...")
   (with-slots (main-window) *engine*
-    (when main-window
+    (when (and (slot-boundp *engine* 'main-window) main-window)
       (log:info "Found SDL2 window, deleting...")
       (sb-int:with-float-traps-masked (:invalid)
         (sdl2:destroy-window main-window))
