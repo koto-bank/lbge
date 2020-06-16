@@ -117,6 +117,9 @@ position, color, texture coordinates, etc."
    (transform :documentation "Transform matrix"
               :initarg :transform
               :accessor transform)
+   (material :documentation "Material assigned to this render object"
+             :initarg :material
+             :accessor material)
    (backend-data :documentation "Backend-dependent data. Opaque"))
   (:documentation "Render object. The thing that contains backend-independent info for rendering"))
 
