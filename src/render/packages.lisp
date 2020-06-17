@@ -108,6 +108,11 @@
    ;;Misc
    :gl-check-error))
 
+(defpackage :lbge.render.material
+  (:use :cl)
+  (:local-nicknames (:s :lbge.render.shader))
+  (:export :material))
+
 ;;; low-level stuff
 (defpackage :lbge.render.gl
   (:use
