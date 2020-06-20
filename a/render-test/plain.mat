@@ -1,0 +1,6 @@
+(material
+ :name "plain"
+ :shaders '(":root/frag.glsl" ":root/vert.glsl")
+ :uniforms '((:color :float3)
+             (:projection :float4x4)
+             (:model-view :float4x4)))
