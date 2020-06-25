@@ -111,7 +111,10 @@
 (defpackage :lbge.render.material
   (:use :cl)
   (:local-nicknames (:s :lbge.render.shader))
-  (:export :material))
+  (:export
+   :material
+   :uniforms
+   :shader))
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
