@@ -12,7 +12,7 @@
 
 (defgeneric add-stage (shader stages)
   (:documentation "Stage is backend pipeline step: fragment, hull,
- tesselation, etc. Specified by alist, e.g. (:fragment frag-asset :vertex vert-asset"))
+ tesselation, etc. Specified by alist, e.g. (:fragment frag-src :vertex vert-src"))
 
 (defgeneric compile-shader (shader)
   (:documentation "Compile and link shader"))
