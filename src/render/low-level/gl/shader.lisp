@@ -39,6 +39,22 @@
                          (slot-value shader 'handle) name)
                         x))))
 
+(defun to-glsl-name (name)
+  (substitute #\_ #\- (string-downcase (string name))))
+
+(defun get-uniform-location (shader name)
+  (ax:switch ((string-upcase (string name)) :test #'string=)
+    ("MODEL-VIEW" (slot-value shader 'model-view-uniform))
+    ("PROJECTION" (slot-value shader 'projection-uniform))
+    (t (gl:get-uniform-location (slot-value shader 'handle)
+                                (to-glsl-name name)))))
+
+(defmethod s:set-uniform-matrix ((shader gl-shader) name matrix &aux mat-size)
+  (let ((uniform-location (get-uniform-location shader name)))
+    (gl:uniform-matrix uniform-location
+                       mat-size
+                       (vector (m:in-vec matrix)))))
+
 (defun get-link-errors (handle)
   (gl:get-program-info-log handle))
 
