@@ -31,7 +31,8 @@
    :get-status
    :get-compile-log
    :delete-shader
-   :set-uniform))
+   :set-uniform
+   :set-uniform-matrix))
 
 (defpackage :lbge.render.texture
   (:use :cl)
