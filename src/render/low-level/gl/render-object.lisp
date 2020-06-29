@@ -88,16 +88,12 @@
                (transform r:transform))
       render-object
     (with-slots (active-shader) backend
-      (gl:uniform-matrix (slot-value active-shader 'model-view-uniform)
-                         4
-                         (vector (m:in-vec
-                                  (m:mul
-                                   (r:camera-view-matrix camera)
-                                   (m:transform-matrix transform)))))
-      (gl:uniform-matrix (slot-value active-shader 'projection-uniform)
-                         4
-                         (vector (m:in-vec
-                                  (r:camera-projection-matrix camera))))
+      (s:set-uniform-matrix active-shader :model-view
+                            (m:mul
+                             (r:camera-view-matrix camera)
+                             (m:transform-matrix transform)))
+      (s:set-uniform-matrix active-shader :projection
+                            (r:camera-projection-matrix camera))
       (with-slots (base-vertex index-size index-offset vao)
           gl-data
         (gl:bind-vertex-array vao)
