@@ -24,11 +24,11 @@
   (le:init-engine (le:make-engine-options
                    :window-title "Render testbed"))
   (e:add-event-handlers
-    (:keyup
-     (:keysym keysym)
-     (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
-       (sdl2:push-event :quit))
-     (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
+   (:keyup
+    (:keysym keysym)
+    (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
+      (sdl2:push-event :quit))
+    (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
   (let* ((r (le:get-renderer))
          (a (le:get-manager 'a:asset-manager))
          (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
