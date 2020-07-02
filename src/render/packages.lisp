@@ -24,6 +24,8 @@
   (:shadow
    cl:compile
    cl:delete)
+  (:local-nicknames
+   (:m :lbge.math))
   (:export
    :shader
    :add-stage
