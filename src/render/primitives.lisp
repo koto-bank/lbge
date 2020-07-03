@@ -57,7 +57,13 @@ If additional-attributes list is provided, it should have the folloving form, e.
                       (m:make-float4 w/2 h/2 0.0f0 1.0f0)
                       (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
                       (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))))
-    (assemble-render-object b verts (vector 0 2 1 0 3 2) transform additional-attributes)))
+    (assemble-render-object b verts (vector 0 2 1 0 3 2) transform
+                            (append (list '(:texcoord :float 2)
+                                          (list (m:make-float2 0.0 1.0)
+                                                (m:make-float2 1.0 1.0)
+                                                (m:make-float2 1.0 0.0)
+                                                (m:make-float2 0.0 0.0))))
+                            additional-attributes)))
 
 (defun make-triangle (&key size (transform (m:make-transform))
                         additional-attributes)
