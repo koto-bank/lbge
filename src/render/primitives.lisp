@@ -41,7 +41,7 @@
                         transform)))
 
 (defun make-rect (&key w h (transform (m:make-transform))
-                    additional-attributes)
+                  additional-attributes)
   "Create a rectangle primitive.
 If additional-attributes list is provided, it should have the folloving form, e.g.:
  ((:color :float 3) ((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0) (0.0 1.0 1.0))
