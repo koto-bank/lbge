@@ -36,6 +36,7 @@
      (:file "camera")
      (:file "render-object")
      (:file "render")
+     (:file "material")
      (:file "backend")
      (:file "shader")
      (:file "texture")
@@ -45,5 +46,6 @@
     :components
     ((:file "shader")
      (:file "texture")
+     (:file "material")
      (:file "backend")
      (:file "render-object")))))
