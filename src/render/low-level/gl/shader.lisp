@@ -25,22 +25,39 @@
 (defun get-compile-errors (id)
   (gl:get-shader-info-log id))
 
-(defmethod s:set-uniform ((shader gl-shader) name x &optional y z w)
-  (cond (w (gl:uniformi (gl:get-uniform-location
-                         (slot-value shader 'handle) name)
-                        x y z w))
-        (z (gl:uniformi (gl:get-uniform-location
-                         (slot-value shader 'handle) name)
-                        x y z))
-        (y (gl:uniformi (gl:get-uniform-location
-                         (slot-value shader 'handle) name)
-                        x y))
-        (t (gl:uniformi (gl:get-uniform-location
-                         (slot-value shader 'handle) name)
-                        x))))
-
 (defun to-glsl-name (name)
   (substitute #\_ #\- (string-downcase (string name))))
+
+(defmacro gl-uniform (fun shader name x y z w)
+  `(cond
+     ,@(loop
+         :for v :in (list w z y t)
+         :for args :on (list w z y x)
+         :collect `(,v (funcall ,fun (gl:get-uniform-location
+                                      (slot-value ,shader 'handle) ,name)
+                                ,@(reverse args))))))
+
+(defmacro set-vector (x y &optional z w)
+  `(setf ,@(loop
+             :for var :in (remove nil (list w z y x))
+             :append `(,var (,(find-symbol (string var) "LBGE.MATH") ,x)))))
+
+(defmethod s:set-uniform ((shader gl-shader) name x &optional y z w)
+  (let ((n (to-glsl-name name))
+        (function #'gl:uniformi))
+    (typecase x
+      (m:float2 (set-vector x y))
+      (m:float3 (set-vector x y z))
+      (m:float4 (set-vector x y z w)))
+    (when (member (class-of x)
+                  (mapcar #'find-class
+                          '(m:float2
+                            m:float3
+                            m:float4
+                            float))
+                  :test #'closer-mop:subtypep)
+      (setf function #'gl:uniformf))
+    (gl-uniform function shader n x y z w)))
 
 (defun get-uniform-location (shader name)
   (ax:switch ((string-upcase (string name)) :test #'string=)
