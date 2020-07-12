@@ -35,6 +35,9 @@
     :negq
 
     ; exports from vector.lisp:
+    :float2
+    :float3
+    :float4
     :float2-x
     :float2-y
     :float3-x
