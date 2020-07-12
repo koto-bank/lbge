@@ -66,10 +66,10 @@
     (t (gl:get-uniform-location (slot-value shader 'handle)
                                 (to-glsl-name name)))))
 
-(defmethod s:set-uniform-matrix ((shader gl-shader) name matrix &aux mat-size)
+(defmethod s:set-uniform-matrix ((shader gl-shader) name matrix)
   (let ((uniform-location (get-uniform-location shader name)))
     (gl:uniform-matrix uniform-location
-                       mat-size
+                       (m:mat-size matrix)
                        (vector (m:in-vec matrix)))))
 
 (defun get-link-errors (handle)
@@ -131,11 +131,19 @@
           (add-to-log s (get-link-errors handle))
           (if (not link-status)
             (setf status :error)
-            (setf status :compiled))))
+            (setf status :ready))))
       (loop
         :for id :in attached-shaders
         :do (gl:detach-shader handle id)
-            (gl:delete-shader id)))))
+            (gl:delete-shader id))
+      (when (eq status :error)
+        (log:error "Shader compilation failed")
+        (log:error log))
+      (when (eq status :ready)
+        (log:info "Shader successfully compiled and linked!")
+        (set-default-uniforms s))
+      (when (> (length log) 0)
+        (log:info "Compilation log: ~A" log)))))
 
 (defmethod s:get-compile-log ((s gl-shader))
   (slot-value s 'log))

@@ -8,7 +8,7 @@
 :unknown - default state
 :error - error occured
 :loaded - some sources are loaded and not compiled
-:compiled - program successfully compiled and linked"))
+:ready - program successfully compiled, linked and ready for use"))
 
 (defgeneric add-stage (shader stages)
   (:documentation "Stage is backend pipeline step: fragment, hull,
