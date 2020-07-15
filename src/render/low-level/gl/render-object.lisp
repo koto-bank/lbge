@@ -83,23 +83,15 @@
       (gl:bind-vertex-array 0))
     (setf (slot-value render-object 'r:backend-data) gl-data)))
 
-(defun draw-object (camera backend render-object)
-  (with-slots ((gl-data r:backend-data)
-               (transform r:transform))
+(defun draw-object (backend render-object)
+  (with-slots ((gl-data r:backend-data))
       render-object
-    (with-slots (active-shader) backend
-      (s:set-uniform-matrix active-shader :model-view
-                            (m:mul
-                             (r:camera-view-matrix camera)
-                             (m:transform-matrix transform)))
-      (s:set-uniform-matrix active-shader :projection
-                            (r:camera-projection-matrix camera))
-      (with-slots (base-vertex index-size index-offset vao)
-          gl-data
-        (gl:bind-vertex-array vao)
-        (gl:draw-elements-base-vertex :triangles
-                                      (gl:make-null-gl-array :unsigned-short)
-                                      base-vertex
-                                      :count index-size
-                                      :offset index-offset)
-        (gl:bind-vertex-array 0)))))
+    (with-slots (base-vertex index-size index-offset vao)
+        gl-data
+      (gl:bind-vertex-array vao)
+      (gl:draw-elements-base-vertex :triangles
+                                    (gl:make-null-gl-array :unsigned-short)
+                                    base-vertex
+                                    :count index-size
+                                    :offset index-offset)
+      (gl:bind-vertex-array 0))))
