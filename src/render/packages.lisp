@@ -133,6 +133,7 @@
                     (:m :lbge.math)
                     (:i :lbge.image)
                     (:r :lbge.render)
+                    (:mat :lbge.render.material)
                     (:h :lbge.hash)
                     (:ax :alexandria)
                     (:s :lbge.render.shader)

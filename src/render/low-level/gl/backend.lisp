@@ -20,9 +20,6 @@
                :initform (h:make-hash))
    (buffer-storages :documentation "List of buffer storages each containing its objects"
                     :initform (list))
-   ;; Todo: Move to material both textures and shaders
-   (active-shader :documentation "Current active shader")
-   (active-texture :documentation "Current texture")
    (window :documentation "SDL window" :initform nil)))
 
 (defmethod b:init ((backend gl-backend) window &optional info)
@@ -106,20 +103,33 @@ cons pair of maj . min context version"
   (with-slots ((objs r:render-objects)
                (camera r:current-camera))
       renderer
-    (with-slots (active-shader active-texture) backend
-      (gl:use-program (slot-value active-shader 'handle))
+    (dolist (obj objs)
+      (ensure-buffer-data backend obj))
+    (dolist (obj objs)
+      (use-material obj camera)
+      (draw-object backend obj))
+    (gl:use-program 0)))
 
-      ;; Texture setting
-      ;; TODO: move to material handling
-      (gl:active-texture :texture0)
-      (gl:bind-texture :texture-2d (slot-value active-texture 'handle))
-      (s:set-uniform active-shader "sampler0" 0)
-
-      (dolist (obj objs)
-        (ensure-buffer-data backend obj))
-      (dolist (obj objs)
-        (draw-object camera backend obj))
-      (gl:use-program 0))))
+(defun use-material (render-object camera)
+  (with-slots ((mat r:material)
+               (transform r:transform))
+      render-object
+    (let* ((shader (mat:shader mat))
+           (handle (slot-value shader 'handle)))
+      (assert (eq :ready (slot-value shader 'status))
+              nil "Shader must be compiled and linked prior to use")
+      (gl:use-program handle)
+      ;; Set default uniforms
+      (s:set-uniform-matrix shader :model-view
+                            (m:mul
+                             (r:camera-view-matrix camera)
+                             (m:transform-matrix transform)))
+      (s:set-uniform-matrix shader :projection
+                            (r:camera-projection-matrix camera))
+      ;; Set other uniforms
+      (mat:set-uniforms mat)
+      ;; Set textures
+      (mat:set-textures mat))))
 
 (defun add-shader (backend name shader)
   (with-slots (shader-map) backend
@@ -152,10 +162,8 @@ cons pair of maj . min context version"
 (defmethod b:make-texture ((backend gl-backend) &rest args)
   (let ((texture (apply #'make-instance 'gl-texture args)))
     (t:texture-initialize texture)
+    (t:texture-load texture)
     texture))
-
-(defmethod b:use-texture ((backend gl-backend) (shader gl-shader) (texture gl-texture))
-  (set-uniform shader "sampler0" (slot-value texture 'handle)))
 
 (defmethod b:present ((backend gl-backend))
   (sb-int:with-float-traps-masked (:invalid)
