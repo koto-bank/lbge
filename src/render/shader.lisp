@@ -23,4 +23,5 @@
 (defgeneric delete-shader (shader))
 
 (defgeneric set-uniform (shader name x &optional y z w))
-(defgeneric set-uniform-matrix (shader name mat &aux (mat-size (m:mat-size mat))))
+(defgeneric set-uniform-matrix (shader name mat))
+(defgeneric set-texture (shader name texture texture-num))
