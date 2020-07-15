@@ -53,14 +53,26 @@
 (defun x (vec)
   (aref (in-vec vec) 0))
 
+(defun (setf x) (new-value vec)
+  (setf (aref (in-vec vec) 0) new-value))
+
 (defun y (vec)
   (aref (in-vec vec) 1))
+
+(defun (setf y) (new-value vec)
+  (setf (aref (in-vec vec) 1) new-value))
 
 (defun z (vec)
   (aref (in-vec vec) 2))
 
+(defun (setf z) (new-value vec)
+  (setf (aref (in-vec vec) 2) new-value))
+
 (defun w (vec)
   (aref (in-vec vec) 3))
+
+(defun (setf w) (new-value vec)
+  (setf (aref (in-vec vec) 3) new-value))
 
 (defun make-float2 (&optional a1 a2)
   (cond ((null a1)
