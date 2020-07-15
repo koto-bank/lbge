@@ -45,7 +45,9 @@
                         transform)))
 
 (defun make-rect (&key w h (transform (m:make-transform))
-                  additional-attributes)
+                  material
+                  additional-attributes
+                  (gen-texcoords t))
   "Create a rectangle primitive.
 If additional-attributes list is provided, it should have the folloving form, e.g.:
  ((:color :float 3) ((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0) (0.0 1.0 1.0))
@@ -60,14 +62,18 @@ If additional-attributes list is provided, it should have the folloving form, e.
          (verts (list (m:make-float4 -w/2 h/2 0.0f0 1.0f0)
                       (m:make-float4 w/2 h/2 0.0f0 1.0f0)
                       (m:make-float4 w/2 -h/2 0.0f0 1.0f0)
-                      (m:make-float4 -w/2 -h/2 0.0f0 1.0f0))))
-    (assemble-render-object b verts (vector 0 2 1 0 3 2) transform
-                            (append (list '(:texcoord :float 2)
-                                          (list (m:make-float2 0.0 1.0)
-                                                (m:make-float2 1.0 1.0)
-                                                (m:make-float2 1.0 0.0)
-                                                (m:make-float2 0.0 0.0))))
-                            additional-attributes)))
+                      (m:make-float4 -w/2 -h/2 0.0f0 1.0f0)))
+         (texcoords
+           (list '(:texcoord :float 2)
+                 (list (m:make-float2 0.0 1.0)
+                       (m:make-float2 1.0 1.0)
+                       (m:make-float2 1.0 0.0)
+                       (m:make-float2 0.0 0.0)))))
+    (assemble-render-object b verts (vector 0 2 1 0 3 2)
+                            material
+                            transform
+                            (append (when gen-texcoords texcoords)
+                                    additional-attributes))))
 
 (defun make-triangle (&key size (transform (m:make-transform))
                       material
