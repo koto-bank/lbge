@@ -126,13 +126,15 @@ position, color, texture coordinates, etc."
 (defun make-render-batch (&key indices vertices)
   (make-instance 'batch :vertices vertices :indices indices))
 
-(defun make-render-object (batches semantics &optional (transform (m:make-transform)))
+(defun make-render-object (batches semantics material
+                           &optional (transform (m:make-transform)))
   (make-instance 'render-object
                  :semantics semantics
                  :batches (make-array (length batches)
                                       :initial-contents batches
                                       :adjustable t
                                       :fill-pointer (length batches))
+                 :material material
                  :transform transform))
 
 (defun add-batch (object batch)
