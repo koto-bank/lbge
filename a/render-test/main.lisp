@@ -11,24 +11,70 @@
                     (:b :lbge.render.backend)
                     (:s :lbge.render.shader)
                     (:t :lbge.render.texture)
+                    (:mat :lbge.render.material)
                     (:timer :lbge.timer)
                     (:u :lbge.utils))
   (:export :run))
 
 (in-package :lbge-render-test)
 
+(defclass plain-mat (mat:material)
+  ((color :accessor color)))
+
+(defclass umalico-mat (mat:material)
+  ((umalico-tex :accessor umalico-tex)))
+
+(defun load-shader (backend asset-mgr name frag-src vert-src)
+  (let ((frag-shader-asset
+          (a:get-asset asset-mgr (a:make-asset-key :glsl-source :disk frag-src)))
+        (vert-shader-asset
+          (a:get-asset asset-mgr (a:make-asset-key :glsl-source :disk vert-src)))
+        (shader (b:make-shader backend name)))
+    (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
+                              :fragment (a:asset-data frag-shader-asset)))
+    (s:compile-shader shader)
+    shader))
+
+(defun make-plain-mat (renderer asset-mgr color)
+  (let ((shader (load-shader (r:renderer-backend renderer)
+                             asset-mgr
+                             "simple-shader"
+                             ":root/frag.glsl" ":root/vert.glsl"))
+        (mat (make-instance 'plain-mat)))
+    (setf (mat:shader mat) shader)
+    (mat:add-uniform mat :in-color 'color)
+    (setf (color mat) color)
+    mat))
+
+(defun make-umalico-mat (renderer asset-mgr)
+  (let ((shader (load-shader (r:renderer-backend renderer)
+                             asset-mgr
+                             "simple-shader-2"
+                             ":root/frag.glsl" ":root/vert.glsl"))
+        (image (a:get-asset asset-mgr
+                            (a:make-asset-key :image :disk ":root/umalico-0.tga")))
+        (mat (make-instance 'umalico-mat)))
+    (mat:add-texture mat :sampler0 'umalico-tex)
+    (setf (mat:shader mat) shader
+          (umalico-tex mat) (b:make-texture (r:renderer-backend renderer)
+                                            :image (a:asset-data image)
+                                            :target :texture-2d
+                                            :format :rgba8))
+    mat))
+
 (defun run ()
   (log:config :debug)
   (le:delete-engine)
   (le:make-engine)
   (le:init-engine (le:make-engine-options
+                   :opengl-version '(4 . 2)
                    :window-title "Render testbed"))
   (e:add-event-handlers
-   (:keyup
-    (:keysym keysym)
-    (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
-      (sdl2:push-event :quit))
-    (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
+    (:keyup
+     (:keysym keysym)
+     (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
+       (sdl2:push-event :quit))
+     (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
   (let* ((r (le:get-renderer))
          (a (le:get-manager 'a:asset-manager))
          (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
@@ -38,33 +84,27 @@
                                         (m:make-float3 0.0 0.0 1.0)
                                         (m:make-float3 0.0 0.0 0.0)
                                         (m:make-float3 0.0 1.0 0.0))))
+         ;; material
+         (plain (make-plain-mat r a (m:make-float4 0.3 0.3 0.7 1.0))
+                #+nil(a:get-asset a (a:make-asset-key :material :disk ":root/plain.mat")))
+         (umalico (make-umalico-mat r a)
+                  #+nil(a:get-asset a (a:make-asset-key :material :disk ":root/textured.mat")))
+
          ;; primitives
          (rect (r:make-rect :w 0.45f0 :h 0.63f0
+                            :material umalico
                             :transform
-                            (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0))
-                            :additional-attributes
-                            (list '(:color :float 3)
-                                  (list (m:make-float3 1.0 0.0 1.0)
-                                        (m:make-float3 0.0 0.0 1.0)
-                                        (m:make-float3 0.0 1.0 0.0)
-                                        (m:make-float3 1.0 0.0 0.0))
-                                  '(:texcoord :float 2)
-                                  (list (m:make-float2 0.0 1.0)
-                                        (m:make-float2 1.0 1.0)
-                                        (m:make-float2 1.0 0.0)
-                                        (m:make-float2 0.0 0.0)))))
+                            (m:make-transform :pos (m:make-float4 0.3f0 0.3f0 0.0f0 1.0f0))))
          (tri  (r:make-triangle :size 0.3f0
+                                :material plain
                                 :transform
-                                (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0))
-                                :additional-attributes
-                                (list '(:color :float 3)
-                                      (list (m:make-float3 0.0 0.0 1.0)
-                                            (m:make-float3 0.0 1.0 0.0)
-                                            (m:make-float3 1.0 0.0 0.0)))))
+                                (m:make-transform :pos (m:make-float4 -0.3f0 0.3f0 0.0f0 1.0f0))))
          (ellipse (r:make-ellipse :r-x 0.15f0 :r-y 0.15f0
+                                  :material plain
                                   :transform
                                   (m:make-transform :pos (m:make-float4 -0.3f0 -0.3f0 0.0f0 1.0f0))))
          (ring (r:make-ring :out-r 0.15f0 :in-r 0.1f0
+                            :material plain
                             :transform
                             (m:make-transform :pos (m:make-float4 0.3f0 -0.3f0 0.0f0 1.0f0))))
          ;; animations
@@ -97,22 +137,8 @@
                                                                        0.0f0 1.0f0)))))
                              #'an:linear-interpolation))
          ;; timer
-         (timer (timer:make 5000 :one-shot t))
-
-         ;; shader
-         (frag-shader-asset
-           (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/frag.glsl")))
-         (vert-shader-asset
-           (a:get-asset a (a:make-asset-key :glsl-source :disk ":root/vert.glsl")))
-         (shader (b:make-shader (r:renderer-backend r) "simple-shader"))
-
-         ;; texture
-         (image (a:get-asset a (a:make-asset-key :image :disk ":root/umalico-0.tga")))
-         (image-test (a:get-asset a (a:make-asset-key :image :disk ":root/test2.tga")))
-         (texture (b:make-texture (r:renderer-backend r)
-                                  :image (a:asset-data image)
-                                  :target :texture-2d
-                                  :format :rgba8)))
+         (total-dt 0)
+         (timer (timer:make 5000)))
     ;; Install
     (r:add-camera r c)
     (r:set-current-camera r c)
@@ -124,39 +150,52 @@
      ring)
     (le:link :before-start
              (lambda ()
-               (log:info "Fragment shader:")
-               (let ((lines (u:merge-lines (a:asset-data frag-shader-asset))))
-                 (log:info lines))
-               (log:info "Vertex shader:")
-               (let ((lines (u:merge-lines (a:asset-data vert-shader-asset))))
-                 (log:info lines))
-               (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
-                                         :fragment (a:asset-data frag-shader-asset)))
-               (s:compile-shader shader)
-               (when (eq (s:get-status shader)
-                         :error)
-                 (log:info "Shader compilation failed")
-                 (log:info (s:get-compile-log shader)))
-               (when (eq (s:get-status shader)
-                         :compiled)
-                 (log:info "Shader successfully compiled and linked!"))
-               (let ((log (s:get-compile-log shader)))
-                 (when (> (length log) 0)
-                   (log:info "Compilation log: ~A" log)))
-               (b:use-shader (r:renderer-backend r) shader)
-               ;; Texture
-               (t:texture-load texture)
-               (setf (slot-value (r:renderer-backend r) 'lbge.render.gl::active-texture)
-                     texture)
                (gl:polygon-mode :front-and-back :fill))) ; change to :line to view wireframe
     (timer:link timer (lambda ()
+                        (log:debug "FPS ~A (~A frames ~A seconds)"
+                                   (/ (b:get-total-frames (r:renderer-backend r))
+                                      (/ total-dt 1000.0))
+                                   (b:get-total-frames (r:renderer-backend r))
+                                   (/ total-dt 1000.0))
                         (b:print-statistics (r:renderer-backend r))))
     (le:link :on-loop
-             (lambda (dt)
-               (let ((backend (r:renderer-backend r)))
-                 (an:update animation dt)
-                 (b:clear backend)
-                 (b:render backend r)
-                 (b:present backend)
-                 (timer:update timer dt)))))
+             (let ((dr 0.02)
+                   (dg 0.01)
+                   (db 0.03))
+               (lambda (dt)
+                 (let ((backend (r:renderer-backend r)))
+                   (let ((color (color plain)))
+                     (incf (m:x color) dr)
+                     (incf (m:y color) dg)
+                     (incf (m:z color) db)
+                     (when (> (m:x color) 1.0)
+                       (setf
+                        dr (- dr)
+                        (m:x color) (+ 1.0 dr)))
+                     (when (> (m:y color) 1.0)
+                       (setf
+                        dg (- dg)
+                        (m:y color) (+ 1.0 dg)))
+                     (when (> (m:z color) 1.0)
+                       (setf
+                        db (- db)
+                        (m:z color) (+ 1.0 db)))
+                     (when (< (m:x color) 0.0)
+                       (setf
+                        dr (- dr)
+                        (m:x color) (+ 0.0 dr)))
+                     (when (< (m:y color) 0.0)
+                       (setf
+                        dg (- dg)
+                        (m:y color) (+ 0.0 dg)))
+                     (when (< (m:z color) 0.0)
+                       (setf
+                        db (- db)
+                        (m:z color) (+ 0.0 db))))
+                   (incf total-dt dt)
+                   (an:update animation dt)
+                   (b:clear backend)
+                   (b:render backend r)
+                   (b:present backend)
+                   (timer:update timer dt))))))
   (le:start))
