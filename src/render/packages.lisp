@@ -9,13 +9,14 @@
    :present
    :deinit
    :resize-viewport
+
    ;; Shader handling
    :shader-list
    :make-shader
-   :use-shader
+
    ;; Textures
    :make-texture
-   :use-texture
+
    ;; Misc
    :print-statistics))
 

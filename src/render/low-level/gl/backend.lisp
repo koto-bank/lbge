@@ -144,13 +144,6 @@ cons pair of maj . min context version"
     (add-shader backend shader-name shader)
     shader))
 
-(defmethod b:use-shader ((backend gl-backend) (shader gl-shader))
-  (with-slots (status handle) shader
-    (assert (eq :compiled status) nil
-            "Shader must be compiled in order to be used")
-    (setf (slot-value backend 'active-shader) shader)
-    (set-default-uniforms shader)))
-
 (defmethod b:resize-viewport ((backend gl-backend) renderer width height)
   (gl:viewport 0 0 width height)
   (ax:when-let (cam (r:renderer-current-camera renderer))
