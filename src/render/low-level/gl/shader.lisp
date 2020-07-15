@@ -103,6 +103,12 @@
             "Invalid projection-uniform location in shader ~A. Maybe it was optimized out?"
             handle)))
 
+(defmethod s:set-texture ((shader gl-shader) name (texture gl-texture) num)
+  (gl:active-texture num)
+  (gl:bind-texture (slot-value texture 't:target)
+                   (slot-value texture 'handle))
+  (s:set-uniform shader name num))
+
 (defmethod s:compile-shader ((s gl-shader))
   (let ((type-to-gl-type
           '((:vertex :vertex-shader)
