@@ -18,7 +18,8 @@
    :make-texture
 
    ;; Misc
-   :print-statistics))
+   :print-statistics
+   :get-total-frames))
 
 (defpackage :lbge.render.shader
   (:use :cl)
