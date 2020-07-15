@@ -73,6 +73,7 @@
    :vertices
    :indices
    :textures
+   :material
    :add-texture
    :make-render-object
    :make-render-batch
@@ -118,7 +119,11 @@
   (:export
    :material
    :uniforms
-   :shader))
+   :shader
+   :add-uniform
+   :set-uniforms
+   :add-texture
+   :set-textures))
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
