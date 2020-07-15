@@ -26,7 +26,10 @@
     :collect v :into values
     :finally (return (values attributes values))))
 
-(defun assemble-render-object (batch vertices indices transform additional-attributes)
+(defun assemble-render-object (batch vertices indices
+                               material
+                               transform
+                               additional-attributes)
   (multiple-value-bind (attributes values)
       (unzip-attribute-list additional-attributes)
     (with-slots ((verts vertices) (inds indices)) batch
@@ -38,6 +41,7 @@
                         (make-semantics
                          (nconc (list '(:vertex :float 4))
                                 attributes))
+                        material
                         transform)))
 
 (defun make-rect (&key w h (transform (m:make-transform))
@@ -66,7 +70,8 @@ If additional-attributes list is provided, it should have the folloving form, e.
                             additional-attributes)))
 
 (defun make-triangle (&key size (transform (m:make-transform))
-                        additional-attributes)
+                      material
+                      additional-attributes)
   (assert (> size 0.0f0) nil "Triangle size must be positive, current value: ~S" size)
   (let* ((b (make-instance 'batch))
          (size/2 (/ size 2.0f0))
@@ -76,16 +81,20 @@ If additional-attributes list is provided, it should have the folloving form, e.
          (verts (list (m:make-float4 -size/2 -r-insc 0.0f0 1.0f0)
                       (m:make-float4 0.0f0 r-circ 0.0f0 1.0f0)
                       (m:make-float4 size/2 -r-insc 0.0f0 1.0f0))))
-    (assemble-render-object b verts (vector 0 2 1) transform additional-attributes)))
+    (assemble-render-object b verts (vector 0 2 1)
+                            material transform additional-attributes)))
 
 (defun make-circle (&key radius (vert-num 32) (transform (m:make-transform))
-                      additional-attributes)
+                    material
+                    additional-attributes)
   (make-ellipse :r-x radius :r-y radius :vert-num vert-num
                 :transform transform
+                :material material
                 :additional-attributes additional-attributes))
 
 (defun make-ellipse (&key r-x r-y (vert-num 32) (transform (m:make-transform))
-                       additional-attributes)
+                     material
+                     additional-attributes)
   (assert (> vert-num 2) nil "Cant make an ellipse with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
         (inds (make-array  (list (* 3 vert-num))))
@@ -105,10 +114,12 @@ If additional-attributes list is provided, it should have the folloving form, e.
     (log:debug "Ellipse indices: ~A" inds)
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
                         (make-semantics ((:vertex :float 4)))
+                        material
                         transform)))
 
 (defun make-ring (&key in-r out-r (vert-num 32) (transform (m:make-transform))
-                    additional-attributes)
+                  material
+                  additional-attributes)
   (assert (> vert-num 2) nil "Cant make an ring with ~A vertices" vert-num)
   (let ((step (/ (* 2 pi) vert-num))
         (inds (make-array  (list (* 6 vert-num))))
@@ -133,4 +144,5 @@ If additional-attributes list is provided, it should have the folloving form, e.
       (setf (aref inds (- last-index 4)) 1))
     (make-render-object (list (make-instance 'batch :indices inds :vertices verts))
                         (make-semantics ((:vertex :float 4)))
+                        material
                         transform)))
