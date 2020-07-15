@@ -20,6 +20,8 @@
                :initform (h:make-hash))
    (buffer-storages :documentation "List of buffer storages each containing its objects"
                     :initform (list))
+   (frame-number :documentation "Last rendered frame number"
+                 :initform 0)
    (window :documentation "SDL window" :initform nil)))
 
 (defmethod b:init ((backend gl-backend) window &optional info)
@@ -159,6 +161,7 @@ cons pair of maj . min context version"
     texture))
 
 (defmethod b:present ((backend gl-backend))
+  (incf (slot-value backend 'frame-number))
   (sb-int:with-float-traps-masked (:invalid)
     (sdl2:gl-swap-window (slot-value backend 'window))))
 
@@ -169,10 +172,13 @@ cons pair of maj . min context version"
 (defun print-buffer-storage (buffer-storage stream)
   (with-slots (vao semantics last-vertex-index) buffer-storage
     (format stream "~
-VAO:        ~A~%~
-Semantics:  ~A~%~
-Vertices:   ~A~%---------------~%"
+      VAO: ~A~%~
+Semantics: ~A~%~
+ Vertices: ~A~%---------------~%"
             vao semantics (1+ last-vertex-index))))
+
+(defmethod b:get-total-frames ((backend gl-backend))
+  (slot-value backend 'frame-number))
 
 (defmethod b:print-statistics ((backend gl-backend) &optional (stream t) args)
   (with-slots (buffer-storages shader-map) backend
