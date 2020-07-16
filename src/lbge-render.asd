@@ -7,7 +7,7 @@
   :license "BSD-2-Clause"
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
-               :log4cl
+               :log4cl :closer-mop
                :cl-opengl)
   :components
   ((:file "patches")
