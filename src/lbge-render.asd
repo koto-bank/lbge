@@ -46,6 +46,5 @@
     :components
     ((:file "texture")
      (:file "shader")
-     (:file "material")
      (:file "backend")
      (:file "render-object")))))
