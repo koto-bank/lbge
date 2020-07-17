@@ -1,8 +1,8 @@
-#version 420
+#version 330
 
 in vec2 tex_coord0;
 
-layout(binding = 0) uniform sampler2D sampler0;
+uniform sampler2D sampler0;
 
 uniform vec4 in_color;
 

@@ -1,4 +1,4 @@
-#version 420
+#version 330
 
 layout(location = 0) in vec4 vert_pos;
 layout(location = 1) in vec2 tex_coord;

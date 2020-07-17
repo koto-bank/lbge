@@ -67,7 +67,7 @@
   (le:delete-engine)
   (le:make-engine)
   (le:init-engine (le:make-engine-options
-                   :opengl-version '(4 . 2)
+                   :opengl-version '(4 . 1)
                    :window-title "Render testbed"))
   (e:add-event-handlers
     (:keyup
