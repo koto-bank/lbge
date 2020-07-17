@@ -25,8 +25,8 @@
 
 (defstruct engine-options
   (window-title "LBGE Window")
-  (window-w 1680)
-  (window-h 1050)
+  (window-w 1280)
+  (window-h 800)
   (clear-color (m:make-float4 0.68f0 0.7f0 0.76f0 1.0f0))
   (opengl-version '(4 . 1)))
 
