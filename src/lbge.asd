@@ -5,6 +5,7 @@
                :cffi :cl-autowrap
                :lbge-render
                :log4cl
+               :objective-cl
                :closer-mop :cl-ppcre)
   :components
   ((:module base
