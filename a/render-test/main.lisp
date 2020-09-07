@@ -44,6 +44,7 @@
     (setf (mat:shader mat) shader)
     (mat:add-uniform mat :in-color 'color)
     (setf (color mat) color)
+    (assert (mat:check-material-consistency mat) nil "Material ~A has inconsistent location names" mat)
     mat))
 
 (defun make-umalico-mat (renderer asset-mgr)
@@ -60,6 +61,7 @@
                                             :image (a:asset-data image)
                                             :target :texture-2d
                                             :format :rgba8))
+    (assert (mat:check-material-consistency mat) nil "Material ~A has inconsistent location names" mat)
     mat))
 
 (defun run ()

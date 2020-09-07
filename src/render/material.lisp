@@ -43,3 +43,12 @@ Slot-name is the name of texture in the material"
                          name
                          (slot-value material slot)
                          n))))
+
+(objective-cl:enable)
+(defun check-material-consistency (material)
+  "Check that material shader has all names needed
+ for setting uniforms and textures"
+  (every (lambda (location)
+           (s:get-uniform [material.shader] (car location)))
+         (append [material.textures] [material.uniforms])))
+(objective-cl:disable)

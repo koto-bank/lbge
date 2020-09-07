@@ -126,7 +126,8 @@
    :add-uniform
    :set-uniforms
    :add-texture
-   :set-textures))
+   :set-textures
+   :check-material-consistency))
 
 ;;; low-level stuff
 (defpackage :lbge.render.gl
