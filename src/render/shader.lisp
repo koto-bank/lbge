@@ -25,3 +25,5 @@
 (defgeneric set-uniform (shader name x &optional y z w))
 (defgeneric set-uniform-matrix (shader name mat))
 (defgeneric set-texture (shader name texture texture-num))
+(defgeneric get-uniform (shader name)
+  (:documentation "Return nil, if shader doesn't have uniform with provided name, return t otherwise"))

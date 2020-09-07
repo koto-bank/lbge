@@ -37,7 +37,8 @@
    :delete-shader
    :set-uniform
    :set-uniform-matrix
-   :set-texture))
+   :set-texture
+   :get-uniform))
 
 (defpackage :lbge.render.texture
   (:use :cl)

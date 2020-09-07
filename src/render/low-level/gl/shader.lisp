@@ -155,3 +155,8 @@
   (slot-value s 'log))
 
 (defmethod s:delete-shader ((s gl-shader)))
+
+(objective-cl:enable)
+(defmethod s:get-uniform ((s gl-shader) name)
+  (/= -1 (gl:get-uniform-location [s.handle] (to-glsl-name name))))
+(objective-cl:disable)
