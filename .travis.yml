@@ -6,10 +6,8 @@ branches:
   - master
 
 install:
-  - curl -L https://raw.githubusercontent.com/roswell/roswell/release/scripts/install-for-ci.sh | sh
-  - ros install koto-bank/objective-cl
-  - ros install ./src/lbge.asd
-  - ros install ./a/unit-tests/lbge-unit-tests.asd
+  - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash
+  - git clone https://github.com/koto-bank/objective-cl.git ~/quicklisp/local-projects/
 
 env:
   global:
@@ -31,11 +29,12 @@ os:
   - linux
 
 script:
-  - ros -s lbge-unit-tests -e '(lbge-unit-tests:run-on-travis-agent)'
-  - ros -s lbge-ecs-test -e '(lbge-ecs-test:run-on-travis-agent)'
-  - ros -s lbge-render-test -e '(quit)' # check that it compiles
+  - cl -e '(ql:quickload :lbge-unit-tests)'
+       -e '(lbge-unit-tests:run-on-travis-agent)'
+  - cl -e '(ql:quickload :lbge-ecs-test)'
+       -e '(lbge-ecs-test:run-on-travis-agent)'
+  - cl -e '(ql:quickload :lbge-render-test)' -e '(quit)' # check that it compiles
 
 cache:
   directories:
-    - $HOME/.roswell
     - $HOME/.config/common-lisp
