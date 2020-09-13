@@ -28,6 +28,9 @@ os:
   - osx
   - linux
 
+before_script:
+  - cl -e '(ql:register-local-projects)'
+
 script:
   - cl -e '(ql:quickload :lbge-unit-tests)'
        -e '(lbge-unit-tests:run-on-travis-agent)'
