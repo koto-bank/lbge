@@ -34,7 +34,7 @@ script:
        -e '(lbge-unit-tests:run-on-travis-agent)'
   - cl -e '(ql:quickload :lbge-ecs-test)'
        -e '(lbge-ecs-test:run-on-travis-agent)'
-  - cl -e '(ql:quickload :lbge-render-test)' -e '(quit)' # check that it compiles
+  - cl -e '(ql:quickload :lbge-render-test)' -e '(uiop:quit)' # check that it compiles
 
 cache:
   directories:
