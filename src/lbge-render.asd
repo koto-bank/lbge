@@ -8,7 +8,7 @@
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
                :log4cl :closer-mop
-               :cl-opengl)
+               :cl-opengl :objective-cl)
   :components
   ((:file "patches")
    (:module base
