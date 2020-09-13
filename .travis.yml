@@ -23,9 +23,7 @@ addons:
     update: true
     packages: libsdl2-2.0-0
 
-osx_image: xcode11.2
 os:
-  - osx
   - linux
 
 before_script:
