@@ -1,3 +1,8 @@
+(defpackage :lbge-system
+  (:use :cl))
+
+(in-package :lbge-system)
+
 (asdf:defsystem :lbge
   :license "BSD-2-Clause"
   :depends-on (:alexandria :sdl2
@@ -5,7 +10,6 @@
                :cffi :cl-autowrap
                :lbge-render
                :log4cl
-               :objective-cl
                :closer-mop :cl-ppcre)
   :components
   ((:module base
