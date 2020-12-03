@@ -8,7 +8,11 @@
   :depends-on (:alexandria :sdl2
                :cffi :cl-autowrap
                :log4cl :closer-mop
-               :cl-opengl :objective-cl)
+               :cl-opengl
+               :objective-cl)
+  :around-compile (lambda (next)
+                    (uiop:symbol-call '#:objective-cl '#:enable)
+                    (funcall next))
   :components
   ((:file "patches")
    (:module base
