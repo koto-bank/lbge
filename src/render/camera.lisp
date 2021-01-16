@@ -25,25 +25,20 @@ or :y"))
 (defun make-ortho-camera (&key left right top bottom near far view)
   (let ((cam (make-instance 'ortho-camera))
         (proj-matrix (m:make-ortho-projection
-                    :left left
-                    :right right
-                    :top top
-                    :bottom bottom
-                    :near near
-                    :far far)))
-    (with-slots (matrix view-matrix
-                 (c-left left) (c-right right)
-                 (c-top top) (c-bottom bottom)
-                 (c-near near) (c-far far))
-        cam
-      (setf matrix proj-matrix
-            view-matrix view
-            c-left left
-            c-right right
-            c-top top
-            c-bottom bottom
-            c-near near
-            c-far far))
+                      :left left
+                      :right right
+                      :top top
+                      :bottom bottom
+                      :near near
+                      :far far)))
+    (setf [cam.matrix] proj-matrix
+          [cam.view-matrix] view
+          [cam.left] left
+          [cam.right] right
+          [cam.top] top
+          [cam.bottom] bottom
+          [cam.near] near
+          [cam.far] far)
     cam))
 
 (defmethod adjust-camera-new-aspect ((camera ortho-camera) aspect preserve-fov)
