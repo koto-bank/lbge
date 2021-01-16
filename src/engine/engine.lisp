@@ -148,7 +148,7 @@ Asserts that it have been created earlier."
 (defun engine-loop ()
   (let ((ticks 0))
     (unwind-protect
-                (sdl2:with-sdl-event (sdl-event)
+         (sdl2:with-sdl-event (sdl-event)
            (blink :before-start)
            (setf ticks (sdl2:get-ticks))
            (loop :while (eq (slot-value *engine* 'state) :running)
