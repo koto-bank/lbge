@@ -15,6 +15,7 @@
    :height
    :channels
    :data
+   :copy-image
 
    ;; Asset
    :image-asset-handler))
