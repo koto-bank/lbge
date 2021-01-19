@@ -28,3 +28,11 @@ and so on. Each handler must define this method"))
       (log:debug "Root path: ~S" root)
       (log:debug "Merged path ~S" merged-path)
       (f:is-file merged-path))))
+
+(defun find-path-by-path-key (asset-manager asset-key)
+  (assert (eq [asset-key.key-type] :disk)
+          nil "Can find asset file path only for :disk assets.
+Got ~A key type instead" [asset-key.key-type])
+  (find-asset-file-by-path
+   (asset-roots asset-manager)
+   [asset-key.path]))
