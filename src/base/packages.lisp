@@ -27,7 +27,8 @@
    :merge-lines
    :princln
    :bind
-   :find-shortest))
+   :find-shortest
+   :~))
 
 (defpackage :lbge.timer
   (:use :cl)

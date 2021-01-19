@@ -52,3 +52,9 @@ subsequent funcall, e.g:
          (setf shortest current-size
                elem obj)
     :finally (return elem)))
+
+(defmacro ~ (object &rest slots)
+  "Shorthand for slot access: (~ object slot)"
+  (reduce (lambda (acc elem) `(slot-value ,acc ',elem))
+          slots
+          :initial-value object))
