@@ -107,6 +107,17 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
                                            (super standard-class))
   t)
 
+(defun asset-deps (asset)
+  (slot-value asset '%dependencies))
+
+(defmacro for-each-dependency (asset (dep-var) &body body)
+  `(progn
+     (assert (eq (find-class 'asset-class)
+                 (metaclass-of ,asset))
+             nil "~A is not an asset class, therefore can't process dependencies" (class-of ,asset))
+     (loop for ,dep-var in (asset-deps ,asset) do
+       (progn ,@body))))
+
 (defclass asset ()
   ((state
     :documentation
