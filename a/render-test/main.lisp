@@ -26,12 +26,12 @@
 
 (defun load-shader (backend asset-mgr name frag-src vert-src)
   (let ((frag-shader-asset
-          (a:get-asset asset-mgr (a:make-asset-key :glsl-source :disk frag-src)))
+          (a:get-asset asset-mgr (a:make-asset-key 'a:shader-source :disk frag-src)))
         (vert-shader-asset
-          (a:get-asset asset-mgr (a:make-asset-key :glsl-source :disk vert-src)))
+          (a:get-asset asset-mgr (a:make-asset-key 'a:shader-source :disk vert-src)))
         (shader (b:make-shader backend name)))
-    (s:add-stage shader (list :vertex (a:asset-data vert-shader-asset)
-                              :fragment (a:asset-data frag-shader-asset)))
+    (s:add-stage shader (list :vertex (a:shader-source vert-shader-asset)
+                              :fragment (a:shader-source frag-shader-asset)))
     (s:compile-shader shader)
     shader))
 
@@ -53,12 +53,12 @@
                              "simple-shader-2"
                              ":root/frag.glsl" ":root/vert.glsl"))
         (image (a:get-asset asset-mgr
-                            (a:make-asset-key :image :disk ":root/umalico-0.tga")))
+                            (a:make-asset-key 'a:image-asset :disk ":root/umalico-0.tga")))
         (mat (make-instance 'umalico-mat)))
     (mat:add-texture mat :sampler0 'umalico-tex)
     (setf (mat:shader mat) shader
           (umalico-tex mat) (b:make-texture (r:renderer-backend renderer)
-                                            :image (a:asset-data image)
+                                            :image image
                                             :target :texture-2d
                                             :format :rgba8))
     (assert (mat:check-material-consistency mat) nil "Material ~A has inconsistent location names" mat)
