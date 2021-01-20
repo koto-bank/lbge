@@ -43,7 +43,7 @@ Root pathname must be set relative to the app root (see lbge.filesystem)"
                                 (find-class 'asset-handler))
           nil "Handler must be a subclass of `asset-handler' class")
   (with-slots ((handlers asset-handlers)) asset-manager
-    (let ((type (handler-get-type handler)))
+    (let ((type (asset-type handler)))
       (assert (not (assoc type handlers))
               nil
               "Handler for ~S already registered" type)

@@ -9,13 +9,6 @@
 Implementation decides which asset keys are supported, what options
 are needed for loading, and so on"))
 
-(defgeneric handler-get-type (handler)
-  (:documentation "Return type of the asset, e.g. :sexp-data, :glsl-source
-and so on. Each handler must define this method"))
-
-(defmethod handler-get-type ((h asset-handler))
-  (error "Method handler-get-type must be defined for every asset-handler"))
-
 (defun find-asset-file-by-path (asset-roots path)
   "Find asset file by asset path"
   (let* ((parsed-path (f:parse-asset-path path))
