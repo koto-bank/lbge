@@ -48,20 +48,21 @@
         (:file "linear")))))
    (:module assets
     :pathname "base/asset"
+    :serial t
     :components
     ((:file "package")
      (:file "asset")
      (:file "asset-handler")
      (:file "asset-manager")
+     (:file "utils")
      (:file "sexp-asset-handler")
-     (:file "glsl-asset-handler")))
+     (:file "render-asset-handlers")))
    (:module image-loader
     :components
     ((:file "packages")
      (:file "image")
      (:file "tga")
-     (:file "image-loader")
-     (:file "image-asset")))
+     (:file "image-loader")))
    (:module engine
     :components
     ((:file "package")

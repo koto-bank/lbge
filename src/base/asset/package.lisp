@@ -6,17 +6,20 @@
    ;; Key
    :asset-key
    :make-asset-key
-   :asset-type
    :key-type
    :path
    :options
+   :find-path-by-path-key
 
    :asset
-   :asset-data
+   :type
+   :asset-type
+   :define-asset
    :asset-state
 
    :make-asset-manager
    :asset-manager
+   :define-asset-handler
    :asset-handler
    :add-handler
    :handler-get-type
@@ -27,7 +30,10 @@
    :asset-roots
    :get-asset
 
-   :find-asset-by-path
-
    :sexp-asset-handler
-   :glsl-asset-handler))
+   :shader-source
+   :shader-source-asset-handler
+   :source
+
+   :image-asset
+   :image-asset-asset-handler))

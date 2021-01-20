@@ -96,8 +96,8 @@ Asserts that it have been created earlier."
   ;; Setup managers
   (let ((a (add-manager 'asset:asset-manager)))
     (asset:add-root a :root ".")        ; default root
-    (asset:add-handler a (make-instance 'asset:glsl-asset-handler))
-    (asset:add-handler a (make-instance 'image:image-asset-handler)))
+    (asset:add-handler a (make-instance 'asset:shader-source-asset-handler))
+    (asset:add-handler a (make-instance 'asset:image-asset-asset-handler)))
   (let* ((renderer (render:make-renderer :gl))
          (backend (render:renderer-backend renderer)))
     (render-back:init backend
