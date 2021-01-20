@@ -126,6 +126,7 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
 :loaded - successfully loaded/created
 :error - an error has occured during loading/creation"
     :initform :void
+    :initarg :state
     :accessor asset-state)
    (key
     :documentation "Asset key"
