@@ -127,11 +127,22 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
 :error - an error has occured during loading/creation"
     :initform :void
     :accessor asset-state)
-   (data
-    :documentation "Asset data. Type dependent, so may be whatever"
-    :accessor asset-data)
    (key
     :documentation "Asset key"
     :type 'asset-key
     :accessor asset-key))
-  (:documentation "Base class for all assets"))
+  (:documentation "Base class for all assets")
+  (:metaclass asset-class))
+
+(defmacro define-asset (name &body body)
+  "Define an asset, which is a subclass of the asset class, and can
+depend on other assets.
+
+When loading an asset, dependenctes will be loaded automatically.
+
+To mark slot as a dependent asset, you must add `:dep t' argument
+to it  and specify its type, which must also be inherited from
+asset. Type will be checked at the moment of class definition"
+  `(defclass ,name ,(cons 'asset (car body))
+     ,@(cdr body)
+     (:metaclass asset-class)))
