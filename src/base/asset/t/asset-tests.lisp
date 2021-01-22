@@ -26,9 +26,10 @@
     (add-root a :test-dir "base/asset/t")
     (add-handler a (make-instance 'sexp-asset-handler))
     (testing "Asset manager loading sexp assets"
-      (let* ((sexp-data-key (make-asset-key :sexp-data :disk ":test-dir/test-data.data"
+      (let* ((sexp-data-key (make-asset-key 'sexp :disk ":test-dir/test-data.data"
                                             (find-package :lbge.test.assets)))
              (test-asset (get-asset a sexp-data-key)))
         (ok test-asset)
         (ok (eq (asset-state test-asset) :loaded))
-        (ok (equal (asset-data test-asset) (list 'henlo 'world)))))))
+        (ok (equal (sexp-data test-asset)
+                   (list 'henlo 'world)))))))

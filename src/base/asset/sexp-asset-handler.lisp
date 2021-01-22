@@ -1,6 +1,6 @@
 (in-package :lbge.asset)
 
-(define-asset sexp () ((sexp :initarg :sexp)))
+(define-asset sexp () ((sexp :initarg :sexp :accessor sexp-data)))
 
 (define-asset-handler sexp (asset-manager key)
   (let ((package-to-intern [key.options])
