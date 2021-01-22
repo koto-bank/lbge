@@ -31,6 +31,8 @@
    :get-asset
 
    :sexp-asset-handler
+   :sexp
+   :sexp-data
    :shader-source
    :shader-source-asset-handler
    :source
