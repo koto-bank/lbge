@@ -19,6 +19,7 @@
      (:file "utils")
      (:file "beacon")
      (:file "timer")
+     (:file "serialization")
      (:file "sparse-set")))
    (:module animation
     :components
@@ -51,10 +52,10 @@
     :serial t
     :components
     ((:file "package")
+     (:file "utils")
      (:file "asset")
      (:file "asset-handler")
      (:file "asset-manager")
-     (:file "utils")
      (:file "sexp-asset-handler")
      (:file "render-asset-handlers")))
    (:module image-loader
