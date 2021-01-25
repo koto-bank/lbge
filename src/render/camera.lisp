@@ -31,14 +31,14 @@ or :y"))
                       :bottom bottom
                       :near near
                       :far far)))
-    (setf [cam.matrix] proj-matrix
-          [cam.view-matrix] view
-          [cam.left] left
-          [cam.right] right
-          [cam.top] top
-          [cam.bottom] bottom
-          [cam.near] near
-          [cam.far] far)
+    [cam.matrix setf proj-matrix
+     cam.view-matrix view
+     cam.left left
+     cam.right right
+     cam.top top
+     cam.bottom bottom
+     cam.near near
+     cam.far far]
     cam))
 
 (defmethod adjust-camera-new-aspect ((camera ortho-camera) aspect preserve-fov)
