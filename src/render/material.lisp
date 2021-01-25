@@ -1,11 +1,13 @@
 (in-package :lbge.render.material)
 
 (defclass material ()
-  ((uniforms :documentation "Material uniform list"
+  ((uniforms :documentation "A list of keywords denoting available ~
+uniforms in the shader"
              :initform (list)
              :accessor uniforms
              :initarg :uniforms)
-   (textures :documentation "Material textures list"
+   (textures :documentation "A list of pairs, where car is the texture uniform ~
+name inside the shader, and cdr is the "
              :accessor textures
              :initform (list)
              :initarg :textures)
