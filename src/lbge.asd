@@ -10,7 +10,12 @@
                :cffi :cl-autowrap
                :lbge-render
                :log4cl
-               :closer-mop :cl-ppcre)
+               :closer-mop :cl-ppcre
+               :objective-cl)
+  :around-compile (lambda (next)
+                    (uiop:symbol-call '#:objective-cl '#:enable)
+                    (unwind-protect (funcall next)
+                      (uiop:symbol-call '#:objective-cl '#:disable)))
   :components
   ((:module base
     :components
