@@ -6,14 +6,14 @@
     "Type of the asset.
 E.g. image, geometry, effect"
     :initform nil
-    :initarg :type)
-   (key-type
+    :initarg :asset-type)
+   (type
     :documentation
     "Common key types for various purposes:
 :disk for assets to be loaded from/saved to disk
 :memory for assets to be created in-memory"
     :initform nil
-    :initarg :key-type)
+    :initarg :type)
    (path
     :documentation
     "For :disk asset keys should denote path to file.
@@ -29,8 +29,8 @@ For :memory may be just an asset name or whatever"
    "Asset key is unique asset identifier."))
 
 (defun make-asset-key (asset-type key-type path &optional options)
-  (make-instance 'asset-key :type asset-type
-                            :key-type key-type
+  (make-instance 'asset-key :asset-type asset-type
+                            :type key-type
                             :path path
                             :options options))
 

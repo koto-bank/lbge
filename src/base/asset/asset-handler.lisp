@@ -23,9 +23,9 @@ are needed for loading, and so on"))
       (f:is-file merged-path))))
 
 (defun find-path-by-path-key (asset-manager asset-key)
-  (assert (eq [asset-key.key-type] :disk)
+  (assert (eq [asset-key.type] :disk)
           nil "Can find asset file path only for :disk assets.
-Got ~A key type instead" [asset-key.key-type])
+Got ~A key type instead" [asset-key.type])
   (find-asset-file-by-path
    (asset-roots asset-manager)
    [asset-key.path]))
