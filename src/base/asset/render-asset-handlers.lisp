@@ -9,7 +9,9 @@
     (log:debug "File path ~S" file-path)
     (log:debug "Asset key ~S" key)
     (unless file-path
-      (return (make-instance 'asset :state :error)))
+      (return (make-asset 'shader-source
+                          key
+                          :state :error)))
     (let ((shader-lines nil))
       (with-open-file (shader-file
                        file-path
@@ -21,15 +23,16 @@
           (unless (string= "" (u:trim-newlines line))
             (setf shader-lines (cons (format nil "~a~%" line)
                                      shader-lines)))))
-      (make-instance 'shader-source :source (reverse shader-lines)
-                                    :state :loaded))))
+      (make-asset 'shader-source key
+                  :source (reverse shader-lines)
+                  :state :loaded))))
 
 ;;; Image
 (define-asset image-asset (lbge.image:image) ())
 
 (define-asset-handler image-asset (manager key)
   (let ((file-path (lbge.asset:find-path-by-path-key manager key))
-        (image-asset  (make-instance 'image-asset :state :error)))
+        (image-asset  (make-asset 'image-asset key :state :error)))
     (log:debug "File path ~S" file-path)
     (log:debug "Asset key ~S" key)
     (unless file-path
@@ -39,6 +42,19 @@
         (lbge.image:copy-image image-asset image)
         [image-asset.state setf :loaded])
       image-asset)))
+
+;;; Texture
+(define-asset texture-asset (lbge.render.texture:texture)
+  ((image :type image-asset :dep t)))
+
+(define-asset-handler texture-asset (manager key)
+  (let ((file-path (find-path-by-path-key manager key))
+        (texture (make-asset 'texture-asset key)))
+    (unless file-path
+      (return texture))
+    (deserialize texture file-path)
+    (setf [texture.image]
+          (load-asset manager [texture.image.key]))))
 
 ;;; Material
 (define-asset material-asset (lbge.render.material:material) ())
