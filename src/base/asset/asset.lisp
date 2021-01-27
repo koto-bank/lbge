@@ -58,13 +58,17 @@ For :memory may be just an asset name or whatever"
 (defun metaclass-of (object)
   (class-of (class-of object)))
 
-(defun is-asset (dependency-slot)
+(defun is-dep-an-asset (dependency-slot)
   (unless dependency-slot
-    (return-from is-asset nil))
+    (return-from is-dep-an-asset nil))
   (eq (class-of
        (find-class
         (closer-mop:slot-definition-type dependency-slot)))
       (find-class 'asset-class)))
+
+(defun is-asset (object)
+  (eq (find-class 'asset-class)
+      (metaclass-of object)))
 
 (defun get-invalid-deps (dependencies)
   "Find dependencies which don't have type or it is not an asset class
@@ -76,12 +80,12 @@ defined with `define-asset'"
                     (if type
                       (class-of (closer-mop:slot-definition-type dep))
                       'n/a))))
-          (remove-if #'is-asset dependencies)))
+          (remove-if #'is-dep-an-asset dependencies)))
 
 (defmethod closer-mop:compute-effective-slot-definition ((class asset-class) name direct-slots)
   (let ((slot (call-next-method))
         (direct-slot (first direct-slots)))
-    (when (eq (class-of direct-slots)
+    (when (eq (class-of direct-slot)
               (find-class 'asset-direct-slot))
       (setf (effective-slot-asset-dep slot)
             (direct-slot-asset-dep direct-slot))) ; override the dep
@@ -90,9 +94,11 @@ defined with `define-asset'"
 (defmethod closer-mop:compute-slots ((class asset-class))
   (let* ((all-slots (call-next-method))
          (deps (remove-if-not #'identity all-slots :key #'effective-slot-asset-dep)))
-    (assert (every #'is-asset deps)
-            nil "Every asset dependence should have :type which must be defined with `define-asset'
+    (assert (every #'is-dep-an-asset deps)
+            nil "Error while defining asset class ~A
+Every asset dependence should have :type which must be defined with `define-asset'
 Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
+            class
             (get-invalid-deps deps))
     (cons (make-instance 'asset-effective-slot
                          :allocation :class
@@ -107,17 +113,6 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
                                            (super standard-class))
   t)
 
-(defun asset-deps (asset)
-  (slot-value asset '%dependencies))
-
-(defmacro for-each-dependency (asset (dep-var) &body body)
-  `(progn
-     (assert (eq (find-class 'asset-class)
-                 (metaclass-of ,asset))
-             nil "~A is not an asset class, therefore can't process dependencies" (class-of ,asset))
-     (loop for ,dep-var in (asset-deps ,asset) do
-       (progn ,@body))))
-
 (defclass asset ()
   ((state
     :documentation
@@ -131,6 +126,7 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
    (key
     :documentation "Asset key"
     :type 'asset-key
+    :initarg :asset-key
     :accessor asset-key))
   (:documentation "Base class for all assets")
   (:metaclass asset-class))
@@ -143,7 +139,75 @@ When loading an asset, dependenctes will be loaded automatically.
 
 To mark slot as a dependent asset, you must add `:dep t' argument
 to it  and specify its type, which must also be inherited from
-asset. Type will be checked at the moment of class definition"
+asset. Type will be checked at the moment of class definition.
+
+The slot may contain also a collection of there dependencies. In such
+case they will be processed individually"
   `(defclass ,name ,(cons 'asset (car body))
      ,@(cdr body)
      (:metaclass asset-class)))
+
+(defun asset-deps (asset)
+  (mapcar (lambda (dep-slot)
+            (cons
+             (closer-mop:slot-definition-name dep-slot)
+             (when (slot-boundp asset
+                                (closer-mop:slot-definition-name dep-slot))
+               (slot-value asset
+                           (closer-mop:slot-definition-name dep-slot)))))
+          (slot-value asset '%dependencies)))
+
+(defun dependency-type (asset dep-slot)
+  (closer-mop:slot-definition-type
+   (find dep-slot
+         (slot-value asset '%dependencies)
+         :key #'closer-mop:slot-definition-name)))
+
+(defgeneric make-asset (asset-class asset-key &rest rest))
+
+;;; Default method for all asset classes (they are instances of the
+;;; asset-class metaclass)
+(defmethod make-asset ((asset-class asset-class) asset-key &rest rest)
+  ;; If the :state is provided in :rest arguments,
+  ;; it will override the default value listed here
+  (apply #'make-instance (append (list asset-class :asset-key asset-key)
+                                 rest)))
+
+(defmethod make-asset ((asset-class-name symbol) asset-key &rest rest)
+  (apply #'make-asset (find-class asset-class-name) (cons asset-key rest)))
+
+;;; Asset serialization
+(defmethod s:serialize ((key asset-key))
+  (list [key.type] [key.path] [key.options]))
+
+(defmethod s:deserialize ((key asset-key) key-form &optional options)
+  (assert  (and (= 3 (length key-form))
+                (keywordp (car key-form))
+                (stringp (cadr key-form)))
+           nil "Wrong form format for asset key deserialization: ~S" key-form)
+  [key.type setf (car key-form)
+   key.path (cadr key-form)
+   key.options (caddr key-form)]
+  key)
+
+(defmethod s:serialize ((asset asset))
+  "Default serialization for asset: dump all dependencies as ~
+their asset keys."
+  (for-each-dependency asset (slot-name dep)
+    do (unless (null dep)
+         (assert (is-asset dep) nil "Dependency is not an asset (how did this even happened?)"))
+    collect (list slot-name (s:serialize [dep.key]))))
+
+(defmethod s:deserialize ((asset asset) deps &optional options)
+  (for-each-dependency asset (dep-slot dep)
+    do (let* ((dep-type (dependency-type asset dep-slot))
+              (key (make-instance 'asset-key))
+              (dep-data (find dep-slot deps :key #'car))
+              (dep (make-instance dep-type)))
+         (assert dep-data
+                 nil "Data for slot ~S not found in deps" dep-slot)
+         (s:deserialize key (cadr dep-data))
+         (setf (slot-value asset dep-slot) dep
+               [key.asset-type] dep-type
+               [dep.key] key)))
+  asset)

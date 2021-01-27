@@ -21,3 +21,12 @@ Must return the asset in a proper state"
                    ',asset-class)
            (block nil
              ,@get-asset-body))))))
+
+(defmacro for-each-dependency (asset (slot-name-var dep-var) &body body)
+  ;; Loop macro enhanced for working with asset dependencies
+  `(progn
+     (assert (eq (find-class 'asset-class)
+                 (metaclass-of ,asset))
+             nil "~A is not an asset class, therefore can't process dependencies" (class-of ,asset))
+     (loop for (,slot-name-var . ,dep-var) in (asset-deps ,asset)
+           ,@body)))

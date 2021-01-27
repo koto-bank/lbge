@@ -1,11 +1,13 @@
 (defpackage :lbge.asset
   (:use :cl :lbge.hash)
   (:local-nicknames (:f :lbge.filesystem)
-                    (:u :lbge.utils))
+                    (:u :lbge.utils)
+                    (:s :lbge.serialization))
   (:export
    ;; Key
    :asset-key
    :make-asset-key
+   :make-asset
    :key-type
    :path
    :options
@@ -15,6 +17,7 @@
    :type
    :asset-type
    :define-asset
+   :asset-deps
    :asset-state
 
    :make-asset-manager
@@ -38,4 +41,10 @@
    :source
 
    :image-asset
-   :image-asset-asset-handler))
+   :image-asset-asset-handler
+
+   :texture-asset
+   :texture-asset-asset-handler
+
+   :material-asset
+   :material-asset-asset-handler))
