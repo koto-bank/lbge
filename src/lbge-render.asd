@@ -12,7 +12,8 @@
                :objective-cl)
   :around-compile (lambda (next)
                     (uiop:symbol-call '#:objective-cl '#:enable)
-                    (funcall next))
+                    (unwind-protect (funcall next)
+                      (uiop:symbol-call '#:objective-cl '#:disable)))
   :components
   ((:file "patches")
    (:module base
