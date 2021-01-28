@@ -16,6 +16,7 @@
                     (uiop:symbol-call '#:objective-cl '#:enable)
                     (unwind-protect (funcall next)
                       (uiop:symbol-call '#:objective-cl '#:disable)))
+  :serial t
   :components
   ((:module base
     :components
