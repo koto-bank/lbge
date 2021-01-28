@@ -28,7 +28,8 @@
    :princln
    :bind
    :find-shortest
-   :~))
+   :~
+   :metaclass-of))
 
 (defpackage :lbge.timer
   (:use :cl)

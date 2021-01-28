@@ -37,7 +37,7 @@ For :memory may be just an asset name or whatever"
 ;;; Metaclass for asset class
 ;;; for :dep slot option support, so we can easily get
 ;;; all slots containing dependencies for every asset class
-(defclass asset-class (standard-class) ())
+(defclass asset-class (s:serializable) ())
 
 (defclass asset-direct-slot (closer-mop:standard-direct-slot-definition)
   ((dep :initarg :dep
@@ -55,9 +55,6 @@ For :memory may be just an asset name or whatever"
 (defmethod closer-mop:effective-slot-definition-class ((class asset-class) &rest initargs)
   (find-class 'asset-effective-slot))
 
-(defun metaclass-of (object)
-  (class-of (class-of object)))
-
 (defun is-dep-an-asset (dependency-slot)
   (unless dependency-slot
     (return-from is-dep-an-asset nil))
@@ -68,7 +65,7 @@ For :memory may be just an asset name or whatever"
 
 (defun is-asset (object)
   (eq (find-class 'asset-class)
-      (metaclass-of object)))
+      (u:metaclass-of object)))
 
 (defun get-invalid-deps (dependencies)
   "Find dependencies which don't have type or it is not an asset class
@@ -110,10 +107,10 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
           all-slots)))
 
 (defmethod closer-mop:validate-superclass ((class asset-class)
-                                           (super standard-class))
+                                           (super s:serializable-class))
   t)
 
-(defclass asset ()
+(defclass asset (s:serializable)
   ((state
     :documentation
     "Current asset state:

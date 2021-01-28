@@ -58,3 +58,6 @@ subsequent funcall, e.g:
   (reduce (lambda (acc elem) `(slot-value ,acc ',elem))
           slots
           :initial-value object))
+
+(defun metaclass-of (object)
+  (class-of (class-of object)))
