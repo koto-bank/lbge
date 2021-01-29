@@ -37,7 +37,7 @@ For :memory may be just an asset name or whatever"
 ;;; Metaclass for asset class
 ;;; for :dep slot option support, so we can easily get
 ;;; all slots containing dependencies for every asset class
-(defclass asset-class (s:serializable) ())
+(defclass asset-class (s:serializable-class) ())
 
 (defclass asset-direct-slot (closer-mop:standard-direct-slot-definition)
   ((dep :initarg :dep
@@ -105,10 +105,6 @@ Dependencies in question:~:{ ~A, type: ~A, class: ~A~}"
                          :documentation "Asset dependencies"
                          :initform deps)
           all-slots)))
-
-(defmethod closer-mop:validate-superclass ((class asset-class)
-                                           (super s:serializable-class))
-  t)
 
 (defclass asset (s:serializable)
   ((state
