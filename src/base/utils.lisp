@@ -25,6 +25,9 @@ Args named _ remain unbound and should be provided in
 subsequent funcall, e.g:
    > (funcall (bind + 1 _ 2 _) 4 5)
    12"
+  (when (and (listp fun)
+             (eq 'function (car fun)))
+    (setf fun (cadr fun)))
   (let ((new-arglist (list))
         (lambda-arglist (list)))
     (dolist (a args)
