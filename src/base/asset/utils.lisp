@@ -5,7 +5,7 @@
 get-asset-body - function accepting asset manager and asset key.
 Must return the asset in a proper state"
   (flet ((make-handler-class-name (asset-name)
-           (intern (concatenate 'string (string asset-name) "-ASSET-HANDLER") 'lbge.asset)))
+           (intern (concatenate 'string (string asset-name) "-ASSET-HANDLER"))))
     (assert (symbolp asset-class) nil "Asset type name must be a symbol, but got ~A" (type-of asset-class))
     (let ((class-name (make-handler-class-name asset-class)))
       `(progn
