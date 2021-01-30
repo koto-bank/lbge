@@ -12,7 +12,10 @@
    :deserialize-stream
 
    :serialize-file
-   :deserialize-file))
+   :deserialize-file
+
+   :serializable-direct-slot
+   :serializable-effective-slot))
 
 (in-package :lbge.serialization)
 
