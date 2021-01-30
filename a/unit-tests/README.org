@@ -20,9 +20,8 @@ named ~*lbge-skip-test*~ in the package. But make sure that the code
 at least compiles.
 
 ** How to run only selected test suite
-Use ~:selected-test-suite~ keyword argument:
-~(lbge-unit-tests:run :selected-test-suite :lbge.test.assets)~
-
+Pass names of selected tests as arguments to the ~run~ function:
+~(lbge-unit-tests:run :assets :asset-serialization)~
 
 * An example:
 ~lbge/engine/math/t/vector.lisp:~
