@@ -44,15 +44,18 @@ For :memory may be just an asset name or whatever"
 ;;; all slots containing dependencies for every asset class
 (defclass asset-class (s:serializable-class) ())
 
-(defclass asset-direct-slot (closer-mop:standard-direct-slot-definition)
+(defclass asset-direct-slot (s:serializable-direct-slot)
   ((dep :initarg :dep
         :initform nil
         :accessor direct-slot-asset-dep)))
 
-(defclass asset-effective-slot (closer-mop:standard-effective-slot-definition)
+(defclass asset-effective-slot (s:serializable-effective-slot)
   ((dep :initarg :dep
         :initform nil
         :accessor effective-slot-asset-dep)))
+
+(defun asset-effective-slot-p (slot)
+  (eq 'asset-effective-slot (type-of slot)))
 
 (defmethod closer-mop:direct-slot-definition-class ((class asset-class) &rest initargs)
   (find-class 'asset-direct-slot))
@@ -95,7 +98,8 @@ defined with `define-asset'"
 
 (defmethod closer-mop:compute-slots ((class asset-class))
   (let* ((all-slots (call-next-method))
-         (deps (remove-if-not #'identity all-slots :key #'effective-slot-asset-dep)))
+         (asset-slots (remove-if-not #'asset-effective-slot-p all-slots))
+         (deps (remove-if-not #'identity asset-slots :key #'effective-slot-asset-dep)))
     (assert (every #'is-dep-an-asset deps)
             nil "Error while defining asset class ~A
 Every asset dependence should have :type which must be defined with `define-asset'
@@ -175,37 +179,36 @@ case they will be processed individually"
   (apply #'make-asset (find-class asset-class-name) (cons asset-key rest)))
 
 ;;; Asset serialization
-(defmethod s:serialize ((key asset-key))
-  (list [key.type] [key.path] [key.options]))
-
-(defmethod s:deserialize ((key asset-key) key-form &optional options)
-  (assert  (and (= 3 (length key-form))
-                (keywordp (car key-form))
-                (stringp (cadr key-form)))
-           nil "Wrong form format for asset key deserialization: ~S" key-form)
-  [key.type setf (car key-form)
-   key.path (cadr key-form)
-   key.options (caddr key-form)]
-  key)
-
 (defmethod s:serialize ((asset asset))
   "Default serialization for asset: dump all dependencies as ~
 their asset keys."
-  (for-each-dependency asset (slot-name dep)
-    do (unless (null dep)
-         (assert (is-asset dep) nil "Dependency is not an asset (how did this even happened?)"))
-    collect (list slot-name (s:serialize [dep.key]))))
+  (append
+   (call-next-method)
+   (for-each-dependency asset (slot-name dep)
+     do (unless (null dep)
+          (assert (is-asset dep) nil "Dependency is not an asset (how did this even happened?)"))
+     if (slot-boundp asset slot-name)
+     collect (list slot-name [dep.key s:serialize])
+     else collect (list slot-name nil))))
 
-(defmethod s:deserialize ((asset asset) deps &optional options)
+(defmethod s:deserialize ((asset asset) form &optional options)
+  (if (eq (type-of asset)
+          (car form))
+    (progn
+      (setf form (cdr form))
+      (call-next-method asset form options))
+    (call-next-method))
   (for-each-dependency asset (dep-slot dep)
     do (let* ((dep-type (dependency-type asset dep-slot))
-              (key (make-instance 'asset-key))
-              (dep-data (find dep-slot deps :key #'car))
-              (dep (make-instance dep-type)))
+              (dep-data (find dep-slot form :key #'car)))
          (assert dep-data
                  nil "Data for slot ~S not found in deps" dep-slot)
-         (s:deserialize key (cadr dep-data))
-         (setf (slot-value asset dep-slot) dep
-               [key.asset-type] dep-type
-               [dep.key] key)))
+         ;; dep currently is an asset key. We need to create an asset
+         ;; of appropriate type with this key and set it as the slot
+         ;; value
+         (if dep
+           (setf (slot-value asset dep-slot)
+                 (make-asset [dep.asset-type] dep))
+           (setf (slot-value asset dep-slot)
+                 (make-asset (dependency-type asset dep-slot) nil)))))
   asset)
