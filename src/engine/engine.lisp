@@ -95,9 +95,7 @@ Asserts that it have been created earlier."
   (fs:set-app-root-to-system 'lbge-render-test)
   ;; Setup managers
   (let ((a (add-manager 'asset:asset-manager)))
-    (asset:add-root a :root ".")        ; default root
-    (asset:add-handler a (make-instance 'asset:shader-source-asset-handler))
-    (asset:add-handler a (make-instance 'asset:image-asset-asset-handler)))
+    (asset:add-root a :root "."))       ; default root
   (let* ((renderer (render:make-renderer :gl))
          (backend (render:renderer-backend renderer)))
     (render-back:init backend
