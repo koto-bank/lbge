@@ -35,6 +35,20 @@ Root pathname must be set relative to the app root (see lbge.filesystem)"
         new-asset)
       asset)))
 
+(defun load-dependencies (asset-manager asset)
+  "Traverse all dependencies of the asset and load them"
+  (for-each-dependency asset (dep-slot dep)
+    do (unless (or (eq :loaded [dep.state])
+                   (null [dep.key]))
+         (setf (slot-value asset dep-slot)
+               (get-asset asset-manager [dep.key]))
+         (load-dependencies asset-manager
+                            (slot-value asset dep-slot))))
+  (for-each-dependency asset (dep-slot dep)
+    do (assert (or (null [dep.key])
+                   (eq :loaded [dep.state])) nil
+               "Failed to load dependency ~A for asset ~A" dep asset)))
+
 (defun add-handler (asset-manager handler)
   "Add an asset handler
 `type' is keyword denoting for what asset key types handler will be used (e.g. texture)

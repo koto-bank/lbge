@@ -5,6 +5,7 @@
                     (:s :lbge.serialization))
   (:export
    ;; Key
+   :key
    :asset-key
    :make-asset-key
    :make-asset
@@ -32,6 +33,8 @@
    :add-root
    :asset-roots
    :get-asset
+   :save-asset
+   :load-dependencies
 
    :sexp-asset-handler
    :sexp
