@@ -45,8 +45,9 @@
 (defmethod closer-mop:compute-effective-slot-definition ((class serializable-class) name direct-slots)
   (let ((slot (call-next-method))
         (direct-slot (first direct-slots)))
-    (when (eq (class-of direct-slot)
-              (find-class 'serializable-direct-slot))
+
+    (when (closer-mop:subclassp (class-of direct-slot)
+                                (find-class 'serializable-direct-slot))
       (setf (serializable-effective-slot-s slot)
             (serializable-direct-slot-s direct-slot)))
     slot))
@@ -102,7 +103,10 @@
   (cons (type-of object)
         (loop
           for slot in [object.%serializable-slots]
-          collect (list slot (serialize (slot-value object slot))))))
+          collect (list slot
+                        (if (slot-boundp object slot)
+                          (serialize (slot-value object slot))
+                          nil)))))
 
 (defmethod deserialize ((object serializable) form &optional options)
   (loop
@@ -124,7 +128,7 @@
                           :direction :output
                           :if-exists :supersede)
     (flet ((prin1-object (obj)
-             (prin1 (serialize object) stream)))
+             (prin1 (serialize obj) stream)))
       (if (listp object-or-list)
         (mapcar #'prin1-object object-or-list)
         (prin1-object object-or-list)))))
