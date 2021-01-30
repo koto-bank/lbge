@@ -1,32 +1,37 @@
 (in-package :lbge.asset)
 
-(defclass asset-key ()
+(defclass asset-key (s:serializable)
   ((asset-type
     :documentation
     "Type of the asset.
 E.g. image, geometry, effect"
     :initform nil
-    :initarg :asset-type)
+    :initarg :asset-type
+    :serialize t)
    (type
     :documentation
     "Common key types for various purposes:
 :disk for assets to be loaded from/saved to disk
 :memory for assets to be created in-memory"
     :initform nil
-    :initarg :type)
+    :initarg :type
+    :serialize :t)
    (path
     :documentation
     "For :disk asset keys should denote path to file.
 For :memory may be just an asset name or whatever"
     :initform nil
-    :initarg :path)
+    :initarg :path
+    :serialize t)
    (options
     :documentation
     "Options for use by asset handler. Implementation specific"
     :initarg :options
-    :initform nil))
+    :initform nil
+    :serialize t))
   (:documentation
-   "Asset key is unique asset identifier."))
+   "Asset key is unique asset identifier.")
+  (:metaclass s:serializable-class))
 
 (defun make-asset-key (asset-type key-type path &optional options)
   (make-instance 'asset-key :asset-type asset-type
