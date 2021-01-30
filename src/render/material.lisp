@@ -7,7 +7,7 @@ uniforms in the shader"
              :accessor uniforms
              :initarg :uniforms)
    (textures :documentation "A list of pairs, where car is the texture uniform ~
-name inside the shader, and cdr is the "
+name inside the shader, and cdr is the texture handle"
              :accessor textures
              :initform (list)
              :initarg :textures)
