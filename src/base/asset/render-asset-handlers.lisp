@@ -45,18 +45,23 @@
 
 ;;; Texture
 (define-asset texture-asset (lbge.render.texture:texture)
-  ((image :type image-asset :dep t)))
+  ((image-asset :type image-asset :dep t)))
 
 (define-asset-handler texture-asset (manager key)
   (let ((file-path (find-path-by-path-key manager key))
         (texture (make-asset 'texture-asset key)))
     (unless file-path
       (return texture))
-    (deserialize texture file-path)
-    (setf [texture.image]
-          (load-asset manager [texture.image.key]))))
+    (s:deserialize-file texture file-path)))
 
 ;;; Material
-(define-asset material-asset (lbge.render.material:material) ())
+(define-asset material-asset (lbge.render.material:material)
+  ((vertex-shader-source :dep t :type shader-source-asset)
+   (fragment-shader-source :dep t :type shader-source-asset)))
 
-(define-asset-handler material-asset (manager key) ())
+(define-asset-handler material-asset (manager key)
+  (let ((file-path (find-path-by-path-key manager key))
+        (material (make-asset 'material-asset key :state :error)))
+    (unless file-path
+      (return material))
+    (s:deserialize-file material file-path)))
