@@ -90,8 +90,8 @@ defined with `define-asset'"
 (defmethod closer-mop:compute-effective-slot-definition ((class asset-class) name direct-slots)
   (let ((slot (call-next-method))
         (direct-slot (first direct-slots)))
-    (when (eq (class-of direct-slot)
-              (find-class 'asset-direct-slot))
+    (when (closer-mop:subclassp (class-of direct-slot)
+                                (find-class 'asset-direct-slot))
       (setf (effective-slot-asset-dep slot)
             (direct-slot-asset-dep direct-slot))) ; override the dep
     slot))
