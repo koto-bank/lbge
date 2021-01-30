@@ -145,9 +145,15 @@ asset. Type will be checked at the moment of class definition.
 
 The slot may contain also a collection of there dependencies. In such
 case they will be processed individually"
-  `(defclass ,name ,(cons 'asset (car body))
-     ,@(cdr body)
-     (:metaclass asset-class)))
+  (let ((base-class-list (car body)))
+    (unless (some (u:bind #'closer-mop:subclassp
+                          (find-class _)
+                          (find-class 'lbge.asset:asset))
+                  base-class-list)
+      (setf base-class-list (cons 'asset base-class-list)))
+    `(defclass ,name ,base-class-list
+       ,@(cdr body)
+       (:metaclass asset-class))))
 
 (defun asset-deps (asset)
   (mapcar (lambda (dep-slot)
