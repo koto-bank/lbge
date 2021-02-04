@@ -77,6 +77,10 @@
      (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
        (sdl2:push-event :quit))
      (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
+  (let ((a (le:get-manager 'a:asset-manager)))
+    (a:add-handler a (make-instance 'a:shader-source-asset-handler))
+    (a:add-handler a (make-instance 'a:image-asset-asset-handler))
+    (a:add-handler a (make-instance 'a:texture-asset-asset-handler)))
   (let* ((r (le:get-renderer))
          (a (le:get-manager 'a:asset-manager))
          (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
