@@ -171,10 +171,7 @@ cons pair of maj . min context version"
 ;;; Misc
 (defun print-buffer-storage (buffer-storage stream)
   (with-slots (vao semantics last-vertex-index) buffer-storage
-    (format stream "~
-      VAO: ~A~%~
-Semantics: ~A~%~
- Vertices: ~A~%---------------~%"
+    (format stream "VAO: ~A~% Semantics: ~A~% Vertices: ~A~%---------------~%"
             vao semantics (1+ last-vertex-index))))
 
 (defmethod b:get-total-frames ((backend gl-backend))

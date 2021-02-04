@@ -23,11 +23,7 @@ position, color, texture coordinates, etc."
 (defmethod print-object ((sem semantics) stream)
   (with-slots (stride attribute-types attribute-sizes attribute-offsets)
       sem
-      (format stream "~
-#<Stride: ~S~%~
-  types:  ~S~%~
-  sizes:  ~S~%~
-  offsets: ~S>"
+      (format stream "#<Stride: ~S~% types:  ~S~% sizes:  ~S~% offsets: ~S>"
               stride
               attribute-types
               attribute-sizes
