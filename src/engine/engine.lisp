@@ -27,6 +27,7 @@
   (window-title "LBGE Window")
   (window-w 1280)
   (window-h 800)
+  (time-per-frame 16) ; ms per frame, for 62.5 fps
   (clear-color (m:make-float4 0.68f0 0.7f0 0.76f0 1.0f0))
   (opengl-version '(4 . 1)))
 
@@ -144,7 +145,8 @@ Asserts that it have been created earlier."
   (engine-renderer *engine*))
 
 (defun engine-loop ()
-  (let ((ticks 0))
+  (let ((ticks 0)
+        (time-per-frame (engine-options-time-per-frame [*engine*.options])))
     (unwind-protect
          (sdl2:with-sdl-event (sdl-event)
            (blink :before-start)
@@ -153,10 +155,13 @@ Asserts that it have been created earlier."
                  ;; process-events is defined in events.lisp
                  :do (progn
                        (let* ((current-ticks (sdl2:get-ticks))
-                              (delta (- current-ticks ticks)))
-                         (setf ticks current-ticks)
+                              (delta (- current-ticks ticks)))                      
                          (lbge.engine.events:process-events *engine* sdl-event)
-                         (blink :on-loop (list delta))))))
+                         (blink :on-loop (list delta))
+                         (let ((loop-time (- (sdl2:get-ticks) current-ticks)))
+                           (when (< loop-time time-per-frame)
+                             (sdl2:delay (- time-per-frame loop-time))))
+                         (setf ticks current-ticks)))))
       (stop-engine))))
 
 (defun start ()
