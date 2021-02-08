@@ -39,15 +39,18 @@
    :sexp-asset-handler
    :sexp
    :sexp-data
+
    :shader-source
-   :shader-source-asset-handler
+   :shader-source-handler
    :source
 
    :image-asset
-   :image-asset-asset-handler
+   :image-asset-handler
 
    :texture-asset
-   :texture-asset-asset-handler
+   :texture-asset-handler
+   :backend-texture
 
    :material-asset
-   :material-asset-asset-handler))
+   :material-asset-handler
+   :backend-material))
