@@ -1,13 +1,16 @@
 (in-package :lbge.render.material)
 
 (defclass material ()
-  ((uniforms :documentation "A list of keywords denoting available ~
-uniforms in the shader"
+  ((uniforms
+    :documentation
+    "A list of pairs, where car is a keyword, the uniform name, ~
+and the cdr is the value to be passed to the shader.~
+When cdr is a symbol, it is treated as the shader slot name"
              :initform (list)
              :accessor uniforms
              :initarg :uniforms)
    (textures :documentation "A list of pairs, where car is the texture uniform ~
-name inside the shader, and cdr is the texture handle"
+name inside the shader, and cdr is the texture"
              :accessor textures
              :initform (list)
              :initarg :textures)
@@ -32,8 +35,10 @@ Slot-name is the name of texture in the material"
 (defun set-uniforms (material)
   "Set all uniform parameters"
   (with-slots (shader uniforms) material
-    (loop :for (name . slot) :in uniforms :do
-      (s:set-uniform shader name (slot-value material slot)))))
+    (loop :for (name . uniform) :in uniforms :do
+      (s:set-uniform shader name (if (symbolp uniform)
+                                   (slot-value material uniform)
+                                   uniform)))))
 
 (defun set-textures (material)
   "Setup all texture uniforms in the shader"
