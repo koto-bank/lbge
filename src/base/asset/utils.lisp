@@ -13,8 +13,9 @@ Must return the asset in a proper state"
            ((type :initform ',asset-class :accessor asset-type)))
 
          (defmethod handler-get-asset ((,(gensym) ,class-name) ,asset-manager-var ,asset-key-var)
-           (assert (eq (find-class ',asset-class)
-                       (find-class (slot-value ,asset-key-var 'asset-type)))
+           (assert (closer-mop:subclassp
+                    (find-class (slot-value ,asset-key-var 'asset-type))
+                    (find-class ',asset-class))
                    nil
                    "Asset key type ~A is incompatible with current asset handler, which has type ~A"
                    (slot-value ,asset-key-var 'asset-type)
