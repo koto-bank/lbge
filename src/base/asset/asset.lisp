@@ -171,18 +171,22 @@ case they will be processed individually"
          (slot-value asset '%dependencies)
          :key #'closer-mop:slot-definition-name)))
 
-(defgeneric make-asset (asset-class asset-key &rest rest))
+(defgeneric make-asset (asset-clas-or-key &rest rest))
 
 ;;; Default method for all asset classes (they are instances of the
 ;;; asset-class metaclass)
-(defmethod make-asset ((asset-class asset-class) asset-key &rest rest)
+(defmethod make-asset ((asset-class asset-class) &rest rest)
   ;; If the :state is provided in :rest arguments,
   ;; it will override the default value listed here
-  (apply #'make-instance (append (list asset-class :asset-key asset-key)
-                                 rest)))
+  (apply #'make-instance (append (list asset-class :asset-key (car rest))
+                                 (cdr rest))))
 
-(defmethod make-asset ((asset-class-name symbol) asset-key &rest rest)
-  (apply #'make-asset (find-class asset-class-name) (cons asset-key rest)))
+(defmethod make-asset ((asset-class-name symbol) &rest rest)
+  (apply #'make-asset (find-class asset-class-name) rest))
+
+(defmethod make-asset ((key asset-key) &rest rest)
+  (apply #'make-instance (append (list [key.asset-type] :asset-key key)
+                                 rest)))
 
 ;;; Asset serialization
 (defmethod s:serialize ((asset asset))
