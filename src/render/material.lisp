@@ -26,10 +26,10 @@ Slot-name is the name of corresponding slot in the material"
   (push (cons name slot-name)
         (uniforms material)))
 
-(defun add-texture (material name slot-name)
+(defun add-texture (material name texture)
   "Name is uniform name in the shader.
-Slot-name is the name of texture in the material"
-  (push (cons name slot-name)
+Texture is the texture object"
+  (push (cons name texture)
         (textures material)))
 
 (defun set-uniforms (material)
@@ -44,11 +44,11 @@ Slot-name is the name of texture in the material"
   "Setup all texture uniforms in the shader"
   (with-slots (shader textures) material
     (loop
-      :for (name . slot) :in textures
+      :for (name . texture) :in textures
       :for n :from 0
       :do (s:set-texture shader
                          name
-                         (slot-value material slot)
+                         texture
                          n))))
 
 (defun check-material-consistency (material)
