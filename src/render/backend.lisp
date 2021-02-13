@@ -15,7 +15,7 @@ info is custom info, what can be placed there, depends on backend"))
 (defgeneric deinit (backend))
 
 ;;; Shaders
-(defgeneric make-shader (backend shader-key))
+(defgeneric make-shader (backend))
 (defgeneric shader-list (backend))
 
 ;;; Textures

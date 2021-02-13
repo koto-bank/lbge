@@ -16,8 +16,8 @@
 (defclass gl-backend (b:backend)
   ((context :documentation "GL context" :initform nil)
    ;; TODO way to check if shader is comatible with buffer-storage?
-   (shader-map :documentation "Map of all shaders. Key is shader name"
-               :initform (h:make-hash))
+   (shader-list :documentation "List of all shaders"
+                :initform (list))
    (buffer-storages :documentation "List of buffer storages each containing its objects"
                     :initform (list))
    (frame-number :documentation "Last rendered frame number"
@@ -133,17 +133,15 @@ cons pair of maj . min context version"
       ;; Set textures
       (mat:set-textures mat))))
 
-(defun add-shader (backend name shader)
-  (with-slots (shader-map) backend
-    (assert (null (h:hash-get shader-map name))
-            nil "Shader with name ~A already exists" name)
-    (h:hash-set shader-map name shader)))
+(defun add-shader (backend shader)
+  (with-slots (shader-list) backend
+    (push shader shader-list)))
 
-(defmethod b:make-shader ((backend gl-backend) shader-name)
+(defmethod b:make-shader ((backend gl-backend))
   (let ((shader (make-instance 'gl-shader)))
     (setf (slot-value shader 'handle)
           (gl:create-program))
-    (add-shader backend shader-name shader)
+    (add-shader backend shader)
     shader))
 
 (defmethod b:resize-viewport ((backend gl-backend) renderer width height)
@@ -178,7 +176,7 @@ cons pair of maj . min context version"
   (slot-value backend 'frame-number))
 
 (defmethod b:print-statistics ((backend gl-backend) &optional (stream t) args)
-  (with-slots (buffer-storages shader-map) backend
+  (with-slots (buffer-storages) backend
     (loop
       :for storage :in buffer-storages :do
         (print-buffer-storage storage stream))))
