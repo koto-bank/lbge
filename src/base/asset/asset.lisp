@@ -196,7 +196,7 @@ their asset keys."
    (call-next-method)
    (for-each-dependency asset (slot-name dep)
      do (unless (null dep)
-          (assert (is-asset dep) nil "Dependency is not an asset (how did this even happened?)"))
+          (assert (is-asset dep) nil "Dependency ~A of ~A is not an asset (how did this even happened?)" dep asset))
      if (slot-boundp asset slot-name)
      collect (list slot-name [dep.key s:serialize])
      else collect (list slot-name nil))))
