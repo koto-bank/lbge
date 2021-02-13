@@ -202,8 +202,8 @@ their asset keys."
      else collect (list slot-name nil))))
 
 (defmethod s:deserialize ((asset asset) form &optional options)
-  (if (eq (type-of asset)
-          (car form))
+  (if (closer-mop:subclassp (car form)
+                            (type-of asset))
     (progn
       (setf form (cdr form))
       (call-next-method asset form options))
