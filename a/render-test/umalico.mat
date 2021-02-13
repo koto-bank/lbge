@@ -1,0 +1,13 @@
+(lbge-render-test::TEXTURED-MATERIAL
+ (LBGE.ASSET::VERTEX-SHADER-SOURCE
+  (LBGE.ASSET:ASSET-KEY (LBGE.ASSET:ASSET-TYPE LBGE.ASSET:shader-source)
+                        (TYPE :DISK) (LBGE.ASSET:PATH ":root/textured-vert.glsl")
+                        (LBGE.ASSET:OPTIONS NIL)))
+ (LBGE.ASSET::FRAGMENT-SHADER-SOURCE
+  (LBGE.ASSET:ASSET-KEY (LBGE.ASSET:ASSET-TYPE LBGE.ASSET:shader-source)
+                        (TYPE :DISK) (LBGE.ASSET:PATH ":root/textured-frag.glsl")
+                        (LBGE.ASSET:OPTIONS NIL)))
+ (lbge-render-test::TEXTURE
+  (LBGE.ASSET:ASSET-KEY (LBGE.ASSET:ASSET-TYPE LBGE.ASSET:TEXTURE-ASSET)
+                        (TYPE :DISK) (LBGE.ASSET:PATH ":root/umalico.tex")
+                        (LBGE.ASSET:OPTIONS NIL))))
