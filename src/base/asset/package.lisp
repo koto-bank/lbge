@@ -2,6 +2,11 @@
   (:use :cl :lbge.hash)
   (:local-nicknames (:f :lbge.filesystem)
                     (:u :lbge.utils)
+                    (:r :lbge.render)
+                    (:b :lbge.render.backend)
+                    (:sh :lbge.render.shader)
+                    (:t :lbge.render.texture)
+                    (:mat :lbge.render.material)
                     (:s :lbge.serialization))
   (:export
    ;; Key
@@ -43,6 +48,8 @@
    :shader-source
    :shader-source-handler
    :source
+   :backend-shader
+   :build-shader
 
    :image-asset
    :image-asset-handler
@@ -50,7 +57,9 @@
    :texture-asset
    :texture-asset-handler
    :backend-texture
+   :build-texture
 
    :material-asset
    :material-asset-handler
-   :backend-material))
+   :backend-material
+   :build-material))
