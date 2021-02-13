@@ -26,6 +26,7 @@
      (:file "beacon")
      (:file "timer")
      (:file "serialization")
+     (:file "math-serialization")
      (:file "sparse-set")))
    (:module animation
     :components
