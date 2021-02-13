@@ -1,6 +1,10 @@
-(material
- :name "plain"
- :shaders '(":root/frag.glsl" ":root/vert.glsl")
- :uniforms '((:color :float3)
-             (:projection :float4x4)
-             (:model-view :float4x4)))
+(lbge-render-test::PLAIN-MATERIAL
+ (lbge-render-test::COLOR (lbge.math:float4 0.3 0.3 0.7 1.0))
+ (LBGE.ASSET::VERTEX-SHADER-SOURCE
+  (LBGE.ASSET:ASSET-KEY (LBGE.ASSET:ASSET-TYPE LBGE.ASSET:shader-source)
+                        (TYPE :DISK) (LBGE.ASSET:PATH ":root/vert.glsl")
+                        (LBGE.ASSET:OPTIONS NIL)))
+ (LBGE.ASSET::FRAGMENT-SHADER-SOURCE
+  (LBGE.ASSET:ASSET-KEY (LBGE.ASSET:ASSET-TYPE LBGE.ASSET:shader-source)
+                        (TYPE :DISK) (LBGE.ASSET:PATH ":root/frag.glsl")
+                        (LBGE.ASSET:OPTIONS NIL))))
