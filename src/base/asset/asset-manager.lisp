@@ -67,9 +67,12 @@ Root pathname must be set relative to the app root (see lbge.filesystem)"
   "Load asset by key.
 Asset handler for appropriate asset type must be registered.
 After load it will be stored in the loaded assets storage."
-  (let ((handler (assoc
-                  (slot-value asset-key 'asset-type)
-                  (slot-value asset-manager 'asset-handlers))))
+  (let ((handler (find-if
+                  (u:bind closer-mop:subclassp
+                          [asset-key.asset-type]
+                          _)
+                  [asset-manager.asset-handlers]
+                  :key #'car)))
     (assert handler nil "Asset handler for type ~S not found"
-            (slot-value asset-key 'asset-type))
+            [asset-key.asset-type])
     (handler-get-asset (cdr handler) asset-manager asset-key)))
