@@ -27,18 +27,21 @@
             :accessor texture)))
 
 (defun run ()
+  (f:set-app-root-to-system 'lbge-render-test)
   (log:config :debug)
   (le:delete-engine)
   (le:make-engine)
   (le:init-engine (le:make-engine-options
                    :opengl-version '(4 . 1)
                    :window-title "Render testbed"))
+
   (e:add-event-handlers
     (:keyup
      (:keysym keysym)
      (when (sdl2:scancode= (sdl2:scancode-value keysym) :scancode-escape)
        (sdl2:push-event :quit))
      (format t "Pressed ~S key~%" (sdl2:scancode keysym))))
+
   (let ((a (le:get-manager 'a:asset-manager)))
     (a:add-handler a (make-instance 'a:shader-source-handler))
     (a:add-handler a (make-instance 'a:image-asset-handler))
