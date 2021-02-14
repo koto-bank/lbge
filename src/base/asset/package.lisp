@@ -41,7 +41,7 @@
    :save-asset
    :load-dependencies
 
-   :sexp-asset-handler
+   :sexp-handler
    :sexp
    :sexp-data
 
