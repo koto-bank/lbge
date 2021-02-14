@@ -121,19 +121,20 @@
   (prin1 (serialize object) stream))
 
 (defun deserialize-stream (object stream &optional options)
-  (deserialize object (read stream) options))
+  (let ((form (read stream)))
+    (if (null object)
+      (deserialize object form options)
+      (deserialize object (cdr form) options))))
 
 (defun serialize-file (object-or-list file-path)
   (with-open-file (stream file-path
                           :direction :output
                           :if-exists :supersede)
-    (flet ((prin1-object (obj)
-             (prin1 (serialize obj) stream)))
-      (if (listp object-or-list)
-        (mapcar #'prin1-object object-or-list)
-        (prin1-object object-or-list)))))
+    (if (listp object-or-list)
+      (mapcar #'serialize-stream object-or-list)
+      (serialize-stream object-or-list))))
 
 (defun deserialize-file (object file-path &optional options)
   (with-open-file (stream file-path
                           :direction :input)
-    (deserialize object (read stream) options)))
+    (deserialize-stream object stream options)))
