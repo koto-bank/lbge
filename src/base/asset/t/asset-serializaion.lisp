@@ -13,9 +13,9 @@
    (slot-2 :initarg :slot-2)))
 
 (define-asset-handler small-asset (mgr key)
-  (let ((a (make-asset 'small-asset key :slot-2 nil))
-        (path (find-path-by-path-key mgr key)))
-    (s:deserialize-file a path)
+  (let ((a (make-asset key :slot-2 nil :state :error)))
+    (unless (eq (key-type key) :memory)
+      (s:deserialize-file a (find-path-by-path-key mgr key)))
     (setf (asset-state a) :loaded)
     a))
 
@@ -26,7 +26,7 @@
    (yet-another-slot :initarg :yet-another-slot)))
 
 (define-asset-handler big-asset (mgr key)
-  (let ((a (make-asset 'big-asset key :yet-another-slot "default-value"))
+  (let ((a (make-asset key :yet-another-slot "default-value"))
         (path (find-path-by-path-key mgr key)))
     (s:deserialize-file a path)
     (setf (asset-state a) :loaded)
@@ -34,23 +34,24 @@
 
 (deftest asset-serialize-test
   (let* ((mgr (make-instance 'asset-manager))
-         (small-1 (make-asset 'small-asset nil
-                              :slot-1 12
-                              :slot-2 34))
+         (small-1 (make-asset
+                   (make-asset-key 'small-asset
+                                   :memory
+                                   "small-asset")
+                   :slot-1 12
+                   :slot-2 34))
          (small-1-deserialized
            (s:deserialize nil (s:serialize small-1)))
          (small-2-key (make-asset-key 'small-asset
                                       :disk
                                       ":test-dir/small-asset-2.data"))
-         (small-2 (make-asset 'small-asset
-                              small-2-key
+         (small-2 (make-asset small-2-key
                               :slot-1 56
                               :slot-2 78))
          (big-key (make-asset-key 'big-asset
                                   :disk
                                   ":test-dir/big-asset.data"))
          (big (make-asset
-               'big-asset
                big-key
                :small-1 small-1
                :small-2 small-2
@@ -67,7 +68,9 @@
                                          'key))
             (big-small-2-key (slot-value (slot-value big-deserialized 'small-2)
                                          'key)))
-        (ok (null big-small-1-key))
+        (ng (null big-small-1-key))
+        (ok (eq (slot-value big-small-1-key 'type) :memory))
+        (ok (eq (slot-value big-small-1-key 'asset-type) 'small-asset))
         (ok (equal (slot-value big-small-2-key 'asset-type) 'small-asset))
         (ok (equal (slot-value big-small-2-key 'type) :disk))
         (ok (string= (slot-value big-small-2-key 'path)
@@ -89,5 +92,5 @@
         (load-dependencies mgr big-from-disk)
         (setf big-small-1 (slot-value big-from-disk 'small-1))
         (setf big-small-2 (slot-value big-from-disk 'small-2))
-        (ok (eq :void (asset-state big-small-1)))
+        (ok (eq :loaded (asset-state big-small-1)))
         (ok (eq :loaded (asset-state big-small-2)))))))
