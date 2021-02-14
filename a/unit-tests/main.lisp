@@ -159,6 +159,7 @@ If it does, then it is a test package."
   "Run unit tests and report the result.
 `selected-tests`: if provided, only selected tests will run
 Name must be string designator of the test name, e.g. `:engine'"
+  (lbge.filesystem:set-app-root-to-system 'lbge)
   (delete-test-packages)
   (load-test-files)
   (rove:use-reporter :spec)
