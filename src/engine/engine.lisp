@@ -93,7 +93,6 @@ Asserts that it have been created earlier."
                                         (engine-options-window-h options))))
       (t ()
         (stop-engine))))
-  (fs:set-app-root-to-system 'lbge-render-test)
   ;; Setup managers
   (let ((a (add-manager 'asset:asset-manager)))
     (asset:add-root a :root "."))       ; default root
@@ -155,7 +154,7 @@ Asserts that it have been created earlier."
                  ;; process-events is defined in events.lisp
                  :do (progn
                        (let* ((current-ticks (sdl2:get-ticks))
-                              (delta (- current-ticks ticks)))                      
+                              (delta (- current-ticks ticks)))
                          (lbge.engine.events:process-events *engine* sdl-event)
                          (blink :on-loop (list delta))
                          (let ((loop-time (- (sdl2:get-ticks) current-ticks)))
