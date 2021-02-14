@@ -25,7 +25,7 @@ are needed for loading, and so on"))
 (defun find-path-by-path-key (asset-manager asset-key)
   (assert (eq [asset-key.type] :disk)
           nil "Can find asset file path only for :disk assets.
-Got ~A key type instead" [asset-key.type])
+Got ~S key type instead" [asset-key.type])
   (find-asset-file-by-path
    (asset-roots asset-manager)
    [asset-key.path]))
