@@ -7,6 +7,7 @@
 E.g. image, geometry, effect"
     :initform nil
     :initarg :asset-type
+    :reader asset-type
     :serialize t)
    (type
     :documentation
@@ -15,7 +16,8 @@ E.g. image, geometry, effect"
 :memory for assets to be created in-memory"
     :initform nil
     :initarg :type
-    :serialize :t)
+    :serialize :t
+    :reader key-type)
    (path
     :documentation
     "For :disk asset keys should denote path to file.
