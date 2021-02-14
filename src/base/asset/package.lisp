@@ -14,6 +14,7 @@
    :asset-key
    :make-asset-key
    :make-asset
+   :asset-type
    :key-type
    :path
    :options
