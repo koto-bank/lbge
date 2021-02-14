@@ -197,12 +197,7 @@ their asset keys."
      else collect (list slot-name nil))))
 
 (defmethod s:deserialize ((asset asset) form &optional options)
-  (if (closer-mop:subclassp (car form)
-                            (type-of asset))
-    (progn
-      (setf form (cdr form))
-      (call-next-method asset form options))
-    (call-next-method))
+  (call-next-method)
   (for-each-dependency asset (dep-slot dep)
     do (let* ((dep-type (dependency-type asset dep-slot))
               (dep-data (find dep-slot form :key #'car)))
