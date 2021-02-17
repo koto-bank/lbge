@@ -67,10 +67,11 @@
      (:file "sexp-asset-handler")
      (:file "render-asset-handlers")))
    (:module image-loader
+    :serial t
     :components
     ((:file "packages")
-     (:file "png")
      (:file "image")
+     (:file "png")
      (:file "tga")
      (:file "image-loader")))
    (:module engine
