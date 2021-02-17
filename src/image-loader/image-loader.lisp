@@ -17,3 +17,4 @@
     (funcall (cdr (assoc extension *loaders* :test #'string=)) path)))
 
 (register-loader "TGA" #'load-tga)
+(register-loader "PNG" #'load-png)

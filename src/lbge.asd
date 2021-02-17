@@ -10,6 +10,7 @@
                :cffi :cl-autowrap
                :lbge-render
                :log4cl
+               :png
                :closer-mop :cl-ppcre
                :objective-cl)
   :around-compile (lambda (next)
@@ -68,6 +69,7 @@
    (:module image-loader
     :components
     ((:file "packages")
+     (:file "png")
      (:file "image")
      (:file "tga")
      (:file "image-loader")))
