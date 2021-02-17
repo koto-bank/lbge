@@ -25,10 +25,9 @@
 (defun load-png (path)
   (with-open-file (png path
                        :direction :input
-                       :if-does-not-exist :error
                        :element-type '(unsigned-byte 8))
     (let ((image (png:decode png)))
       (make-image :width (png:image-width image)
                   :height (png:image-height image)
                   :channels (png-channels image)
-                  :data (png-data image)))))
+                  :data (png-data image))))))
