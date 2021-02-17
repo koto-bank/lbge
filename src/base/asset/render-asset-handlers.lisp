@@ -108,7 +108,7 @@
                  (b:make-texture backend
                                  :image [texture.image-asset]
                                  :target :texture-2d
-                                 :format :rgba8))
+                                 :format [texture.image-asset.image:channels]))
            (mat:add-texture backend-material (make-sampler-keyword i)
                             [texture.backend-texture])))
     material))
