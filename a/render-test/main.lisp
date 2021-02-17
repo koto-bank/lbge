@@ -132,6 +132,8 @@
      ring)
     (le:link :before-start
              (lambda ()
+               (gl:enable :blend)
+               (gl:blend-func :src-alpha :one-minus-src-alpha)
                (gl:polygon-mode :front-and-back :fill))) ; change to :line to view wireframe
     (timer:link timer (lambda ()
                         (log:debug "FPS ~A (~A frames ~A seconds)"
