@@ -3,6 +3,7 @@
   (:local-nicknames (:f :lbge.filesystem)
                     (:u :lbge.utils)
                     (:r :lbge.render)
+                    (:image :lbge.image)
                     (:b :lbge.render.backend)
                     (:sh :lbge.render.shader)
                     (:t :lbge.render.texture)
