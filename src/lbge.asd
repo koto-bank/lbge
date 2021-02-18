@@ -70,9 +70,9 @@
     :serial t
     :components
     ((:file "packages")
-     (:file "image")
      (:file "png")
      (:file "tga")
+     (:file "image")
      (:file "image-loader")))
    (:module engine
     :components
