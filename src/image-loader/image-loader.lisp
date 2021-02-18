@@ -2,9 +2,8 @@
 
 (defparameter *loaders* (list))
 
-(defmacro register-loader (extension loader-fn)
-  `(setf *loaders*
-         (acons (string-upcase ,extension) ,loader-fn *loaders*)))
+(defmacro register-loader (extension loader-name)
+  `(setf *loaders* (acons (string-upcase ,extension) ,loader-name *loaders*)))
 
 (defun load-image (path)
   "Takes path to an image and returns `image` structure.
@@ -14,5 +13,5 @@
             "Failed to find loader for file type ~S (file ~S)" extension path)
     (funcall (cdr (assoc extension *loaders* :test #'string=)) path)))
 
-(register-loader "TGA" #'load-tga)
-(register-loader "PNG" #'load-png)
+(register-loader "TGA" 'load-tga)
+(register-loader "PNG" 'load-png)
