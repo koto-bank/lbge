@@ -27,7 +27,7 @@
                        :direction :input
                        :if-does-not-exist :error
                        :element-type '(unsigned-byte 8))
-    (let ((image (png:decode png :preserve-alpha t)))
+    (let ((image (png:decode png)))
       (make-image :width (png:image-width image)
                   :height (png:image-height image)
                   :channels (png-channels image)
