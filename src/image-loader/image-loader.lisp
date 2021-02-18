@@ -1,12 +1,10 @@
 (in-package :lbge.image)
 
-(eval-when (:compile-toplevel :load-toplevel)
-  (defparameter *loaders* (list)))
+(defparameter *loaders* (list))
 
 (defmacro register-loader (extension loader-fn)
-  `(eval-when (:compile-toplevel :load-toplevel)
-     (setf *loaders*
-           (acons (string-upcase ,extension) ,loader-fn *loaders*))))
+  `(setf *loaders*
+         (acons (string-upcase ,extension) ,loader-fn *loaders*)))
 
 (defun load-image (path)
   "Takes path to an image and returns `image` structure.
