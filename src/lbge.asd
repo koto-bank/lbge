@@ -12,7 +12,8 @@
                :log4cl
                :png
                :closer-mop :cl-ppcre
-               :objective-cl)
+               :objective-cl
+               :autoexport)
   :around-compile (lambda (next)
                     (uiop:symbol-call '#:objective-cl '#:enable)
                     (unwind-protect (funcall next)
