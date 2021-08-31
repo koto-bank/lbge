@@ -5,11 +5,13 @@
 
 (asdf:defsystem :lbge-render
   :license "BSD-2-Clause"
-  :depends-on (:alexandria :sdl2
+  :depends-on (:alexandria
+               :sdl2
                :cffi :cl-autowrap
                :log4cl :closer-mop
                :cl-opengl
-               :objective-cl)
+               :objective-cl
+               :autoexport)
   :around-compile (lambda (next)
                     (uiop:symbol-call '#:objective-cl '#:enable)
                     (unwind-protect (funcall next)
