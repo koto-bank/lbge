@@ -29,7 +29,6 @@
 (defun run ()
   (f:set-app-root-to-system 'lbge-render-test)
   (log:config :debug)
-  (le:delete-engine)
   (le:make-engine)
   (le:init-engine (le:make-engine-options
                    :opengl-version '(4 . 1)
@@ -50,13 +49,7 @@
   (let* ((r (le:get-renderer))
          (backend (r:renderer-backend r))
          (a (le:get-manager 'a:asset-manager))
-         (c (r:make-ortho-camera :left -1.0f0 :right 1.0f0
-                                 :top 0.75f0 :bottom -0.75f0
-                                 :near -0.1f0 :far 3.0f0
-                                 :view (m:make-look-at
-                                        (m:make-float3 0.0 0.0 1.0)
-                                        (m:make-float3 0.0 0.0 0.0)
-                                        (m:make-float3 0.0 1.0 0.0))))
+         (c (r:make-default-ortho-camera))
          ;; material
          (plain (a:build-material
                  backend
