@@ -22,6 +22,16 @@
 Preserve-fov is a keyword which tells which fov we should preserve, :x
 or :y"))
 
+(pub defun make-default-ortho-camera ()
+   (make-ortho-camera
+    :left -1.0f0 :right 1.0f0
+    :top 0.75f0 :bottom -0.75f0
+    :near -0.1f0 :far 3.0f0
+    :view (m:make-look-at
+           (m:make-float3 0.0 0.0 1.0)
+           (m:make-float3 0.0 0.0 0.0)
+           (m:make-float3 0.0 1.0 0.0))))
+
 (defun make-ortho-camera (&key left right top bottom near far view)
   (let ((cam (make-instance 'ortho-camera))
         (proj-matrix (m:make-ortho-projection
