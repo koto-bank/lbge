@@ -55,7 +55,7 @@
    :texture-bind))
 
 (defpackage :lbge.render
-  (:use :cl)
+  (:use :cl :autoexport)
   (:local-nicknames (:b :lbge.render.backend)
                     (:ax :alexandria)
                     (:m :lbge.math))
