@@ -5,7 +5,8 @@
 
 (asdf:defsystem :lbge
   :license "BSD-2-Clause"
-  :depends-on (:alexandria :sdl2
+  :depends-on (:alexandria
+               :sdl2
                :rove
                :cffi :cl-autowrap
                :lbge-render
