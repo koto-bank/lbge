@@ -77,10 +77,8 @@ Asserts that it have been created earlier."
     (hash-get managers manager-type)))
 
 (defun init-engine (&optional options)
-  (unless options
-    (setf options (make-engine-options)))
-  (setf (slot-value *engine* 'options) options)
-
+  (unless options (setf options (make-engine-options)))
+  (setf [*engine*.options] options)
   (let ((init-flags (autowrap:mask-apply
                      'sdl2::sdl-init-flags
                      '(:audio :video :timer :joystick :gamecontroller :noparachute))))
@@ -145,7 +143,7 @@ Asserts that it have been created earlier."
 
 (defun engine-loop ()
   (let ((ticks 0)
-        (time-per-frame (engine-options-time-per-frame [*engine*.options])))
+        (time-per-frame (engine-options-time-per-frame (slot-value *engine* 'options))))
     (unwind-protect
          (sdl2:with-sdl-event (sdl-event)
            (blink :before-start)
