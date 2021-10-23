@@ -9,8 +9,8 @@
     (format t "Running SDL version: ~S.~S.~S~%" major minor patch)))
 
 (defun run ()
-  (lbge.engine:delete-engine)
   (lbge.engine:make-engine)
+  (lbge.engine:init-engine)
   (lbge.engine:link :before-start #'print-win-info)
   (lbge.engine.events:add-event-handlers
     (:keyup
