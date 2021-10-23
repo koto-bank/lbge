@@ -30,4 +30,4 @@
       (make-image :width (png:image-width image)
                   :height (png:image-height image)
                   :channels (png-channels image)
-                  :data (png-data image))))))
+                  :data (png-data image)))))
