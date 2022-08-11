@@ -1,7 +1,7 @@
 (define-test matrix-add-test
     (:lbge.math)
   (testing "2x2 matrix addition"
-    (ok (eqm (add (make-float2x2 1 2
+    (ok (eqg (add (make-float2x2 1 2
                                  3 4)
                   (make-float2x2 5 6
                                  7 8))
@@ -9,7 +9,7 @@
                             10 12))))
 
   (testing "3x3 matrix addition"
-    (ok (eqm (add (make-float3x3 1 2 3
+    (ok (eqg (add (make-float3x3 1 2 3
                                  4 5 6
                                  7 8 9)
                   (make-float3x3 10 11 12
@@ -20,7 +20,7 @@
                             23 25 27))))
 
   (testing "4x4 matrix addition"
-    (ok (eqv (add (make-float4x4 1 2 3 4
+    (ok (eqg (add (make-float4x4 1 2 3 4
                                  5 6 7 8
                                  9 10 11 12
                                  13 14 15 16)
@@ -35,7 +35,7 @@
 (define-test matrix-sub-test
     (:lbge.math)
   (testing "2x2 matrix subtraction"
-    (ok (eqm (sub (make-float2x2 1 2
+    (ok (eqg (sub (make-float2x2 1 2
                                  3 4)
                   (make-float2x2 5 6
                                  7 8))
@@ -43,7 +43,7 @@
                             -4 -4))))
 
   (testing "3x3 matrix subtraction"
-    (ok (eqm (sub (make-float3x3 1 2 3
+    (ok (eqg (sub (make-float3x3 1 2 3
                                  4 5 6
                                  7 8 9)
                   (make-float3x3 10 11 12
@@ -54,7 +54,7 @@
                             -9 -9 -9))))
 
   (testing "4x4 matrix subtraction"
-    (ok (eqm (sub (make-float4x4 1 2 3 4
+    (ok (eqg (sub (make-float4x4 1 2 3 4
                                  5 6 7 8
                                  9 10 11 12
                                  13 14 15 16)
@@ -71,14 +71,14 @@
 (define-test matrix-mul-test
     (:lbge.math)
   (testing "2x2 matrix multiplication"
-    (ok (eqm (mul (make-float2x2 1 2
+    (ok (eqg (mul (make-float2x2 1 2
                                  3 4)
                   2)
              (make-float2x2 2 4
                             6 8))))
 
   (testing "3x3 matrix multiplication"
-    (ok (eqm (mul (make-float3x3 1 2 3
+    (ok (eqg (mul (make-float3x3 1 2 3
                                  4 5 6
                                  7 8 9)
                   2)
@@ -87,7 +87,7 @@
                             14 16 18))))
 
   (testing "4x4 matrix multiplication"
-    (ok (eqm (mul (make-float4x4 1 2 3 4
+    (ok (eqg (mul (make-float4x4 1 2 3 4
                                  5 6 7 8
                                  9 10 11 12
                                  13 14 15 16)
@@ -98,7 +98,7 @@
                             26 28 30 32))))
 
   (testing "2x2 by 2x2 matrix multiplication"
-    (ok (eqm (mul (make-float2x2 5 8
+    (ok (eqg (mul (make-float2x2 5 8
                                  3 8)
                   (make-float2x2 3 8
                                  8 9))
@@ -106,7 +106,7 @@
                             73 96))))
 
   (testing "3x3 by 3x3 matrix multiplication"
-    (ok (eqm (mul (make-float3x3 10 20 10
+    (ok (eqg (mul (make-float3x3 10 20 10
                                  4 5 6
                                  2 3 5)
                   (make-float3x3 3 2 4
@@ -117,7 +117,7 @@
                             35 33 45))))
 
   (testing "4x4 by 4x4 matrix multiplication"
-    (ok (eqm (mul (make-float4x4 5 7 9 10
+    (ok (eqg (mul (make-float4x4 5 7 9 10
                                  2 3 3 8
                                  8 10 2 3
                                  3 3 4 8)
@@ -131,20 +131,20 @@
                             105 169 128 169))))
 
   (testing "2x2 matrix by 2d vector multiplication"
-    (ok (eqv (mul (make-float2x2 1 2
+    (ok (eqg (mul (make-float2x2 1 2
                                  3 4)
                   (make-float2 1 2))
              (make-float2 3 14))))
 
   (testing "3x3 matrix by 3d vector multiplication"
-    (ok (eqv (mul (make-float3x3 1 2 3
+    (ok (eqg (mul (make-float3x3 1 2 3
                                  4 5 6
                                  7 8 9)
                   (make-float3 1 2 3))
              (make-float3 6 30 72))))
 
   (testing "4x4 matrix multiplication"
-    (ok (eqv (mul (make-float4x4 1 2 3 4
+    (ok (eqg (mul (make-float4x4 1 2 3 4
                                  5 6 7 8
                                  9 10 11 12
                                  13 14 15 16)
@@ -155,14 +155,14 @@
 (define-test matrix-div-test
     (:lbge.math)
   (testing "2x2 matrix division"
-    (ok (eqm (div (make-float2x2 2 4
+    (ok (eqg (div (make-float2x2 2 4
                                  6 8)
                   2)
              (make-float2x2 1 2
                             3 4))))
 
   (testing "3x3 matrix division"
-    (ok (eqm (div (make-float3x3 2 4 6
+    (ok (eqg (div (make-float3x3 2 4 6
                                  8 10 12
                                  14 16 18)
                   2)
@@ -171,7 +171,7 @@
                             7 8 9))))
 
   (testing "4x4 matrix division"
-    (ok (eqm (div (make-float4x4 2 4 6 8
+    (ok (eqg (div (make-float4x4 2 4 6 8
                                  10 12 14 16
                                  18 20 22 24
                                  26 28 30 32)
@@ -182,16 +182,16 @@
                             13 14 15 16)))))
 
 
-(define-test absm-test
+(define-test absg-test
     (:lbge.math)
   (testing "2x2 matrix abs"
-    (ok (eqm (absm (make-float2x2 -1 -2
+    (ok (eqg (absg (make-float2x2 -1 -2
                                   -3 -4))
              (make-float2x2 1 2
                             3 4))))
 
   (testing "3x3 matrix abs"
-    (ok (eqm (absm (make-float3x3 -1 -2 -3
+    (ok (eqg (absg (make-float3x3 -1 -2 -3
                                   -4 -5 -6
                                   -7 -8 -9))
              (make-float3x3 1 2 3
@@ -199,7 +199,7 @@
                             7 8 9))))
 
   (testing "4x4 matrix abs"
-    (ok (eqm (absm (make-float4x4 -1 -2 -3 -4
+    (ok (eqg (absg (make-float4x4 -1 -2 -3 -4
                                   -5 -6 -7 -8
                                   -9 -10 -11 12
                                   -13 -14 -15 -16))
@@ -209,16 +209,16 @@
                             13 14 15 16)))))
 
 
-(define-test negm-test
+(define-test negg-test
     (:lbge.math)
   (testing "2x2 matrix negation"
-    (ok (eqm (negm (make-float2x2 1 2
+    (ok (eqg (negg (make-float2x2 1 2
                                   3 4))
              (make-float2x2 -1 -2
                             -3 -4))))
 
   (testing "3x3 matrix negation"
-    (ok (eqm (negm (make-float3x3 1 2 3
+    (ok (eqg (negg (make-float3x3 1 2 3
                                   4 5 6
                                   7 8 9))
              (make-float3x3 -1 -2 -3
@@ -226,7 +226,7 @@
                             -7 -8 -9))))
 
   (testing "4x4 matrix negation"
-    (ok (eqm (negm (make-float4x4 1 2 3 4
+    (ok (eqg (negg (make-float4x4 1 2 3 4
                                   5 6 7 8
                                   9 10 11 12
                                   13 14 15 16))
@@ -239,13 +239,13 @@
 (define-test transpose-test
     (:lbge.math)
   (testing "2x2 matrix transposition"
-    (ok (eqm (transpose (make-float2x2 1 2
+    (ok (eqg (transpose (make-float2x2 1 2
                                        3 4))
              (make-float2x2 1 3
                             2 4))))
 
   (testing "3x3 matrix transposition"
-    (ok (eqm (transpose (make-float3x3 1 2 3
+    (ok (eqg (transpose (make-float3x3 1 2 3
                                        4 5 6
                                        7 8 9))
              (make-float3x3 1 4 7
@@ -253,7 +253,7 @@
                             3 6 9))))
 
   (testing "4x4 matrix transposition"
-    (ok (eqm (transpose (make-float4x4 1 2 3 4
+    (ok (eqg (transpose (make-float4x4 1 2 3 4
                                        5 6 7 8
                                        9 10 11 12
                                        13 14 15 16))
