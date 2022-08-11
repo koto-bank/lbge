@@ -1,7 +1,13 @@
 (in-package :lbge.math)
 
-(defgeneric get-size (vector)
-  (:documentation "Return number of vector components"))
+(defgeneric size (datum)
+  (:documentation "Return number of vector or total matrix components"))
+
+(defgeneric width (matrix)
+  (:documentation "Return the width of its argument"))
+
+(defgeneric height (matrix)
+  (:documentation "Return the height of its argument"))
 
 (defgeneric add (value1 value2)
   (:documentation "Perform addition of value1 to value2 that makes sense for the type"))
@@ -21,23 +27,28 @@
 (defgeneric norm (value)
   (:documentation "Get the euclidean norm of the value"))
 
-(defgeneric negv (vector)
-  (:documentation "Perform element-wise negation on a vector"))
+(defgeneric negg (vector)
+  (:documentation "Perform element-wise negation"))
 
-(defgeneric absv (vector)
-  (:documentation "Perform element-wise absolute value on a vector"))
+(defgeneric absg (vector)
+  (:documentation "Perform element-wise absolute value"))
+
+(defgeneric eqg (value1 value2 &key eps &allow-other-keys)
+  (:documentation "Generic equality predicate for values of this math library")
+  (:method ((value1 t) (value2 t) &key (eps *epsilon*) &allow-other-keys)
+    (declare (ignore value1 value2 eps))
+    nil))
+
+(defgeneric neqg (value1 value2 &key eps &allow-other-keys)
+  (:documentation "The inverse of #'eqg")
+  (:method ((value1 t) (value2 t) &key (eps *epsilon*) &allow-other-keys)
+    (not (eqg value1 value2 :eps eps))))
 
 (defgeneric det (matrix)
   (:documentation "Compute the determinant of a matrix"))
 
 (defgeneric transpose (matrix)
   (:documentation "Compute the transpose a matrix"))
-
-(defgeneric absm (matrix)
-  (:documentation "Perform element-wise absolute value on a matrix"))
-
-(defgeneric negm (matrix)
-  (:documentation "Perform element-wise negation on a matrix"))
 
 (defgeneric conj (quat)
   (:documentation "Get the conjugate quaternion of q"))
@@ -57,19 +68,7 @@
 (defgeneric exptq (quat1 quat2)
   (:documentation "Raise q1 to the power of q2"))
 
-(defgeneric absq (quat)
-  (:documentation "Perform element-wise absolute value on a quarternion"))
-
-(defgeneric negq (quat)
-  (:documentation "Perform element-wise negation on a quaternion"))
-
 (defgeneric lerp (x t1 t2 val1 val2))
-
-(defgeneric absp (poly)
-  (:documentation "Perform element-wise absolute value on a polynomial"))
-
-(defgeneric negp (poly)
-  (:documentation "Perform element-wise negation on a polynomial"))
 
 (defgeneric degree (poly)
   (:documentation "Get the degree of a polynomial"))
@@ -77,7 +76,7 @@
 (defgeneric call-at (poly x)
   (:documentation "Evaluate polynomial at point x"))
 
-(defgeneric add-point-ip (interp x y)
+(defgeneric nadd-point (interp x y)
   (:documentation "Add a point into an existing Newton interpolation polynomial"))
 
 (defgeneric add-point (interp x y)

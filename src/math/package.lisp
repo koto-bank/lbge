@@ -12,41 +12,30 @@
     :append-to
 
     ; exports from definitions.lisp:
-    :get-size
+    :size
     :add
     :sub
     :mul
     :div
     :norm2
     :norm
-    :negv
-    :absv
+    :eqg
+    :neqg
+    :negg
+    :absg
     :det
     :transpose
-    :absm
-    :negm
     :conj
     :inv
     :versor
     :expq
     :logq
     :exptq
-    :absq
-    :negq
 
     ; exports from vector.lisp:
     :float2
     :float3
     :float4
-    :float2-x
-    :float2-y
-    :float3-x
-    :float3-y
-    :float3-z
-    :float4-x
-    :float4-y
-    :float4-z
-    :float4-w
     :float2-zero
     :float3-zero
     :float4-zero
@@ -62,8 +51,6 @@
     :make-float3
     :make-float4
     :dot
-    :eqv
-    :neqv
     :cross
     :zero-vector-p
     :angle
@@ -91,8 +78,6 @@
     :det2x2
     :det3x3
     :det4x4
-    :eqm
-    :neqm
     :make-ortho-projection
     :make-look-at
 
@@ -104,8 +89,6 @@
     :quaternion-one
     :quaternion-v
     :quaternion-a
-    :eqq
-    :neqq
     :from-euler
     :to-euler
 
@@ -121,8 +104,6 @@
     :raise-degree
     :pad-poly
     :call
-    :eqp
-    :neqp
 
     ; exports from lerp.lisp
     :lerp
@@ -131,6 +112,6 @@
     ; exports from newton.lisp
     :make-newton
     :copy-newton-interp
-    :add-point-ip
+    :nadd-point
     :add-point
     :call))
